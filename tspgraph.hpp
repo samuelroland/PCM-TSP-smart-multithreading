@@ -20,6 +20,7 @@ private:
 public:
     int size() const { return _coords.size(); }
     int distance(int a, int b) const { return _dist[a][b]; }
+    void resize(int size) { _coords.resize(size); }
 
     TSPGraph(const std::string& filename) {
         std::ifstream in(filename);

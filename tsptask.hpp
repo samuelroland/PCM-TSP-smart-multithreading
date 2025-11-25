@@ -59,12 +59,12 @@ public:
     }
 
     void write(std::ostream& os) const {
-        os << "[" << _distance << ": ";
+        os << "{" << _distance << ": ";
         for (int i = 0; i < _size; i++) {
             if (i) os << ", ";
             os << _node[i];
         }
-        os << "]";
+        os << "}";
     }
 };
 
@@ -80,6 +80,7 @@ private:
     static TSPPath _shortest;
     static std::vector<TSPTask*> _free_list;
 
+    // this does not work with multiple threads!
     static TSPTask* alloc(const TSPPath& path, int node) {
         if (_free_list.empty())
             return new TSPTask(path, node);
@@ -90,6 +91,7 @@ private:
         return p;
     }
 
+    // this does not work with multiple threads!
     static void free(TSPTask* p) {
         //        	delete p;
         _free_list.push_back(p);
@@ -97,14 +99,14 @@ private:
 
     TSPPath _path;
 
-    TSPTask() { throw std::runtime_error("Cannot construct TSPTask()"); }
+    TSPTask() { throw std::runtime_error("Cannot construct TSPTask(void)"); }
 
     TSPTask(const TSPPath& path, int node) : _path(path) {
         _path.push(node);
     }
 
 public:
-    TSPTask(int cutoff) {
+    TSPTask(int cutoff) {// cutoff expressed as a distance from full
         _shortest.maximise();
         _cutoff_size = TSPPath::full() - cutoff;
     }
@@ -120,23 +122,26 @@ public:
 
     // Task interface implementation: split, merge, solve, write
 
-    int split(Task** partitions, int size) override {
-        if (_path.size() >= _cutoff_size || size < TSPPath::full()) return 0;
+    int split(TaskCollection* collection) override {
+        collection->clear();
+        if (_path.size() >= _cutoff_size) return 0;
         int count = 0;
         for (int i = 0; i < TSPPath::full(); i++) {
-            if (!_path.contains(i))
-                //				partitions[count ++] = new TSPTask(_path, i);
-                partitions[count++] = TSPTask::alloc(_path, i);
+            if (!_path.contains(i)) {
+                //				TSPTask* t  = new TSPTask(_path, i);
+                TSPTask* t = TSPTask::alloc(_path, i);
+                collection->push(t);
+                count++;
+            }
         }
         return count;
     }
 
-    void merge(Task** partitions, int size) override {
-        for (int p = 0; p < size; p++) {
-            TSPTask* t = (TSPTask*) partitions[p];
+    void merge(TaskCollection* collection) override {
+        for (int p = 0; p < collection->size(); p++) {
+            TSPTask* t = (TSPTask*) collection->pop();
             //			delete t;
             TSPTask::free(t);
-            partitions[p] = nullptr;
         }
     }
 
