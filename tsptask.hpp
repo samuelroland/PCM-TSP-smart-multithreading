@@ -1,3 +1,5 @@
+#ifndef TSPTASK_HPP
+#define TSPTASK_HPP
 #include <bitset>
 #include <climits>
 
@@ -187,3 +189,4 @@ public:
 TSPGraph* TSPPath::_graph;
 TSPPath TSPTask::_shortest = [] { TSPPath s; s.maximise(); return s; }();
 std::vector<TSPTask*> TSPTask::_free_list;
+#endif

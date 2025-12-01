@@ -1,3 +1,6 @@
+#ifndef TASK_HPP
+#define TASK_HPP
+
 #include <algorithm>
 #include <chrono>
 #include <iostream>
@@ -155,3 +158,4 @@ public:
     int solves() { return _solves; }
     int splits() { return _splits; }
 };
+#endif
