@@ -102,10 +102,11 @@ std::ostream& operator<<(std::ostream& os, const TSPPath& t) {
 class TSPTask : public Task {
 
 private:
-    static TSPPath _shortest;
-    static std::vector<TSPTask*> _free_list;
+    static TSPPath _shortest;   // TODO: not thread safe, change
+    static std::vector<TSPTask*> _free_list; // TODO: not thread safe, reimplement
 
     // this does not work with multiple threads!
+    // TODO: reimplement
     TSPTask* reusealloc(int node) {
         if (_free_list.empty())
             return new TSPTask(this, node);
@@ -118,13 +119,14 @@ private:
     }
 
     // this does not work with multiple threads!
+    // TODO: reimplement
     void reusefree(TSPTask* p) {
         _free_list.push_back(p);
     }
 
     TSPPath _path;
     int _cutoff_size;
-
+public:
     TSPTask(TSPTask* task, int node) : _path(task->_path), _cutoff_size(task->_cutoff_size) {
         _path.push(node);
     }

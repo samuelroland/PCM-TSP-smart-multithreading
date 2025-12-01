@@ -1,5 +1,7 @@
-#include "tsptask.hpp"
 #include <iostream>
+
+#include "tsptask.hpp"
+#include "parallel_runner.hpp"
 
 /*****************************************************************
   Program to solve a TSP problem
@@ -36,5 +38,18 @@ int main(int argc, char** argv) {
     std::cout << "partit: " << tsp1.result() << " t:" << r1.duration()
               << " s:" << r1.solves() << "/" << r1.splits() << std::endl;
 
+    TSPTask tsp_parallel;
+    tsp_parallel.cutoff(0);
+
+    // choisir nombre de threads = nombre de coeurs physiques
+    unsigned int num_threads = std::thread::hardware_concurrency();
+    if (num_threads == 0) num_threads = 4; // fallback
+    num_threads = 1;
+    ParallelTaskRunner r_parallel(num_threads);
+    r_parallel.run(&tsp_parallel);
+
+    std::cout << "parallel: " << tsp_parallel.result()
+              << " t:" << r_parallel.duration()
+              << " threads:" << num_threads << std::endl;
     return 0;
 }
