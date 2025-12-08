@@ -4,6 +4,8 @@
 #include "task.hpp"
 #include "tsptask.hpp"
 
+// TODO: transform this collection with CAS using atomic_stamped
+// TODO: implement a first queue structure SAMUEL
 class FastTaskDS : public TaskCollection {
 private:
     std::vector<Task*> _tab;
@@ -72,6 +74,7 @@ public:
     int split(TaskCollection* collection) override {
         collection->clear();
         if (_path.size() >= _cutoff_size) return 0;
+        if (_path.distance() >= _shortest.distance()) return -1;// the branch must be cut
         int count = 0;
         for (int i = 0; i < TSPPath::full(); i++) {
             if (!_path.contains(i)) {
@@ -118,6 +121,7 @@ public:
 
 
 // TODO: change the implementation to start threads
+// TODO: OLIVIA
 class ParallelTaskRunner : public TaskRunner {
 private:
     int _size;
@@ -128,6 +132,8 @@ private:
         //		FixedTaskStack coll(space, _size);
         TaskStack coll(_size);
         int n = t->split(&coll);
+        if (n < 0) return;// the split has defined we are over the shortest path on this branch so we cut the branch
+        // TODO: should we free the task somehow ?
         if (n) {
             _splits++;
             for (int i = 0; i < n; i++)
@@ -137,6 +143,7 @@ private:
             _solves++;
             t->solve();
         }
+        // TODO: implement the glouton approach by giving an empty FastTaskDS to split(), then keeping a task to continue, and pushing other in the global FastTaskDS
     }
     ParallelTaskRunner() {}// cannot use default constructor
 public:
