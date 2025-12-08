@@ -1,3 +1,4 @@
+#include "parrallel_work.hpp"
 #include "tsptask.hpp"
 #include <iostream>
 
@@ -22,19 +23,26 @@ int main(int argc, char** argv) {
     if (argc == 3)
         graph.resize(atoi(argv[2]));
 
-    TSPPath::setup(&graph);
+    // TSPPath::setup(&graph);
+    //
+    // TSPTask tsp2;
+    // DirectTaskRunner r2;
+    // r2.run(&tsp2);
+    // std::cout << "direct: " << tsp2.result() << " t:" << r2.duration() << std::endl;
+    //
+    // TSPTask tsp1;
+    // tsp1.cutoff(0);
+    // PartitionedTaskStackRunner r1(TSPPath::MAX_GRAPH);
+    // r1.run(&tsp1);
+    // std::cout << "partit: " << tsp1.result() << " t:" << r1.duration()
+    //           << " s:" << r1.solves() << "/" << r1.splits() << std::endl;
 
-    TSPTask tsp2;
-    DirectTaskRunner r2;
-    r2.run(&tsp2);
-    std::cout << "direct: " << tsp2.result() << " t:" << r2.duration() << std::endl;
-
-    TSPTask tsp1;
-    tsp1.cutoff(0);
-    PartitionedTaskStackRunner r1(TSPPath::MAX_GRAPH);
-    r1.run(&tsp1);
-    std::cout << "partit: " << tsp1.result() << " t:" << r1.duration()
-              << " s:" << r1.solves() << "/" << r1.splits() << std::endl;
+    TSPParraTask tsp3;
+    tsp3.cutoff(0);
+    ParallelTaskRunner r3(TSPPath::MAX_GRAPH);
+    r3.run(&tsp3);
+    std::cout << "parallel: " << tsp3.result() << " t:" << r3.duration()
+              << " s:" << r3.solves() << "/" << r3.splits() << std::endl;
 
     return 0;
 }
