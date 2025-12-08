@@ -1,5 +1,6 @@
 #ifndef TSPTASK_HPP
 #define TSPTASK_HPP
+
 #include <bitset>
 #include <climits>
 
@@ -107,6 +108,7 @@ private:
 
     // this does not work with multiple threads!
     // TODO: reimplement
+    /*
     TSPTask* reusealloc(int node) {
         if (_free_list.empty())
             return new TSPTask(this, node);
@@ -118,10 +120,18 @@ private:
         return p;
     }
 
+    */
+    TSPTask* reusealloc(int node) {
+        return new TSPTask(this, node);
+    }
     // this does not work with multiple threads!
     // TODO: reimplement
+    /*
     void reusefree(TSPTask* p) {
         _free_list.push_back(p);
+    }*/
+    void reusefree(TSPTask* p) {
+        delete p;
     }
 
     TSPPath _path;
