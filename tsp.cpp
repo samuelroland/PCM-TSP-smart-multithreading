@@ -41,10 +41,9 @@ int main(int argc, char** argv) {
     TSPTask tsp_parallel;
     tsp_parallel.cutoff(0);
 
-    // choisir nombre de threads = nombre de coeurs physiques
+    // nb threads = nb core
     unsigned int num_threads = std::thread::hardware_concurrency();
     if (num_threads == 0) num_threads = 4; // fallback
-    num_threads = 1;
     ParallelTaskRunner r_parallel(num_threads);
     r_parallel.run(&tsp_parallel);
 
