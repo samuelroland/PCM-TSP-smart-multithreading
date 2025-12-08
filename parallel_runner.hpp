@@ -24,7 +24,8 @@ private:
                 std::this_thread::yield();
                 continue;
             }
-            std::cout << "worker " << std::this_thread::get_id() << " got task " << task << "\n";
+            // debug purpose
+            //std::cout << "worker " << std::this_thread::get_id() << " got task " << task << "\n";
 
             // Créer un conteneur local pour les enfants
             TaskStack children(TSPPath::MAX_GRAPH);

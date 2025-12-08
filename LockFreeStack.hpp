@@ -46,7 +46,8 @@ public:
         } while (!_head.cas(old_head, old_head->next, stamp, stamp + 1));
 
         T* ret = old_head->data;
-        delete old_head;// libération mémoire du noeud
+        // TODO: lu par un autre thread? peut etre pas thread-safe
+        delete old_head;
         return ret;
     }
 
