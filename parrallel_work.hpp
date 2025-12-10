@@ -136,12 +136,12 @@ private:
     int _solves;
 
     // variables for thread pool
-    std::vector< std::thread > workers; // list with all threads ready to work
-    std::condition_variable cv_;        // condition variable to signal changes in the state of the tasks queue
-    std::mutex queue_mutex_;    // Mutex to synchronize access to shared data
-    std::queue<std::function<void()> > tasks_;
-    bool stop_ = false; // Flag to indicate whether the thread pool should stop or not
-    std::atomic<int> tasks_in_progress{0};  // to check the finalization of computing
+    std::vector<std::thread> workers;// list with all threads ready to work
+    std::condition_variable _cv;     // condition variable to signal changes in the state of the tasks queue
+    std::mutex _queue_mutex;         // Mutex to synchronize access to shared data
+    std::queue<std::function<void()>> _tasks;
+    std::atomic<bool> _stop{false};        // Flag to indicate whether the thread pool should stop or not
+    std::atomic<int> _tasks_in_progress{0};// to check the finalization of computing
 
     void recurse(Task* t) {
         // 		Task* space[_size];
@@ -165,7 +165,6 @@ private:
             t->solve();
         }
         // TODO: implement the glouton approach by giving an empty FastTaskDS to split(), then keeping a task to continue, and pushing other in the global FastTaskDS
-
     }
 
     ParallelTaskRunner() {}// cannot use default constructor
@@ -177,60 +176,56 @@ private:
             {
                 // Locking the queue so that data
                 // can be shared safely
-                std::unique_lock<std::mutex> lock(queue_mutex_);
+                std::unique_lock<std::mutex> lock(_queue_mutex);
 
 
                 // Waiting until there is a task to
                 // execute or the pool is stopped
-                cv_.wait(lock, [this] {
-                    return !tasks_.empty() || stop_;
+                _cv.wait(lock, [this] {
+                    return !_tasks.empty() || _stop.load();
                 });
 
                 // exit the thread in case the pool
                 // is stopped and there are no tasks
-                if (stop_ && tasks_.empty()) {
+                if (_stop.load() && _tasks.empty()) {
                     return;
                 }
 
                 // Get the next task from the queue
-                cur_task = move(tasks_.front());
-                tasks_.pop();
+                cur_task = move(_tasks.front());
+                _tasks.pop();
             }
             cur_task();
         }
     }
     // spin wait until all tasks are done
     void wait_until_done() {
-        while (tasks_in_progress.load() > 0) {
-            std::this_thread::yield(); // CPU can do something else
+        while (_tasks_in_progress.load() > 0) {
+            std::this_thread::yield();// CPU can do something else
         }
     }
 
 public:
     ParallelTaskRunner(int size, unsigned int nbThreads) : _size(size), _splits(0), _solves(0) {
         // create thread pool
-        for (unsigned int i=0; i<nbThreads; ++i)
+        for (unsigned int i = 0; i < nbThreads; ++i)
             workers.emplace_back(&ParallelTaskRunner::worker, this);
     }
     ~ParallelTaskRunner() {
-        {
-            // Lock the queue to update the stop flag safely
-            std::unique_lock<std::mutex> lock(queue_mutex_);
-            stop_ = true;
-        }
+        _stop.store(true);
         // Notify all threads
-        cv_.notify_all();
+        _cv.notify_all();
 
         // Joining all worker threads to ensure they have
         // completed their tasks
-        for (auto& thread : workers) {
+        for (auto& thread: workers) {
             thread.join();
         }
     }
     virtual void run(Task* t) override {
         TaskRunner::startTimer();
         // To "start" a thread, let's enqueue
-       enqueue([this, t]() {
+        enqueue([this, t]() {
             recurse(t);
         });
 
@@ -241,17 +236,16 @@ public:
     int splits() { return _splits; }
 
     // Enqueue task for execution by the thread pool
-    void enqueue(std::function<void()> task)
-    {
-        tasks_in_progress++;
+    void enqueue(std::function<void()> task) {
+        _tasks_in_progress++;
         {
-            std::unique_lock<std::mutex> lock(queue_mutex_);
-            tasks_.emplace([this, task]() {
-            task();
-            tasks_in_progress--;
-        });
+            std::unique_lock<std::mutex> lock(_queue_mutex);
+            _tasks.emplace([this, task]() {
+                task();
+                _tasks_in_progress--;
+            });
         }
-        cv_.notify_one();
+        _cv.notify_one();
     }
 };
 
