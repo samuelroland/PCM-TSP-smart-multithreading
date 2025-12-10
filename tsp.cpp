@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
     if (argc == 3)
         graph.resize(atoi(argv[2]));
 
-    // TSPPath::setup(&graph);
+    TSPPath::setup(&graph);
     //
     // TSPTask tsp2;
     // DirectTaskRunner r2;
@@ -39,7 +39,8 @@ int main(int argc, char** argv) {
 
     TSPParraTask tsp3;
     tsp3.cutoff(0);
-    ParallelTaskRunner r3(TSPPath::MAX_GRAPH);
+
+    ParallelTaskRunner r3(TSPPath::MAX_GRAPH, 8);
     r3.run(&tsp3);
     std::cout << "parallel: " << tsp3.result() << " t:" << r3.duration()
               << " s:" << r3.solves() << "/" << r3.splits() << std::endl;

@@ -4,6 +4,13 @@
 #include "task.hpp"
 #include "tsptask.hpp"
 
+#include <atomic>
+#include <condition_variable>
+#include <functional>
+#include <mutex>
+#include <queue>
+#include <thread>
+
 // TODO: transform this collection with CAS using atomic_stamped
 // TODO: implement a first queue structure SAMUEL
 class FastTaskDS : public TaskCollection {
@@ -96,7 +103,7 @@ public:
     }
 
     void solve() override {
-        //		std::cout << "solving " << _path << "\n";
+        //std::cout << "solving " << _path << "\n";
         if (_path.size() == TSPPath::full()) {
             _path.push(TSPPath::FIRST_NODE);// last node = first node
             if (_path.distance() < _shortest.distance())
@@ -127,34 +134,125 @@ private:
     int _size;
     int _splits;
     int _solves;
+
+    // variables for thread pool
+    std::vector< std::thread > workers; // list with all threads ready to work
+    std::condition_variable cv_;        // condition variable to signal changes in the state of the tasks queue
+    std::mutex queue_mutex_;    // Mutex to synchronize access to shared data
+    std::queue<std::function<void()> > tasks_;
+    bool stop_ = false; // Flag to indicate whether the thread pool should stop or not
+    std::atomic<int> tasks_in_progress{0};  // to check the finalization of computing
+
     void recurse(Task* t) {
         // 		Task* space[_size];
         //		FixedTaskStack coll(space, _size);
-        TaskStack coll(_size);
+        FastTaskDS coll(_size);
         int n = t->split(&coll);
         if (n < 0) return;// the split has defined we are over the shortest path on this branch so we cut the branch
         // TODO: should we free the task somehow ?
-        if (n) {
+        if (n > 0) {
             _splits++;
-            for (int i = 0; i < n; i++)
-                recurse(coll[i]);
-            t->merge(&coll);
+            for (int i = 0; i < n; i++) {
+                Task* sub = coll[i];
+                enqueue([this, sub]() {
+                    recurse(sub);
+                });
+            }
+            // ici merge n'attend pas les sous taches. voulu? > core dump!
+            //t->merge(&coll);
         } else {
             _solves++;
             t->solve();
         }
         // TODO: implement the glouton approach by giving an empty FastTaskDS to split(), then keeping a task to continue, and pushing other in the global FastTaskDS
+
     }
+
     ParallelTaskRunner() {}// cannot use default constructor
+
+    // manage work for thread
+    void worker() {
+        while (true) {
+            std::function<void()> cur_task;
+            {
+                // Locking the queue so that data
+                // can be shared safely
+                std::unique_lock<std::mutex> lock(queue_mutex_);
+
+
+                // Waiting until there is a task to
+                // execute or the pool is stopped
+                cv_.wait(lock, [this] {
+                    return !tasks_.empty() || stop_;
+                });
+
+                // exit the thread in case the pool
+                // is stopped and there are no tasks
+                if (stop_ && tasks_.empty()) {
+                    return;
+                }
+
+                // Get the next task from the queue
+                cur_task = move(tasks_.front());
+                tasks_.pop();
+            }
+            cur_task();
+        }
+    }
+    // spin wait until all tasks are done
+    void wait_until_done() {
+        while (tasks_in_progress.load() > 0) {
+            std::this_thread::yield(); // CPU can do something else
+        }
+    }
+
 public:
-    ParallelTaskRunner(int size) : _size(size), _splits(0), _solves(0) {}
+    ParallelTaskRunner(int size, unsigned int nbThreads) : _size(size), _splits(0), _solves(0) {
+        // create thread pool
+        for (unsigned int i=0; i<nbThreads; ++i)
+            workers.emplace_back(&ParallelTaskRunner::worker, this);
+    }
+    ~ParallelTaskRunner() {
+        {
+            // Lock the queue to update the stop flag safely
+            std::unique_lock<std::mutex> lock(queue_mutex_);
+            stop_ = true;
+        }
+        // Notify all threads
+        cv_.notify_all();
+
+        // Joining all worker threads to ensure they have
+        // completed their tasks
+        for (auto& thread : workers) {
+            thread.join();
+        }
+    }
     virtual void run(Task* t) override {
         TaskRunner::startTimer();
-        recurse(t);
+        // To "start" a thread, let's enqueue
+       enqueue([this, t]() {
+            recurse(t);
+        });
+
+        wait_until_done();
         TaskRunner::stopTimer();
     }
     int solves() { return _solves; }
     int splits() { return _splits; }
+
+    // Enqueue task for execution by the thread pool
+    void enqueue(std::function<void()> task)
+    {
+        tasks_in_progress++;
+        {
+            std::unique_lock<std::mutex> lock(queue_mutex_);
+            tasks_.emplace([this, task]() {
+            task();
+            tasks_in_progress--;
+        });
+        }
+        cv_.notify_one();
+    }
 };
 
 
