@@ -13,7 +13,8 @@
 
 /// --------------------------------------------------------
 /// Queue lock-free pour Task*
-// Given in course, chap5 in java, inspired from Michael & Scott,
+// Given in course, chap5 in java, inspired from Michael & Scott
+// modified to not delete dummy to avoid use-after-free > memory-leak
 /// --------------------------------------------------------
 class LockFreeQueue {
 private:
@@ -86,7 +87,7 @@ public:
                     if (head.compare_exchange_weak(first, next,
                             std::memory_order_release,
                             std::memory_order_relaxed)) {
-                        delete first; // supprimer ancien dummy
+                        //delete first; // do not delete dummy here to avoid use-after-free
                         return true;
                     }
                 }
@@ -137,6 +138,12 @@ private:
     static TSPPath _shortest;
     static FastTaskDS* _free_list;
 
+// DEBUG
+    static std::atomic<int> _counter;
+    int _id;
+
+
+
     TSPParraTask* reusealloc(int node) {
         return new TSPParraTask(this, node);// TODO: fix that
     }
@@ -148,13 +155,19 @@ private:
     TSPPath _path;
     int _cutoff_size;
 
-    TSPParraTask(TSPParraTask* task, int node) : _path(task->_path), _cutoff_size(task->_cutoff_size) {
+    TSPParraTask(TSPParraTask* task, int node) : _path(task->_path), _cutoff_size(task->_cutoff_size), _id(_counter++) {
         _path.push(node);
+        //std::cout << "Create task " << _id << std::endl;
     }
 
 public:
-    TSPParraTask() { _cutoff_size = TSPPath::full(); }
-    ~TSPParraTask() override = default;
+    TSPParraTask(): _id(_counter++) {
+        _cutoff_size = TSPPath::full();
+        //std::cout << "Create task " << _id << std::endl;
+    }
+    ~TSPParraTask() override {
+    //std::cout << "Delete task " << _id << std::endl;
+    }
 
     // cutoff set, expressed as a distance from full path
     void cutoff(int c) { _cutoff_size = TSPPath::full() - c; }
@@ -238,8 +251,6 @@ private:
 
     // variables for thread pool
     std::vector<std::thread> workers;// list with all threads ready to work
-    //std::condition_variable _cv;     // condition variable to signal changes in the state of the tasks queue
-    //std::mutex _queue_mutex;         // Mutex to synchronize access to shared data
     LockFreeQueue _tasks;
     std::atomic<bool> _stop{false};        // Flag to indicate whether the thread pool should stop or not
     std::atomic<int> _tasks_in_progress{0};// to check the finalization of computing
@@ -251,7 +262,8 @@ private:
         int n = t->split(&coll);
         if (n < 0) {
             //std::cout << "cut the branch " << "\n";
-            // TODO: delete task in this collection?
+            t->merge(&coll);
+            delete t;
             return;// the split has defined we are over the shortest path on this branch so we cut the branch
         }
         if (n > 0) {
@@ -260,12 +272,11 @@ private:
                 Task* sub = coll[i];
                 enqueue(sub);
             }
-            // ici merge n'attend pas les sous taches. voulu? > core dump!
-
+            delete t;
         } else {
             _solves++;
             t->solve();
-            // TODO: delete task after done (leaf task). Should we manage it in another way?
+            delete t;
 
         }
         // TODO: implement the glouton approach by giving an empty FastTaskDS to split(), then keeping a task to continue, and pushing other in the global FastTaskDS
@@ -285,23 +296,7 @@ private:
             }
             recurse(t);
             _tasks_in_progress--;
-            //delete t; // TODO: need to be done but create core dump!
         }
-            /*{
-                std::unique_lock<std::mutex> lock(_queue_mutex);
-                _cv.wait(lock, [this] {
-                        return !_tasks.empty() || _stop.load();
-                    });
-                if (_stop.load() && _tasks.empty())
-                    return;
-                t = _tasks.front(); // take the task
-                _tasks.pop();       // remove from the queue
-            }
-            recurse(t);
-            _tasks_in_progress--;
-            // TODO: suggestion: remove merge and delete task here, when it's out of the queue
-            //delete t;   // remove the task here, when it's done
-        }*/
     }
 
 public:
@@ -313,13 +308,12 @@ public:
     // never called ;-)
     ~ParallelTaskRunner() {
         _stop.store(true);
-        // Notify all threads
-        //_cv.notify_all();
 
         // Joining all worker threads to ensure they have completed their tasks
         for (auto& thread: workers) {
             thread.join();
         }
+
     }
     virtual void run(Task* rootTask) override {
         TaskRunner::startTimer();
@@ -338,14 +332,11 @@ public:
     void enqueue(Task* t) {
         _tasks_in_progress++;
         _tasks.enqueue(t);
-        /*{
-                std::unique_lock<std::mutex> lock(_queue_mutex);
-                _tasks.push(t);
-        }*/
-        //_cv.notify_one();
     }
 };
 
 
 TSPPath TSPParraTask::_shortest = [] { TSPPath s; s.maximise(); return s; }();
+std::atomic<int> TSPParraTask::_counter{0};
+FastTaskDS* TSPParraTask::_free_list = nullptr;
 #endif
