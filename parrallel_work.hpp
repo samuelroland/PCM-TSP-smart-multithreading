@@ -94,11 +94,15 @@ public:
         return count;
     }
 
+    /*
+     * delete all tasks in the collection
+     * be sure that nobody use the task after this point and no reference exists for these tasks!
+     */
     void merge(TaskCollection* collection) override {
         for (int p = 0; p < collection->size(); p++) {
             TSPParraTask* t = (TSPParraTask*) collection->pop();
-            //			delete t;
-            reusefree(t);
+            delete t;
+            //reusefree(t);
         }
     }
 
@@ -131,15 +135,15 @@ public:
 // TODO: OLIVIA
 class ParallelTaskRunner : public TaskRunner {
 private:
-    int _size;
-    int _splits;
-    int _solves;
+    std::atomic<int> _size;
+    std::atomic<int> _splits;
+    std::atomic<int> _solves;
 
     // variables for thread pool
     std::vector<std::thread> workers;// list with all threads ready to work
     std::condition_variable _cv;     // condition variable to signal changes in the state of the tasks queue
     std::mutex _queue_mutex;         // Mutex to synchronize access to shared data
-    std::queue<std::function<void()>> _tasks;
+    std::queue<Task*> _tasks;
     std::atomic<bool> _stop{false};        // Flag to indicate whether the thread pool should stop or not
     std::atomic<int> _tasks_in_progress{0};// to check the finalization of computing
 
@@ -149,20 +153,19 @@ private:
         FastTaskDS coll(_size);
         int n = t->split(&coll);
         if (n < 0) return;// the split has defined we are over the shortest path on this branch so we cut the branch
-        // TODO: should we free the task somehow ?
         if (n > 0) {
             _splits++;
             for (int i = 0; i < n; i++) {
                 Task* sub = coll[i];
-                enqueue([this, sub]() {
-                    recurse(sub);
-                });
+                enqueue(sub);
             }
             // ici merge n'attend pas les sous taches. voulu? > core dump!
             //t->merge(&coll);
         } else {
             _solves++;
             t->solve();
+            // TODO: delete task after done (leaf task). Should we manage it in another way?
+            t->merge(&coll);
         }
         // TODO: implement the glouton approach by giving an empty FastTaskDS to split(), then keeping a task to continue, and pushing other in the global FastTaskDS
     }
@@ -172,36 +175,21 @@ private:
     // manage work for thread
     void worker() {
         while (true) {
-            std::function<void()> cur_task;
+            Task* t = nullptr;
             {
-                // Locking the queue so that data
-                // can be shared safely
                 std::unique_lock<std::mutex> lock(_queue_mutex);
-
-
-                // Waiting until there is a task to
-                // execute or the pool is stopped
                 _cv.wait(lock, [this] {
-                    return !_tasks.empty() || _stop.load();
-                });
-
-                // exit the thread in case the pool
-                // is stopped and there are no tasks
-                if (_stop.load() && _tasks.empty()) {
+                        return !_tasks.empty() || _stop.load();
+                    });
+                if (_stop.load() && _tasks.empty())
                     return;
-                }
-
-                // Get the next task from the queue
-                cur_task = move(_tasks.front());
-                _tasks.pop();
+                t = _tasks.front(); // take the task
+                _tasks.pop();       // remove from the queue
             }
-            cur_task();
-        }
-    }
-    // spin wait until all tasks are done
-    void wait_until_done() {
-        while (_tasks_in_progress.load() > 0) {
-            std::this_thread::yield();// CPU can do something else
+            recurse(t);
+            _tasks_in_progress--;
+            // TODO: suggestion: remove merge and delete task here, when it's out of the queue
+            //delete t;   // remove the task here, when it's done
         }
     }
 
@@ -225,25 +213,22 @@ public:
     virtual void run(Task* t) override {
         TaskRunner::startTimer();
         // To "start" a thread, let's enqueue
-        enqueue([this, t]() {
-            recurse(t);
-        });
+        enqueue(t);
+        // wait until all threads finished
+        while (_tasks_in_progress.load() > 0)
+            std::this_thread::yield();
 
-        wait_until_done();
         TaskRunner::stopTimer();
     }
     int solves() { return _solves; }
     int splits() { return _splits; }
 
     // Enqueue task for execution by the thread pool
-    void enqueue(std::function<void()> task) {
+    void enqueue(Task* t) {
         _tasks_in_progress++;
         {
-            std::unique_lock<std::mutex> lock(_queue_mutex);
-            _tasks.emplace([this, task]() {
-                task();
-                _tasks_in_progress--;
-            });
+                std::unique_lock<std::mutex> lock(_queue_mutex);
+                _tasks.push(t);
         }
         _cv.notify_one();
     }
