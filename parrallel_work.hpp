@@ -11,6 +11,90 @@
 #include <queue>
 #include <thread>
 
+/// --------------------------------------------------------
+/// Queue lock-free pour Task*
+// Given in course, chap5 in java, inspired from Michael & Scott,
+/// --------------------------------------------------------
+class LockFreeQueue {
+private:
+    struct Node {
+        Task* value;
+        std::atomic<Node*> next;
+        Node(Task* t) : value(t), next(nullptr) {}
+    };
+
+    std::atomic<Node*> head;
+    std::atomic<Node*> tail;
+
+public:
+    LockFreeQueue() {
+        Node* dummy = new Node(nullptr); // dummy node
+        head.store(dummy);
+        tail.store(dummy);
+    }
+
+    ~LockFreeQueue() {
+        // delete remaining nodes
+        Node* node = head.load();
+        while (node) {
+            Node* next = node->next.load();
+            delete node;
+            node = next;
+        }
+    }
+
+    void enqueue(Task* t) {
+        Node* node = new Node(t);
+        while (true) {
+            Node* last = tail.load(std::memory_order_acquire);
+            Node* next = last->next.load(std::memory_order_acquire);
+
+            if (last == tail.load(std::memory_order_acquire)) {
+                if (next == nullptr) {
+                    if (last->next.compare_exchange_weak(next, node,
+                            std::memory_order_release,
+                            std::memory_order_relaxed)) {
+                        tail.compare_exchange_weak(last, node,
+                            std::memory_order_release,
+                            std::memory_order_relaxed);
+                        return;
+                    }
+                } else {
+                    tail.compare_exchange_weak(last, next,
+                        std::memory_order_release,
+                        std::memory_order_relaxed);
+                }
+            }
+        }
+    }
+
+    bool dequeue(Task*& result) {
+        while (true) {
+            Node* first = head.load(std::memory_order_acquire);
+            Node* last = tail.load(std::memory_order_acquire);
+            Node* next = first->next.load(std::memory_order_acquire);
+
+            if (first == head.load(std::memory_order_acquire)) {
+                if (first == last) {
+                    if (next == nullptr)
+                        return false; // queue vide
+                    tail.compare_exchange_weak(last, next,
+                        std::memory_order_release,
+                        std::memory_order_relaxed);
+                } else {
+                    result = next->value;
+                    if (head.compare_exchange_weak(first, next,
+                            std::memory_order_release,
+                            std::memory_order_relaxed)) {
+                        delete first; // supprimer ancien dummy
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+};
+
 // TODO: transform this collection with CAS using atomic_stamped
 // TODO: implement a first queue structure SAMUEL
 class FastTaskDS : public TaskCollection {
@@ -77,7 +161,15 @@ public:
     TSPPath& result() { return _shortest; }
 
     // Task interface implementation: split, merge, solve, write
-
+    /*
+     * param:
+     *  collection : get a collection to full (will be overridden)
+     * Return:
+     *  return the number of item in TaskCollection
+     * return 0 : must be resolve
+     * return < 0: cut the branch, distance is too long
+     * return > 0: continue to split
+     */
     int split(TaskCollection* collection) override {
         collection->clear();
         if (_path.size() >= _cutoff_size) return 0;
@@ -131,8 +223,13 @@ public:
 };
 
 
-// TODO: change the implementation to start threads
-// TODO: OLIVIA
+/*
+ * Thread pool
+ * - manages fixed threads
+ * - holds LockFreeQueue _tasks (global, shared)
+ * - enqueue task in _tasks pool after split
+ */
+
 class ParallelTaskRunner : public TaskRunner {
 private:
     std::atomic<int> _size;
@@ -141,9 +238,9 @@ private:
 
     // variables for thread pool
     std::vector<std::thread> workers;// list with all threads ready to work
-    std::condition_variable _cv;     // condition variable to signal changes in the state of the tasks queue
-    std::mutex _queue_mutex;         // Mutex to synchronize access to shared data
-    std::queue<Task*> _tasks;
+    //std::condition_variable _cv;     // condition variable to signal changes in the state of the tasks queue
+    //std::mutex _queue_mutex;         // Mutex to synchronize access to shared data
+    LockFreeQueue _tasks;
     std::atomic<bool> _stop{false};        // Flag to indicate whether the thread pool should stop or not
     std::atomic<int> _tasks_in_progress{0};// to check the finalization of computing
 
@@ -152,7 +249,11 @@ private:
         //		FixedTaskStack coll(space, _size);
         FastTaskDS coll(_size);
         int n = t->split(&coll);
-        if (n < 0) return;// the split has defined we are over the shortest path on this branch so we cut the branch
+        if (n < 0) {
+            //std::cout << "cut the branch " << "\n";
+            // TODO: delete task in this collection?
+            return;// the split has defined we are over the shortest path on this branch so we cut the branch
+        }
         if (n > 0) {
             _splits++;
             for (int i = 0; i < n; i++) {
@@ -160,12 +261,12 @@ private:
                 enqueue(sub);
             }
             // ici merge n'attend pas les sous taches. voulu? > core dump!
-            //t->merge(&coll);
+
         } else {
             _solves++;
             t->solve();
             // TODO: delete task after done (leaf task). Should we manage it in another way?
-            t->merge(&coll);
+
         }
         // TODO: implement the glouton approach by giving an empty FastTaskDS to split(), then keeping a task to continue, and pushing other in the global FastTaskDS
     }
@@ -176,7 +277,17 @@ private:
     void worker() {
         while (true) {
             Task* t = nullptr;
-            {
+            if (!_tasks.dequeue(t)) {
+                if (_stop.load() && _tasks_in_progress.load() == 0)
+                    return;
+                std::this_thread::yield();
+                continue;
+            }
+            recurse(t);
+            _tasks_in_progress--;
+            //delete t; // TODO: need to be done but create core dump!
+        }
+            /*{
                 std::unique_lock<std::mutex> lock(_queue_mutex);
                 _cv.wait(lock, [this] {
                         return !_tasks.empty() || _stop.load();
@@ -190,30 +301,30 @@ private:
             _tasks_in_progress--;
             // TODO: suggestion: remove merge and delete task here, when it's out of the queue
             //delete t;   // remove the task here, when it's done
-        }
+        }*/
     }
 
 public:
     ParallelTaskRunner(int size, unsigned int nbThreads) : _size(size), _splits(0), _solves(0) {
-        // create thread pool
+        // create thread pool, put at the end of the queue
         for (unsigned int i = 0; i < nbThreads; ++i)
-            workers.emplace_back(&ParallelTaskRunner::worker, this);
+            workers.emplace_back(&ParallelTaskRunner::worker, this); // emplace_back, like push_back but create objet in the call
     }
+    // never called ;-)
     ~ParallelTaskRunner() {
         _stop.store(true);
         // Notify all threads
-        _cv.notify_all();
+        //_cv.notify_all();
 
-        // Joining all worker threads to ensure they have
-        // completed their tasks
+        // Joining all worker threads to ensure they have completed their tasks
         for (auto& thread: workers) {
             thread.join();
         }
     }
-    virtual void run(Task* t) override {
+    virtual void run(Task* rootTask) override {
         TaskRunner::startTimer();
-        // To "start" a thread, let's enqueue
-        enqueue(t);
+        // give the first task to be consumed by the thread pool
+        enqueue(rootTask);
         // wait until all threads finished
         while (_tasks_in_progress.load() > 0)
             std::this_thread::yield();
@@ -226,11 +337,12 @@ public:
     // Enqueue task for execution by the thread pool
     void enqueue(Task* t) {
         _tasks_in_progress++;
-        {
+        _tasks.enqueue(t);
+        /*{
                 std::unique_lock<std::mutex> lock(_queue_mutex);
                 _tasks.push(t);
-        }
-        _cv.notify_one();
+        }*/
+        //_cv.notify_one();
     }
 };
 
