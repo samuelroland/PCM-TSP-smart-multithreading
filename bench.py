@@ -271,7 +271,15 @@ def cmd_baseline_save(args):
     desc = input("Baseline description: ").strip()
     git_hash = get_git_hash()
 
-    shutil.copy2(fresh, results_file(mid, name))
+    new_result_file = results_file(mid, name)
+    shutil.copy2(fresh, new_result_file)
+    # hacky way to rename baseline: fresh -> baseline: <newname> inside the JSON
+    # without iterating on the JSON array inside. Should be mostly safe as long as dates or numbers cannot contain the baseline name.
+    with open(new_result_file, "r", encoding="utf-8") as file:
+        text = file.read()
+    text = text.replace("fresh", name)
+    with open(new_result_file, "w", encoding="utf-8") as file:
+        file.write(text)
     shutil.copy2(TSP_BINARY, BIN_DIR / f"tsp-{name}")
 
     with open(VERSIONS_FILE, "a") as f:
