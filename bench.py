@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # NOTE: this is vibe coded with ChatGPT, and adapted for small fixes.
+import os
+import traceback
 import argparse
 import itertools
 import json
@@ -18,6 +20,7 @@ from termcolor import colored
 BENCH_DIR = Path("bench")
 CONFIG_DIR = BENCH_DIR / "configs"
 RESULTS_DIR = BENCH_DIR / "results"
+FRESH_NAME = "fresh"
 BIN_DIR = BENCH_DIR / "bin"
 TMP_DIR = BENCH_DIR / "tmp"
 VERSIONS_FILE = BENCH_DIR / "versions"
@@ -147,24 +150,28 @@ def timestamp():
 
 def max_runs_for_cities(c):
     if c < 8:
-        return None
+        return 300
     if 9 <= c <= 13:
         return 20
     return 2
 
 
-def read_results(machine_id):
-    rfile = RESULTS_DIR / machine_id / "results.json"
+def results_file(machine_id, baseline):
+    return RESULTS_DIR / machine_id / f"{baseline}.json"
+
+
+def read_results(machine_id, baseline):
+    rfile = results_file(machine_id, baseline)
     if not rfile.exists():
         return []
     with open(rfile) as f:
         return json.load(f)
 
 
-def write_results(machine_id, results):
+def write_results(machine_id, baseline, results):
     rdir = RESULTS_DIR / machine_id
     rdir.mkdir(parents=True, exist_ok=True)
-    with open(rdir / "results.json", "w") as f:
+    with open(results_file(machine_id, baseline), "w") as f:
         json.dump(results, f, indent=4)
 
 
@@ -180,12 +187,21 @@ def find_existing(results, baseline, c, t, co):
     return None
 
 
-def previous_baseline_time(results, baseline, c, t, co):
+def previous_baseline_time(baseline, machine_id, c, t, co):
     versions = [v[0] for v in load_versions()]
-    idx = versions.index(baseline)
-    if idx == 0:
+    prev = latest_baseline()
+    if not prev:
         return [None, None]
-    prev = versions[idx - 1]
+
+    if baseline != FRESH_NAME:
+        if baseline not in versions:
+            return [None, None]
+        idx = versions.index(baseline)
+        if idx == 0:
+            return [None, None]
+
+    # Load results from defined baseline
+    results = json.loads(((RESULTS_DIR / machine_id) / f"{prev}.json").read_text())
     for r in reversed(results):
         if (
             r["baseline"] == prev
@@ -216,54 +232,77 @@ def cmd_init(args):
 
 def cmd_baseline(args):
     ensure_dirs()
-    print("Building program with 'make'")
+    print(
+        "baseline command:\n"
+        "  baseline new   -> run benchmarks and save as a new baseline\n"
+        "  baseline save  -> save current fresh results as a baseline\n"
+    )
+
+
+def cmd_baseline_new(args):
+    ensure_dirs()
     subprocess.check_call(["make"])
-    name = input("Give a name to the baseline: ").strip()
-    desc = input("Give a description to this baseline: ").strip()
+
+    name = input("Baseline name: ").strip()
+    desc = input("Baseline description: ").strip()
     git_hash = get_git_hash()
-    print(f"Using Git hash: {git_hash}")
 
     target = BIN_DIR / f"tsp-{name}"
     shutil.copy2(TSP_BINARY, target)
+
     with open(VERSIONS_FILE, "a") as f:
         f.write(f"{name} {git_hash} {desc}\n")
 
-    print(f"\nCreated baseline '{name}' !")
+    # run benchmarks immediately
+    args.baseline = name
+    cmd_run(args)
+
+
+def cmd_baseline_save(args):
+    ensure_dirs()
+    mid = load_machine_id() or prompt_machine_id()
+
+    fresh = results_file(mid, FRESH_NAME)
+    if not fresh.exists():
+        print("Error: no fresh results to save.")
+        sys.exit(1)
+
+    name = input("Baseline name: ").strip()
+    desc = input("Baseline description: ").strip()
+    git_hash = get_git_hash()
+
+    shutil.copy2(fresh, results_file(mid, name))
+    shutil.copy2(TSP_BINARY, BIN_DIR / f"tsp-{name}")
+
+    with open(VERSIONS_FILE, "a") as f:
+        f.write(f"{name} {git_hash} {desc}\n")
+
+    print(f"Saved fresh results as baseline '{name}'")
 
 
 def cmd_run(args):
     ensure_dirs()
     mid = load_machine_id() or prompt_machine_id()
     cfg = load_config(mid)
-    results = read_results(mid)
+    baseline = getattr(args, "baseline", FRESH_NAME)
+    results = []
 
-    versions = load_versions()
-    if not versions:
-        print("No baseline found.")
-        sys.exit(1)
-
-    default = versions[-1][0]
-    print("Available baselines:")
-    for i, (n, _, _) in enumerate(versions):
-        print(f"{i + 1}. {n}")
-    choice = input(f"Select baseline [default: {default}]: ").strip()
-    baseline = default if not choice else versions[int(choice) - 1][0]
-
-    print(colored(f"Executing baseline '{baseline}'\n", "blue"))
+    tsp_binary_for_baseline = (
+        BIN_DIR / f"tsp-{baseline}" if baseline != FRESH_NAME else TSP_BINARY
+    )
+    if baseline == FRESH_NAME:
+        print(colored("Executing benchmarks on current code", "blue"))
+    else:
+        print(colored(f"Executing baseline '{baseline}'", "blue"))
 
     combos = itertools.product(cfg["cities"], cfg["threads"], cfg["cutoff"])
-    tsp_binary_for_baseline = BIN_DIR / f"tsp-{baseline}"
-
-    if not tsp_binary_for_baseline.exists():
-        print(f"Error: no file {tsp_binary_for_baseline} found")
-        return 2
 
     sys.stdout.write("\n")
     sys.stdout.flush()
 
     for cities, threads, cutoff in combos:
-        if find_existing(results, baseline, cities, threads, cutoff):
-            continue
+        # if find_existing(results, baseline, cities, threads, cutoff):
+        #     continue
 
         mr = max_runs_for_cities(cities)
         out_json = TMP_DIR / f"{timestamp()}.json"
@@ -308,16 +347,16 @@ def cmd_run(args):
             "cutoff": cutoff,
         }
         results.append(entry)
-        write_results(mid, results)
+        write_results(mid, baseline, results)
 
         prev_mean, prev_baseline = previous_baseline_time(
-            results, baseline, cities, threads, cutoff
+            baseline, mid, cities, threads, cutoff
         )
         delta = ""
         if prev_mean:
             pct = ((mean - prev_mean) / prev_mean) * 100
             delta = colored(
-                f"{pct:+.0f}% compared to '{prev_baseline}' ({prev_mean * 1000:.2f} ms)",
+                f"{pct:+.0f}% since '{prev_baseline}' ({prev_mean * 1000:.2f} ms)",
                 "red" if pct < 0 else "green",
             )
 
@@ -338,6 +377,12 @@ def main():
 
     p_base = sub.add_parser("baseline")
     p_base.set_defaults(func=cmd_baseline)
+    sub_baseline = p_base.add_subparsers()
+    p_base_new = sub_baseline.add_parser("new")
+    p_base_new.set_defaults(func=cmd_baseline_new)
+
+    p_base_save = sub_baseline.add_parser("save")
+    p_base_save.set_defaults(func=cmd_baseline_save)
 
     p_run = sub.add_parser("run")
     p_run.set_defaults(func=cmd_run)
@@ -354,5 +399,13 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-    except:
-        print("stopped")
+    except Exception as e:
+        tb = traceback.extract_tb(e.__traceback__)
+        this_file = os.path.abspath(__file__)
+
+        print(f"{type(e).__name__}: {e}")
+        # find the last traceback entry from *this* file
+        for frame in reversed(tb):
+            if os.path.abspath(frame.filename) == this_file:
+                print(f"Stopped at line {frame.lineno}: {frame.line}")
+                break
