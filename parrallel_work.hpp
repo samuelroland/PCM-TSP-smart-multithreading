@@ -110,7 +110,6 @@ public:
 
                         return true;
                         //delete first; // do not delete dummy here to avoid use-after-free
-                        return true;
                     }
                 }
             }
