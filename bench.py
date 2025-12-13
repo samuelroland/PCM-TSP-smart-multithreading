@@ -3,7 +3,6 @@
 import argparse
 import itertools
 import json
-from os import linesep
 import re
 import shutil
 import subprocess
@@ -185,7 +184,7 @@ def previous_baseline_time(results, baseline, c, t, co):
     versions = [v[0] for v in load_versions()]
     idx = versions.index(baseline)
     if idx == 0:
-        return None
+        return [None, None]
     prev = versions[idx - 1]
     for r in reversed(results):
         if (
@@ -194,8 +193,8 @@ def previous_baseline_time(results, baseline, c, t, co):
             and r["threads"] == t
             and r["cutoff"] == co
         ):
-            return r["mean"]
-    return None
+            return [r["mean"], r["baseline"]]
+    return [None, None]
 
 
 # ------------------------
@@ -311,16 +310,18 @@ def cmd_run(args):
         results.append(entry)
         write_results(mid, results)
 
-        prev = previous_baseline_time(results, baseline, cities, threads, cutoff)
+        prev_mean, prev_baseline = previous_baseline_time(
+            results, baseline, cities, threads, cutoff
+        )
         delta = ""
-        if prev:
-            pct = ((mean - prev) / prev) * 100
+        if prev_mean:
+            pct = ((mean - prev_mean) / prev_mean) * 100
             delta = colored(
-                f"\033[92m{pct:+.0f}% from previous\033[0m",
+                f"{pct:+.0f}% compared to '{prev_baseline}' ({prev_mean * 1000:.2f} ms)",
                 "red" if pct < 0 else "green",
             )
 
-        print(colored(f"{mean * 1000:.1f} ms   {delta}", "cyan"))
+        print(colored(f"{mean * 1000:.2f} ms   {delta}", "cyan"))
 
 
 # ------------------------
