@@ -20,13 +20,13 @@ int main(int argc, char** argv) {
     }
 
     TSPGraph graph(argv[1]);
-    if (argc > 2 )
+    if (argc > 2)
         graph.resize(atoi(argv[2]));
 
     unsigned int num_threads = std::thread::hardware_concurrency();
-    if (argc > 3 )
-        num_threads =atoi(argv[3]);
-    if (num_threads == 0) num_threads = 4; // fallback
+    if (argc > 3)
+        num_threads = atoi(argv[3]);
+    if (num_threads == 0) num_threads = 4;// fallback
 
     TSPPath::setup(&graph);
     //

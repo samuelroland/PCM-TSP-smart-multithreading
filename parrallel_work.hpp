@@ -28,11 +28,11 @@ private:
     std::atomic<Node*> tail;
 
     // for memory claim
-    std::atomic<Node*> retired_head { nullptr };
+    std::atomic<Node*> retired_head{nullptr};
 
 public:
     LockFreeQueue() {
-        Node* dummy = new Node(nullptr); // dummy node
+        Node* dummy = new Node(nullptr);// dummy node
         head.store(dummy);
         tail.store(dummy);
     }
@@ -64,17 +64,17 @@ public:
             if (last == tail.load(std::memory_order_acquire)) {
                 if (next == nullptr) {
                     if (last->next.compare_exchange_weak(next, node,
-                            std::memory_order_release,
-                            std::memory_order_relaxed)) {
+                                                         std::memory_order_release,
+                                                         std::memory_order_relaxed)) {
                         tail.compare_exchange_weak(last, node,
-                            std::memory_order_release,
-                            std::memory_order_relaxed);
+                                                   std::memory_order_release,
+                                                   std::memory_order_relaxed);
                         return;
                     }
                 } else {
                     tail.compare_exchange_weak(last, next,
-                        std::memory_order_release,
-                        std::memory_order_relaxed);
+                                               std::memory_order_release,
+                                               std::memory_order_relaxed);
                 }
             }
         }
@@ -89,24 +89,24 @@ public:
             if (first == head.load(std::memory_order_acquire)) {
                 if (first == last) {
                     if (next == nullptr)
-                        return false; // queue vide
+                        return false;// queue vide
                     tail.compare_exchange_weak(last, next,
-                        std::memory_order_release,
-                        std::memory_order_relaxed);
+                                               std::memory_order_release,
+                                               std::memory_order_relaxed);
                 } else {
                     result = next->value;
                     if (head.compare_exchange_weak(first, next,
-                            std::memory_order_release,
-                            std::memory_order_relaxed)) {
+                                                   std::memory_order_release,
+                                                   std::memory_order_relaxed)) {
 
                         // store dummy node
                         Node* old = retired_head.load(std::memory_order_relaxed);
                         do {
                             first->next.store(old, std::memory_order_relaxed);
                         } while (!retired_head.compare_exchange_weak(
-                                     old, first,
-                                     std::memory_order_release,
-                                     std::memory_order_relaxed));
+                                old, first,
+                                std::memory_order_release,
+                                std::memory_order_relaxed));
 
                         return true;
                         //delete first; // do not delete dummy here to avoid use-after-free
@@ -159,10 +159,9 @@ private:
     static TSPPath _shortest;
     static FastTaskDS* _free_list;
 
-// DEBUG
+    // DEBUG
     static std::atomic<int> _counter;
     int _id;
-
 
 
     TSPParraTask* reusealloc(int node) {
@@ -182,12 +181,12 @@ private:
     }
 
 public:
-    TSPParraTask(): _id(_counter++) {
+    TSPParraTask() : _id(_counter++) {
         _cutoff_size = TSPPath::full();
         //std::cout << "Create task " << _id << std::endl;
     }
     ~TSPParraTask() override {
-    //std::cout << "Delete task " << _id << std::endl;
+        //std::cout << "Delete task " << _id << std::endl;
     }
 
     // cutoff set, expressed as a distance from full path
@@ -298,7 +297,6 @@ private:
             _solves++;
             t->solve();
             delete t;
-
         }
         // TODO: implement the glouton approach by giving an empty FastTaskDS to split(), then keeping a task to continue, and pushing other in the global FastTaskDS
     }
@@ -324,7 +322,7 @@ public:
     ParallelTaskRunner(int size, unsigned int nbThreads) : _size(size), _splits(0), _solves(0) {
         // create thread pool, put at the end of the queue
         for (unsigned int i = 0; i < nbThreads; ++i)
-            workers.emplace_back(&ParallelTaskRunner::worker, this); // emplace_back, like push_back but create objet in the call
+            workers.emplace_back(&ParallelTaskRunner::worker, this);// emplace_back, like push_back but create objet in the call
     }
     // never called ;-)
     ~ParallelTaskRunner() {
@@ -334,7 +332,6 @@ public:
         for (auto& thread: workers) {
             thread.join();
         }
-
     }
     virtual void run(Task* rootTask) override {
         TaskRunner::startTimer();
