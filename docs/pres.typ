@@ -26,8 +26,8 @@
 
 #blank-slide[
   #align(center, [
-  #text(weight: "bold", size: 1.5em, fill: black)[TSP multithreading optimization]
-    == Olivia Manz et Samuel Roland
+  #text(weight: "bold", size: 1.5em, fill: black)[Multi-threading optimization for TSP]
+    == Olivia Manz and Samuel Roland
     ==== Cours de PCM  - 2025
   ])
 ]
