@@ -14,7 +14,7 @@
 /// --------------------------------------------------------
 /// Queue lock-free pour Task*
 // Given in course, chap5 in java, inspired from Michael & Scott
-// modified to not delete dummy to avoid use-after-free > memory-leak
+// modified to delete dummy in destructor to avoid read-after-free or memory leak
 /// --------------------------------------------------------
 class LockFreeQueue {
 private:
@@ -26,6 +26,9 @@ private:
 
     std::atomic<Node*> head;
     std::atomic<Node*> tail;
+
+    // for memory claim
+    std::atomic<Node*> retired_head { nullptr };
 
 public:
     LockFreeQueue() {
@@ -41,6 +44,14 @@ public:
             Node* next = node->next.load();
             delete node;
             node = next;
+        }
+
+        // free retired node
+        Node* n = retired_head.exchange(nullptr);
+        while (n) {
+            Node* next = n->next.load();
+            delete n;
+            n = next;
         }
     }
 
@@ -87,6 +98,17 @@ public:
                     if (head.compare_exchange_weak(first, next,
                             std::memory_order_release,
                             std::memory_order_relaxed)) {
+
+                        // store dummy node
+                        Node* old = retired_head.load(std::memory_order_relaxed);
+                        do {
+                            first->next.store(old, std::memory_order_relaxed);
+                        } while (!retired_head.compare_exchange_weak(
+                                     old, first,
+                                     std::memory_order_release,
+                                     std::memory_order_relaxed));
+
+                        return true;
                         //delete first; // do not delete dummy here to avoid use-after-free
                         return true;
                     }
