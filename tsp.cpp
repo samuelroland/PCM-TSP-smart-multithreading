@@ -14,8 +14,8 @@
  *****************************************************************/
 
 int main(int argc, char** argv) {
-    if (argc < 2 || argc > 4) {
-        std::cerr << "Usage: " << argv[0] << " <file.tsp> [number] optional[nb threads]\n";
+    if (argc < 2 || argc > 5) {
+        std::cerr << "Usage: " << argv[0] << " <file.tsp> [nb cities] [nb threads] [cutoff]\n";
         return 1;
     }
 
@@ -45,10 +45,14 @@ int main(int argc, char** argv) {
     */
 
     TSPParraTask* tsp3 = new TSPParraTask();
-    tsp3->cutoff(0);
 
+    int cutoff = 0;
+    if (argc > 4) {
+        cutoff = atoi(argv[4]);
+        tsp3->cutoff(cutoff);
+    }
 
-    std::cout << "running parallel with " << num_threads << " threads\n";
+    std::cout << "running parallel with " << graph.size() << " cities and " << num_threads << " threads with cutoff = " << cutoff << "\n";
 
     ParallelTaskRunner r3(TSPPath::MAX_GRAPH, num_threads);
     r3.run(tsp3);
