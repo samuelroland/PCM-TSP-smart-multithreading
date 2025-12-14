@@ -183,8 +183,8 @@ def max_runs_for_cities(c):
     if c < 14:
         return 40
     if c < 16:
-        return 3
-    return 2
+        return 2
+    return 1  # above 16 it's getting very slow with best parameters
 
 
 def results_file(machine_id, baseline):
