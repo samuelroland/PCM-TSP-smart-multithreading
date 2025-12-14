@@ -128,27 +128,40 @@ Execution with comparisons
 ]
 ]
 
-#slide(title: "Cutoff analysis")[
+#slide(title: "Cutoff analysis - 256 threads")[
   #image("bench/plots/srv2-cutoff-analysis.svg", width: 100%)
 ]
-#slide(title: "Algorithm")[
-#grid(columns: 2, column-gutter: 1em,
-[
-- AAAAAAAAAAAAAAAAAAAAA
-- B
-- C
-],
-[
-  Amazing snippet
 
-```cpp
-if (argc < 2 || argc > 5) {
-    std::cerr << "Usage: " << argv[0] << " <file.tsp> [nb cities] [nb threads] [cutoff]\n";
-    return 1;
-}
-```
-
-]
-)
+#slide(title: "Threads analysis with cutoff at zero")[
+  #image("bench/plots/srv2-threads-analysis-cutoff-zero.svg", width: 100%)
 ]
 
+#slide(title: "Threads analysis with optimal cutoff at 8 on server")[
+  #image("bench/plots/srv2-threads-analysis-cutoff-optimal.svg", width: 100%)
+]
+
+#slide(title: "Threads analysis with optimal cutoff at 8 on laptop")[
+  #image("bench/plots/sam-threads-analysis.svg", width: 100%)
+]
+
+// #slide(title: "Algorithm")[
+// #grid(columns: 2, column-gutter: 1em,
+// [
+// - AAAAAAAAAAAAAAAAAAAAA
+// - B
+// - C
+// ],
+// [
+//   Amazing snippet
+//
+// ```cpp
+// if (argc < 2 || argc > 5) {
+//     std::cerr << "Usage: " << argv[0] << " <file.tsp> [nb cities] [nb threads] [cutoff]\n";
+//     return 1;
+// }
+// ```
+//
+// ]
+// )
+// ]
+//
