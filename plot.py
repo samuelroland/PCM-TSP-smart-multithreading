@@ -2,6 +2,12 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import pandas as pd
 import json
+import matplotlib as mpl
+import os
+
+# Make plots images deterministic !
+os.environ["SOURCE_DATE_EPOCH"] = "1765722353"  # hardcode time of now
+mpl.rcParams["svg.hashsalt"] = "fixed"  # fix the hashsalt for svg id attributes
 
 
 def load_results(json_path):
@@ -112,16 +118,20 @@ def plot_threads_impact(json_path):
     return plt
 
 
-plot_cutoff_impact("./bench/results/srv2/base-cutoff-analysis.json").savefig(
-    "bench/plots/srv2-cutoff-analysis.svg"
-)
+print("Plots generation")
+file = "bench/plots/srv2-cutoff-analysis.svg"
+plot_cutoff_impact("./bench/results/srv2/base-cutoff-analysis.json").savefig(file)
+print(f"Generated {file}")
 
-
+file = "bench/plots/srv2-threads-analysis-cutoff-zero.svg"
 plot_threads_impact(
     "./bench/results/srv2/srv2-threads-analysis-cutoff-zero.json"
-).savefig("bench/plots/srv2-threads-analysis-cutoff-zero.svg")
+).savefig(file)
 
+print(f"Generated {file}")
 
+file = "bench/plots/srv2-threads-analysis-cutoff-optimal.svg"
 plot_threads_impact(
     "./bench/results/srv2/srv2-threads-analysis-cutoff-optimal.json"
-).savefig("bench/plots/srv2-threads-analysis-cutoff-optimal.svg")
+).savefig(file)
+print(f"Generated {file}")
