@@ -11,6 +11,9 @@
 #include <queue>
 #include <thread>
 
+
+class FastTaskDS;
+class TSPParraTask;
 /// --------------------------------------------------------
 /// Queue lock-free pour Task*
 // Given in course, chap5 in java, inspired from Michael & Scott
@@ -117,30 +120,6 @@ public:
     }
 };
 
-// TODO: transform this collection with CAS using atomic_stamped
-// TODO: implement a first queue structure SAMUEL
-class FastTaskDS : public TaskCollection {
-private:
-    std::vector<Task*> _tab;
-
-public:
-    FastTaskDS(int cap) { _tab.reserve(cap); }
-    int size() const override { return _tab.size(); }
-    Task* operator[](int i) override { return _tab[i]; }
-    void push(Task* t) override {
-        _tab.push_back(t);
-    }
-    Task* pop() override {
-        if (_tab.size() <= 0)
-            throw std::runtime_error("TaskStack empty!");
-        Task* ret = _tab.back();
-        _tab.pop_back();
-        return ret;
-    }
-    void clear() override { _tab.clear(); }
-};
-
-
 /*****************************************************************
   TSPTask class, extends Task
   Should call (static) TSPPath::setup() using a TSPGraph before
@@ -158,6 +137,8 @@ class TSPParraTask : public Task {
 private:
     static TSPPath _shortest;
     static FastTaskDS* _free_list;
+
+    double estimated_cost;// actual distance + heuristic
 
     // DEBUG
     static std::atomic<int> _counter;
@@ -177,7 +158,7 @@ private:
 
     TSPParraTask(TSPParraTask* task, int node) : _path(task->_path), _cutoff_size(task->_cutoff_size), _id(_counter++) {
         _path.push(node);
-        //std::cout << "Create task " << _id << std::endl;
+        estimated_cost = _path.distance() - _path.size();// actual distance - path already done > probably a better way
     }
 
 public:
@@ -188,6 +169,11 @@ public:
     ~TSPParraTask() override {
         //std::cout << "Delete task " << _id << std::endl;
     }
+
+    double get_estimated_cost() const { return estimated_cost; }
+
+    TSPPath& path() { return _path; }
+
 
     // cutoff set, expressed as a distance from full path
     void cutoff(int c) { _cutoff_size = TSPPath::full() - c; }
@@ -253,6 +239,33 @@ public:
     void write(std::ostream& os) const override {
         std::cout << "Task(c=" << _cutoff_size << ')' << _path;
     }
+};
+// TODO: transform this collection with CAS using atomic_stamped
+// TODO: implement a first queue structure SAMUEL
+class FastTaskDS : public TaskCollection {
+private:
+    std::vector<TSPParraTask*> _tab;
+
+public:
+    FastTaskDS(int cap) { _tab.reserve(cap); }
+    int size() const override { return _tab.size(); }
+    Task* operator[](int i) override { return (Task*) _tab[i]; }
+
+    void push(Task* t) {
+        TSPParraTask* tp = static_cast<TSPParraTask*>(t);
+        // sorted insert
+        auto it = std::upper_bound(_tab.begin(), _tab.end(), tp,
+                                   [](TSPParraTask* a, TSPParraTask* b) { return a->get_estimated_cost() < b->get_estimated_cost(); });
+        _tab.insert(it, tp);
+    }
+    Task* pop() override {
+        if (_tab.size() <= 0)
+            throw std::runtime_error("TaskStack empty!");
+        TSPParraTask* ret = _tab.back();
+        _tab.pop_back();
+        return (Task*) ret;
+    }
+    void clear() override { _tab.clear(); }
 };
 
 
