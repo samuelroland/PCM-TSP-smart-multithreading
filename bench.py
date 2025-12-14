@@ -34,6 +34,26 @@ TSP_INSTANCE = "dj38.tsp"
 # ------------------------
 
 
+def format_duration(seconds: float) -> str:
+    """
+    Format a duration given in seconds into ms, s, or min.
+
+    Examples:
+    0.42    -> "420.00 ms"
+    2.1059 -> "2.11 s"
+    75.3   -> "1.26 min"
+    """
+
+    if seconds < 0.001:
+        return f"{seconds * 1000:.4f} ms"
+    elif seconds < 1:
+        return f"{seconds * 1000:.2f} ms"
+    elif seconds < 60:
+        return f"{seconds:.2f} s"
+    else:
+        return f"{seconds / 60:.2f} min"
+
+
 def ensure_dirs():
     for d in [BENCH_DIR, CONFIG_DIR, RESULTS_DIR, BIN_DIR, TMP_DIR]:
         d.mkdir(parents=True, exist_ok=True)
@@ -151,8 +171,12 @@ def timestamp():
 def max_runs_for_cities(c):
     if c < 8:
         return 300
-    if 9 <= c <= 13:
-        return 20
+    if c <= 12:
+        return 200
+    if c < 14:
+        return 40
+    if c < 16:
+        return 3
     return 2
 
 
@@ -199,6 +223,7 @@ def previous_baseline_time(baseline, machine_id, c, t, co):
         idx = versions.index(baseline)
         if idx == 0:
             return [None, None]
+        prev = versions[idx - 1]
 
     # Load results from defined baseline
     results = json.loads(((RESULTS_DIR / machine_id) / f"{prev}.json").read_text())
@@ -250,6 +275,7 @@ def cmd_baseline_new(args):
     target = BIN_DIR / f"tsp-{name}"
     shutil.copy2(TSP_BINARY, target)
 
+    # save line after that to avoid comparison with itself
     with open(VERSIONS_FILE, "a") as f:
         f.write(f"{name} {git_hash} {desc}\n")
 
@@ -289,6 +315,7 @@ def cmd_baseline_save(args):
 
 
 def cmd_run(args):
+    subprocess.check_call(["make"])
     ensure_dirs()
     mid = load_machine_id() or prompt_machine_id()
     cfg = load_config(mid)
@@ -364,11 +391,11 @@ def cmd_run(args):
         if prev_mean:
             pct = ((mean - prev_mean) / prev_mean) * 100
             delta = colored(
-                f"{pct:+.0f}% since '{prev_baseline}' ({prev_mean * 1000:.2f} ms)",
-                "red" if pct < 0 else "green",
+                f"{pct:+.0f}% since '{prev_baseline}' ({format_duration(prev_mean)})",
+                "green" if pct < 0 else "yellow" if pct <= 6 else "red",
             )
 
-        print(colored(f"{mean * 1000:.2f} ms   {delta}", "cyan"))
+        print(colored(f"{format_duration(mean)}    {delta}", "cyan"))
 
 
 # ------------------------
