@@ -34,6 +34,13 @@ TSP_INSTANCE = "dj38.tsp"
 # ------------------------
 
 
+def build():
+    try:
+        subprocess.check_call(["make"])
+    except Exception as e:
+        print(e)
+
+
 def format_duration(seconds: float) -> str:
     """
     Format a duration given in seconds into ms, s, or min.
@@ -266,7 +273,7 @@ def cmd_baseline(args):
 
 def cmd_baseline_new(args):
     ensure_dirs()
-    subprocess.check_call(["make"])
+    build()
 
     name = input("Baseline name: ").strip()
     desc = input("Baseline description: ").strip()
@@ -315,7 +322,7 @@ def cmd_baseline_save(args):
 
 
 def cmd_run(args):
-    subprocess.check_call(["make"])
+    build()
     ensure_dirs()
     mid = load_machine_id() or prompt_machine_id()
     cfg = load_config(mid)
