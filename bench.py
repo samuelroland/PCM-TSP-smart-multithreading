@@ -391,21 +391,22 @@ def cmd_run(args):
             }
             results.append(entry)
             write_results(mid, baseline, results)
+
+            prev_mean, prev_baseline = previous_baseline_time(
+                baseline, mid, cities, threads, cutoff
+            )
+            delta = ""
+            if prev_mean:
+                pct = ((mean - prev_mean) / prev_mean) * 100
+                delta = colored(
+                    f"{pct:+.0f}% since '{prev_baseline}' ({format_duration(prev_mean)})",
+                    "green" if pct < 0 else "yellow" if pct <= 6 else "red",
+                )
+
+            print(colored(f"{format_duration(mean)}    {delta}", "cyan"))
+
         except Exception as e:
             print(f"Exception {e} caused the result to be ignored...")
-
-        prev_mean, prev_baseline = previous_baseline_time(
-            baseline, mid, cities, threads, cutoff
-        )
-        delta = ""
-        if prev_mean:
-            pct = ((mean - prev_mean) / prev_mean) * 100
-            delta = colored(
-                f"{pct:+.0f}% since '{prev_baseline}' ({format_duration(prev_mean)})",
-                "green" if pct < 0 else "yellow" if pct <= 6 else "red",
-            )
-
-        print(colored(f"{format_duration(mean)}    {delta}", "cyan"))
 
 
 # ------------------------
