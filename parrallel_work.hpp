@@ -288,11 +288,15 @@ private:
         }
         if (n > 0) {
             _splits++;
-            for (int i = 0; i < n; i++) {
+            // keep the first task selfishly
+            Task* next_local = coll[0];
+            for (int i = 1; i < n; i++) {
                 Task* sub = coll[i];
                 enqueue(sub);
             }
             delete t;
+            // continue with local task
+            recurse(next_local);
         } else {
             _solves++;
             t->solve();
