@@ -377,19 +377,22 @@ def cmd_run(args):
             sys.stdout.write("\033[K")  # clear line
         sys.stdout.flush()
 
-        data = json.loads(out_json.read_text())
-        mean = data["results"][0]["mean"]
+        try:
+            data = json.loads(out_json.read_text())
+            mean = data["results"][0]["mean"]
 
-        entry = {
-            "mean": mean,
-            "date": timestamp(),
-            "baseline": baseline,
-            "cities": cities,
-            "threads": threads,
-            "cutoff": cutoff,
-        }
-        results.append(entry)
-        write_results(mid, baseline, results)
+            entry = {
+                "mean": mean,
+                "date": timestamp(),
+                "baseline": baseline,
+                "cities": cities,
+                "threads": threads,
+                "cutoff": cutoff,
+            }
+            results.append(entry)
+            write_results(mid, baseline, results)
+        except Exception as e:
+            print(f"Exception {e} caused the result to be ignored...")
 
         prev_mean, prev_baseline = previous_baseline_time(
             baseline, mid, cities, threads, cutoff
