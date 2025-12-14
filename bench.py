@@ -34,6 +34,48 @@ TSP_INSTANCE = "dj38.tsp"
 # ------------------------
 
 
+def all_combinations(cfg):
+    return list(itertools.product(cfg["cities"], cfg["threads"], cfg["cutoff"]))
+
+
+def existing_combinations(results):
+    return {(r["cities"], r["threads"], r["cutoff"]) for r in results}
+
+
+def ensure_baseline_binary(baseline, git_hash):
+    target = BIN_DIR / f"tsp-{baseline}"
+    if target.exists():
+        print(colored(f"[OK] Binary exists for '{baseline}'", "green"))
+        return True
+
+    print(colored(f"[BUILD] Creating binary for '{baseline}'", "blue"))
+
+    clone_dir = BENCH_DIR / "selfclone"
+    if clone_dir.exists():
+        shutil.rmtree(clone_dir)
+
+    try:
+        subprocess.check_call(["git", "clone", ".git", str(clone_dir)])
+        subprocess.check_call(["git", "checkout", git_hash], cwd=clone_dir)
+        subprocess.check_call(["make"], cwd=clone_dir)
+
+        built = clone_dir / "tsp"
+        if not built.exists():
+            raise RuntimeError("tsp binary not produced by make")
+
+        shutil.copy2(built, target)
+        print(colored(f"[OK] Built tsp-{baseline}", "green"))
+        return True
+
+    except Exception as e:
+        print(colored(f"[FAIL] Could not build '{baseline}': {e}", "red"))
+        return False
+
+    finally:
+        if clone_dir.exists():
+            shutil.rmtree(clone_dir)
+
+
 def build():
     try:
         subprocess.check_call(["make"])
@@ -183,6 +225,8 @@ def max_runs_for_cities(c):
     if c < 14:
         return 40
     if c < 16:
+        return 5
+    if c < 17:
         return 2
     return 1  # above 16 it's getting very slow with best parameters
 
@@ -250,7 +294,7 @@ def previous_baseline_time(baseline, machine_id, c, t, co):
 # ------------------------
 
 
-def cmd_init(args):
+def cmd_init():
     ensure_dirs()
     mid = load_machine_id()
     if not mid:
@@ -262,7 +306,7 @@ def cmd_init(args):
         setup_config(mid)
 
 
-def cmd_baseline(args):
+def cmd_baseline():
     ensure_dirs()
     print(
         "baseline command:\n"
@@ -291,7 +335,7 @@ def cmd_baseline_new(args):
     cmd_run(args)
 
 
-def cmd_baseline_save(args):
+def cmd_baseline_save():
     ensure_dirs()
     mid = load_machine_id() or prompt_machine_id()
 
@@ -319,6 +363,132 @@ def cmd_baseline_save(args):
         f.write(f"{name} {git_hash} {desc}\n")
 
     print(f"Saved fresh results as baseline '{name}'")
+
+
+# TODO: refactor common code with cmd_run
+def run_missing_for_baseline(baseline, git_hash):
+    mid = load_machine_id() or prompt_machine_id()
+    cfg = load_config(mid)
+
+    expected = set(all_combinations(cfg))
+    results = read_results(mid, baseline)
+    done = existing_combinations(results)
+    missing = expected - done
+
+    if not missing:
+        print(colored(f"[SKIP] '{baseline}' already complete", "green"))
+        return
+
+    if not ensure_baseline_binary(baseline, git_hash):
+        return
+
+    tsp_binary = BIN_DIR / f"tsp-{baseline}"
+
+    print(colored(f"[RUN] Completing '{baseline}' ({len(missing)} missing)", "blue"))
+
+    for cities, threads, cutoff in sorted(missing):
+        mr = max_runs_for_cities(cities)
+        out_json = TMP_DIR / f"{timestamp()}.json"
+
+        cmd = [
+            "hyperfine",
+            "-N",
+            f"./{tsp_binary} {TSP_INSTANCE} {cities} {threads} {cutoff}",
+            "--export-json",
+            str(out_json),
+        ]
+        if mr:
+            cmd.insert(2, "--max-runs")
+            cmd.insert(3, str(mr))
+
+        if cities >= 10:
+            cmd.insert(
+                2,
+                "--prepare",
+            )
+            cmd.insert(
+                3, "sleep 2"
+            )  # because some of the commands are taking increasingly more time when run in loop without any break
+
+        subprocess.call(cmd)
+
+        try:
+            data = json.loads(out_json.read_text())
+            mean = data["results"][0]["mean"]
+
+            results.append(
+                {
+                    "mean": mean,
+                    "date": timestamp(),
+                    "baseline": baseline,
+                    "cities": cities,
+                    "threads": threads,
+                    "cutoff": cutoff,
+                }
+            )
+
+            write_results(mid, baseline, results)
+            print(
+                colored(
+                    f"{baseline}: {cities}/{threads}/{cutoff} -> {format_duration(mean)}",
+                    "cyan",
+                )
+            )
+
+        except Exception as e:
+            print(colored(f"[ERROR] Ignored result: {e}", "red"))
+
+
+def cmd_complete():
+    ensure_dirs()
+    mid = load_machine_id() or prompt_machine_id()
+    cfg = load_config(mid)
+
+    versions = load_versions()
+    expected_count = len(all_combinations(cfg))
+
+    incomplete = []
+
+    print("\nBaseline status:\n")
+
+    for idx, (name, git_hash, _) in enumerate(versions):
+        rfile = results_file(mid, name)
+        if not rfile.exists():
+            print(f"[{idx}] {name:<8} : no results")
+            incomplete.append((idx, name, git_hash))
+            continue
+
+        results = read_results(mid, name)
+        found = len(existing_combinations(results))
+
+        if found < expected_count:
+            print(f"[{idx}] {name:<8} : incomplete ({found}/{expected_count})")
+            incomplete.append((idx, name, git_hash))
+        else:
+            print(f"[{idx}] {name:<8} : complete ({found}/{expected_count})")
+
+    if not incomplete:
+        print(colored("\nAll baselines are complete.", "green"))
+        return
+
+    choice = input(
+        "\nSelect baseline number to complete, or 'a' for all incomplete: "
+    ).strip()
+
+    if choice.lower() == "a":
+        selected = incomplete
+    else:
+        try:
+            idx = int(choice)
+            selected = [b for b in incomplete if b[0] == idx]
+            if not selected:
+                raise ValueError()
+        except ValueError:
+            print("Invalid selection.")
+            return
+
+    for _, name, git_hash in selected:
+        run_missing_for_baseline(name, git_hash)
 
 
 def cmd_run(args):
@@ -433,13 +603,16 @@ def main():
     p_run = sub.add_parser("run")
     p_run.set_defaults(func=cmd_run)
 
+    p_complete = sub.add_parser("complete")
+    p_complete.set_defaults(func=cmd_complete)
+
     if len(sys.argv) == 1:
         parser.print_help()
-        cmd_init(None)
+        cmd_init()
         return
 
     args = parser.parse_args()
-    args.func(args)
+    args.func()
 
 
 if __name__ == "__main__":
