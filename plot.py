@@ -76,7 +76,7 @@ def plot_threads_impact(json_path):
         # Annotate each point with its mean value
         for x, y in zip(group["threads"], group["mean"]):
             plt.annotate(
-                f"{y:.3f}",
+                f"{y:.2f}",
                 (x, y),
                 textcoords="offset points",
                 xytext=(0, 6 + shift),
@@ -84,9 +84,9 @@ def plot_threads_impact(json_path):
                 fontsize=11,
             )
 
-        shift += 5
-        if shift > 8:
-            shift = 0
+        shift += 13
+        if shift > 32:
+            shift = 3
 
     plt.xlabel("Threads")
     plt.ylabel("Mean time (seconds)")
@@ -95,9 +95,13 @@ def plot_threads_impact(json_path):
     # Log Y axis with explicit ticks
     ax = plt.gca()
     ax.set_yscale("log")
+    ax.set_xscale("log")
 
-    yticks = [0.01, 0.02, 0.05, 0.1, 0.2, 0.4, 0.6, 0.8, 1, 2, 5, 10, 30, 50, 70]
+    yticks = [0.05, 0.1, 0.2, 0.4, 0.6, 1, 2, 5, 10, 30, 50, 70]
+    xticks = [10, 30, 50, 100, 150, 200, 256, 300, 500, 1000]
 
+    ax.set_xticks(xticks)
+    ax.set_xticklabels([str(x) for x in xticks])
     ax.set_yticks(yticks)
     ax.set_yticklabels([str(y) for y in yticks])
 
