@@ -1,3 +1,4 @@
+// Code from teacher
 #pragma once
 #include <cstdint>
 /*

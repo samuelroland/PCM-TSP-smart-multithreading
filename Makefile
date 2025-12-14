@@ -1,8 +1,8 @@
-#CPPFLAGS=-O3 -pthread
-CPPFLAGS=-O3 -pthread -g
-#CPPFLAGS=-g
+CPPFLAGS=-O3
+CPPFLAGS+=-g
+#CPPFLAGS+=-fsanitize=address -fno-omit-frame-pointer
 #CPPFLAGS=-std=c++20
-LDFLAGS=-latomic
+#LDFLAGS=-latomic
 
 TARGETS=tsp tspprint intvecsort
 

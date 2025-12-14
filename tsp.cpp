@@ -1,7 +1,6 @@
-#include <iostream>
-
+#include "parrallel_work.hpp"
 #include "tsptask.hpp"
-#include "parallel_runner.hpp"
+#include <iostream>
 
 /*****************************************************************
   Program to solve a TSP problem
@@ -15,40 +14,50 @@
  *****************************************************************/
 
 int main(int argc, char** argv) {
-    if (argc < 2 || argc > 3) {
-        std::cerr << "Usage: " << argv[0] << " <file.tsp> [number]\n";
+    if (argc < 2 || argc > 5) {
+        std::cerr << "Usage: " << argv[0] << " <file.tsp> [nb cities] [nb threads] [cutoff]\n";
         return 1;
     }
 
     TSPGraph graph(argv[1]);
-    if (argc == 3)
+    if (argc > 2)
         graph.resize(atoi(argv[2]));
 
-    TSPPath::setup(&graph);
-
-    TSPTask tsp2;
-    DirectTaskRunner r2;
-    r2.run(&tsp2);
-    std::cout << "direct: " << tsp2.result() << " t:" << r2.duration() << std::endl;
-
-    TSPTask tsp1;
-    tsp1.cutoff(0);
-    PartitionedTaskStackRunner r1(TSPPath::MAX_GRAPH);
-    r1.run(&tsp1);
-    std::cout << "partit: " << tsp1.result() << " t:" << r1.duration()
-              << " s:" << r1.solves() << "/" << r1.splits() << std::endl;
-
-    TSPTask tsp_parallel;
-    tsp_parallel.cutoff(0);
-
-    // nb threads = nb core
     unsigned int num_threads = std::thread::hardware_concurrency();
-    if (num_threads == 0) num_threads = 4; // fallback
-    ParallelTaskRunner r_parallel(num_threads);
-    r_parallel.run(&tsp_parallel);
+    if (argc > 3)
+        num_threads = atoi(argv[3]);
+    if (num_threads == 0) num_threads = 4;// fallback
 
-    std::cout << "parallel: " << tsp_parallel.result()
-              << " t:" << r_parallel.duration()
-              << " threads:" << num_threads << std::endl;
+    TSPPath::setup(&graph);
+    //
+    // TSPTask tsp2;
+    // DirectTaskRunner r2;
+    // r2.run(&tsp2);
+    // std::cout << "direct: " << tsp2.result() << " t:" << r2.duration() << std::endl;
+    //
+
+    /*     TSPTask tsp1;
+         tsp1.cutoff(0);
+         PartitionedTaskStackRunner r1(TSPPath::MAX_GRAPH);
+         r1.run(&tsp1);
+         std::cout << "partit: " << tsp1.result() << " t:" << r1.duration()
+                   << " s:" << r1.solves() << "/" << r1.splits() << std::endl;
+    */
+
+    TSPParraTask* tsp3 = new TSPParraTask();
+
+    int cutoff = 0;
+    if (argc > 4) {
+        cutoff = atoi(argv[4]);
+        tsp3->cutoff(cutoff);
+    }
+
+    std::cout << "running parallel with " << graph.size() << " cities and " << num_threads << " threads with cutoff = " << cutoff << "\n";
+
+    ParallelTaskRunner r3(TSPPath::MAX_GRAPH, num_threads);
+    r3.run(tsp3);
+    std::cout << "parallel: " << tsp3->result() << " t:" << r3.duration()
+              << " s:" << r3.solves() << "/" << r3.splits() << std::endl;
+
     return 0;
 }

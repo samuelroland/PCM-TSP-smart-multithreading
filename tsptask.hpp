@@ -1,5 +1,5 @@
-#ifndef TSPTASK_HPP
-#define TSPTASK_HPP
+#ifndef TSPTASK
+#define TSPTASK
 
 #include <bitset>
 #include <climits>
@@ -103,12 +103,10 @@ std::ostream& operator<<(std::ostream& os, const TSPPath& t) {
 class TSPTask : public Task {
 
 private:
-    static TSPPath _shortest;   // TODO: not thread safe, change
-    static std::vector<TSPTask*> _free_list; // TODO: not thread safe, reimplement
+    static TSPPath _shortest;
+    static std::vector<TSPTask*> _free_list;
 
     // this does not work with multiple threads!
-    // TODO: reimplement
-    /*
     TSPTask* reusealloc(int node) {
         if (_free_list.empty())
             return new TSPTask(this, node);
@@ -120,23 +118,14 @@ private:
         return p;
     }
 
-    */
-    TSPTask* reusealloc(int node) {
-        return new TSPTask(this, node);
-    }
     // this does not work with multiple threads!
-    // TODO: reimplement
-    /*
     void reusefree(TSPTask* p) {
         _free_list.push_back(p);
-    }*/
-    void reusefree(TSPTask* p) {
-        delete p;
     }
 
     TSPPath _path;
     int _cutoff_size;
-public:
+
     TSPTask(TSPTask* task, int node) : _path(task->_path), _cutoff_size(task->_cutoff_size) {
         _path.push(node);
     }
@@ -201,4 +190,5 @@ public:
 TSPGraph* TSPPath::_graph;
 TSPPath TSPTask::_shortest = [] { TSPPath s; s.maximise(); return s; }();
 std::vector<TSPTask*> TSPTask::_free_list;
+
 #endif
