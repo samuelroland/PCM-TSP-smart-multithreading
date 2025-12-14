@@ -1,0 +1,258 @@
+[
+    {
+        "mean": 0.0014611921533333344,
+        "date": "2025-12-14_21-57-19-668689",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 5,
+        "threads": 8,
+        "cutoff": 0
+    },
+    {
+        "mean": 0.0014781995066666677,
+        "date": "2025-12-14_21-57-20-119713",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 5,
+        "threads": 8,
+        "cutoff": 6
+    },
+    {
+        "mean": 0.001471785696666667,
+        "date": "2025-12-14_21-57-20-568350",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 5,
+        "threads": 8,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.001489881416666667,
+        "date": "2025-12-14_21-57-21-022768",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 5,
+        "threads": 8,
+        "cutoff": 10
+    },
+    {
+        "mean": 0.001718280433333335,
+        "date": "2025-12-14_21-57-21-546007",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 5,
+        "threads": 10,
+        "cutoff": 0
+    },
+    {
+        "mean": 0.0018035041833333327,
+        "date": "2025-12-14_21-57-22-094780",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 5,
+        "threads": 10,
+        "cutoff": 6
+    },
+    {
+        "mean": 0.001766830036666666,
+        "date": "2025-12-14_21-57-22-632775",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 5,
+        "threads": 10,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.0017935082233333332,
+        "date": "2025-12-14_21-57-23-178633",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 5,
+        "threads": 10,
+        "cutoff": 10
+    },
+    {
+        "mean": 0.05539927304545455,
+        "date": "2025-12-14_21-57-26-842206",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 10,
+        "threads": 8,
+        "cutoff": 0
+    },
+    {
+        "mean": 0.003495663319999999,
+        "date": "2025-12-14_21-57-27-550661",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 10,
+        "threads": 8,
+        "cutoff": 6
+    },
+    {
+        "mean": 0.0034566278099999992,
+        "date": "2025-12-14_21-57-28-250287",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 10,
+        "threads": 8,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.00957439124,
+        "date": "2025-12-14_21-57-30-174882",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 10,
+        "threads": 8,
+        "cutoff": 10
+    },
+    {
+        "mean": 0.051794897796296306,
+        "date": "2025-12-14_21-57-32-977336",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 10,
+        "threads": 10,
+        "cutoff": 0
+    },
+    {
+        "mean": 0.0034108157599999998,
+        "date": "2025-12-14_21-57-33-674795",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 10,
+        "threads": 10,
+        "cutoff": 6
+    },
+    {
+        "mean": 0.0037285629500000018,
+        "date": "2025-12-14_21-57-34-428643",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 10,
+        "threads": 10,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.010038351655,
+        "date": "2025-12-14_21-57-36-446271",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 10,
+        "threads": 10,
+        "cutoff": 10
+    },
+    {
+        "mean": 2.1490280715,
+        "date": "2025-12-14_21-57-57-939646",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 12,
+        "threads": 8,
+        "cutoff": 0
+    },
+    {
+        "mean": 0.06853123642553191,
+        "date": "2025-12-14_21-58-01-166487",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 12,
+        "threads": 8,
+        "cutoff": 6
+    },
+    {
+        "mean": 0.050369285206896534,
+        "date": "2025-12-14_21-58-04-094556",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 12,
+        "threads": 8,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.09233144112121214,
+        "date": "2025-12-14_21-58-07-153923",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 12,
+        "threads": 8,
+        "cutoff": 10
+    },
+    {
+        "mean": 2.2200296343,
+        "date": "2025-12-14_21-58-29-358279",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 12,
+        "threads": 10,
+        "cutoff": 0
+    },
+    {
+        "mean": 0.0691300890888889,
+        "date": "2025-12-14_21-58-32-474914",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 12,
+        "threads": 10,
+        "cutoff": 6
+    },
+    {
+        "mean": 0.05491443859649125,
+        "date": "2025-12-14_21-58-35-612011",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 12,
+        "threads": 10,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.110489915,
+        "date": "2025-12-14_21-58-39-485182",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 12,
+        "threads": 10,
+        "cutoff": 10
+    },
+    {
+        "mean": 16.5161288904,
+        "date": "2025-12-14_22-01-24-649837",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 13,
+        "threads": 8,
+        "cutoff": 0
+    },
+    {
+        "mean": 0.6830911421,
+        "date": "2025-12-14_22-01-31-484144",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 13,
+        "threads": 8,
+        "cutoff": 6
+    },
+    {
+        "mean": 0.36998202430000005,
+        "date": "2025-12-14_22-01-35-188133",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 13,
+        "threads": 8,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.36747149700000004,
+        "date": "2025-12-14_22-01-38-867532",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 13,
+        "threads": 8,
+        "cutoff": 10
+    },
+    {
+        "mean": 16.2949444281,
+        "date": "2025-12-14_22-04-21-820630",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 13,
+        "threads": 10,
+        "cutoff": 0
+    },
+    {
+        "mean": 0.6287517488000001,
+        "date": "2025-12-14_22-04-28-111581",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 13,
+        "threads": 10,
+        "cutoff": 6
+    },
+    {
+        "mean": 0.3344265628000001,
+        "date": "2025-12-14_22-04-31-460225",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 13,
+        "threads": 10,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.3264472256,
+        "date": "2025-12-14_22-04-34-728456",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 13,
+        "threads": 10,
+        "cutoff": 10
+    }
+]
