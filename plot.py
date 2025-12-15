@@ -99,7 +99,7 @@ def plot_threads_impact(json_path, xticks=None, yticks=None):
             shift = 3
 
     plt.xlabel("Threads")
-    plt.ylabel("Mean time (seconds)")
+    plt.ylabel("Mean time (s)")
     # plt.title("Threads impact depending on cities numbers")
 
     # Log Y axis with explicit ticks
@@ -156,7 +156,7 @@ def plot_baselines_cmp(
     line_styles = ["-", "--", ":", "-.", (0, (3, 1, 1, 1))]
     style_cycle = cycle(line_styles)
 
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(14, 7))
     annot_shift = 0
     for baseline in baselines:
         path = results_file(machine_id, baseline)
@@ -220,9 +220,9 @@ def plot_baselines_cmp(
                 annot_shift = 0
 
     plt.xlabel("Number of cities")
-    plt.ylabel("Time")
+    plt.ylabel("Mean time (s)")
 
-    plt.title("Baseline performance comparison")
+    plt.title("Versions comparison")
     ax = plt.gca()
     # ax.set_yscale("log") # yes or not
     if xticks is not None:
