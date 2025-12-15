@@ -1,0 +1,130 @@
+[
+    {
+        "mean": 0.025751165441666668,
+        "date": "2025-12-15_00-31-32-930241",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 5,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.16063918894444443,
+        "date": "2025-12-15_00-31-35-837346",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 5,
+        "threads": 256,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.02548282174590165,
+        "date": "2025-12-15_00-31-38-980760",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 8,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.16161012347058823,
+        "date": "2025-12-15_00-31-41-745172",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 8,
+        "threads": 256,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.030452026699999996,
+        "date": "2025-12-15_00-32-06-298609",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 10,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.174973601,
+        "date": "2025-12-15_00-32-18-126374",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 10,
+        "threads": 256,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.050439751399999996,
+        "date": "2025-12-15_00-32-28-701430",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 12,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.17101931860000003,
+        "date": "2025-12-15_00-32-40-486317",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 12,
+        "threads": 256,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.20376179800000002,
+        "date": "2025-12-15_00-32-52-595604",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 13,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.20737362640000004,
+        "date": "2025-12-15_00-33-04-743933",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 13,
+        "threads": 256,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.6231496458000001,
+        "date": "2025-12-15_00-33-12-900331",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 14,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.787184674,
+        "date": "2025-12-15_00-33-21-877396",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 14,
+        "threads": 256,
+        "cutoff": 8
+    },
+    {
+        "mean": 5.693194292,
+        "date": "2025-12-15_00-33-55-385426",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 15,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 8.6305646576,
+        "date": "2025-12-15_00-34-43-580591",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 15,
+        "threads": 256,
+        "cutoff": 8
+    },
+    {
+        "mean": 51.081933953000004,
+        "date": "2025-12-15_00-36-27-770937",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 16,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 100.3060016695,
+        "date": "2025-12-15_00-39-50-409523",
+        "baseline": "keepfirsttaskinyourhand",
+        "cities": 16,
+        "threads": 256,
+        "cutoff": 8
+    }
+]
