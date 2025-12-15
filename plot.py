@@ -121,7 +121,14 @@ def plot_threads_impact(json_path, xticks=None, yticks=None):
     return plt
 
 
-def plot_baselines_cmp(machine_id: str, include_fresh: bool, xticks=None, yticks=None):
+def plot_baselines_cmp(
+    machine_id: str,
+    include_fresh: bool,
+    xticks=None,
+    yticks=None,
+    cities_filter_min=0,
+    single_cutoff=None,
+):
     """
     Plot benchmark comparison for all baselines defined in versions file.
 
@@ -150,7 +157,7 @@ def plot_baselines_cmp(machine_id: str, include_fresh: bool, xticks=None, yticks
     style_cycle = cycle(line_styles)
 
     plt.figure(figsize=(10, 6))
-
+    annot_shift = 0
     for baseline in baselines:
         path = results_file(machine_id, baseline)
         if not path.exists():
@@ -170,6 +177,10 @@ def plot_baselines_cmp(machine_id: str, include_fresh: bool, xticks=None, yticks
         # Group by threads
         by_threads = defaultdict(list)
         for entry in data:
+            if single_cutoff is not None and entry["cutoff"] is not single_cutoff:
+                continue
+            if entry["cities"] < cities_filter_min:
+                continue
             by_threads[entry["threads"]].append(entry)
 
         # Assign a line style per thread value
@@ -192,14 +203,28 @@ def plot_baselines_cmp(machine_id: str, include_fresh: bool, xticks=None, yticks
                 marker="o",
                 label=label,
             )
+            # Annotate each point with its mean value
+            for x, y in zip(cities, means):
+                plt.annotate(
+                    f"{y:.2f}",
+                    (x, y),
+                    textcoords="offset points",
+                    xytext=(0, 6 + annot_shift),
+                    ha="center",
+                    fontsize=9,
+                    color=color,
+                )
+
+            annot_shift += 9
+            if annot_shift > 18:
+                annot_shift = 0
 
     plt.xlabel("Number of cities")
-    plt.ylabel("Time (mean)")
+    plt.ylabel("Time")
 
     plt.title("Baseline performance comparison")
     ax = plt.gca()
-    ax.set_xscale("log")
-    ax.set_yscale("log")
+    # ax.set_yscale("log") # yes or not
     if xticks is not None:
         ax.set_xticks(xticks)
         ax.set_xticklabels([str(x) for x in xticks])
@@ -265,13 +290,20 @@ plot_threads_impact(
 print(f"Generated {file}")
 
 file = "bench/plots/srv2-baseline-cmp.svg"
-xticks = [5, 6, 7, 8, 10, 12, 13, 14, 15, 16, 17, 18]
+# xticks = [5, 6, 7, 8, 10, 12, 13, 14, 15, 16, 17, 18]
+xticks = [13, 14, 15, 16]
 yticks = [0.05, 0.1, 0.5, 1, 2, 5, 10, 30, 50, 100]
-plot_baselines_cmp("srv2", True, xticks, yticks).savefig(file)
+plot_baselines_cmp("srv2", True, xticks, yticks, 13).savefig(file)
 print(f"Generated {file}")
 
 file = "bench/plots/sam-baseline-cmp.svg"
-xticks = [5, 6, 7, 8, 10, 12, 13, 14, 15, 16, 17, 18]
-yticks = [0.05, 0.1, 0.5, 1, 2, 5, 10, 30, 50, 100]
-plot_baselines_cmp("sam", True, xticks, yticks).savefig(file)
+xticks = [13, 14, 15, 16]
+yticks = [0.05, 0.1, 0.5, 1, 2, 3]
+plot_baselines_cmp("sam", False, xticks, yticks, 13).savefig(file)
+print(f"Generated {file}")
+
+file = "bench/plots/olivia-baseline-cmp.svg"
+xticks = [10, 12, 13, 14, 15]
+yticks = [0.05, 0.1, 0.2, 0.3, 0.4, 0.5]
+plot_baselines_cmp("olivia", False, xticks, yticks, 10, 8).savefig(file)
 print(f"Generated {file}")
