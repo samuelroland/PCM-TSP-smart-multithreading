@@ -1,0 +1,114 @@
+[
+    {
+        "mean": 0.0016201737000000008,
+        "date": "2025-12-15_00-48-04-681936",
+        "baseline": "base",
+        "cities": 5,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.003339745179999999,
+        "date": "2025-12-15_00-48-05-690247",
+        "baseline": "base",
+        "cities": 5,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.0031427474000000006,
+        "date": "2025-12-15_00-48-25-734160",
+        "baseline": "base",
+        "cities": 10,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.004622941199999999,
+        "date": "2025-12-15_00-48-45-794129",
+        "baseline": "base",
+        "cities": 10,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.020140262,
+        "date": "2025-12-15_00-49-06-008828",
+        "baseline": "base",
+        "cities": 12,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.0253465555,
+        "date": "2025-12-15_00-49-26-276066",
+        "baseline": "base",
+        "cities": 12,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.1287276753,
+        "date": "2025-12-15_00-49-47-578449",
+        "baseline": "base",
+        "cities": 13,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.14971100770000004,
+        "date": "2025-12-15_00-50-09-090548",
+        "baseline": "base",
+        "cities": 13,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.3580219006,
+        "date": "2025-12-15_00-50-20-888657",
+        "baseline": "base",
+        "cities": 14,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.40641009420000007,
+        "date": "2025-12-15_00-50-32-929287",
+        "baseline": "base",
+        "cities": 14,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 2.7321472899999995,
+        "date": "2025-12-15_00-50-56-598786",
+        "baseline": "base",
+        "cities": 15,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 2.6852576786,
+        "date": "2025-12-15_00-51-20-033432",
+        "baseline": "base",
+        "cities": 15,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 28.599648922,
+        "date": "2025-12-15_00-52-21-236974",
+        "baseline": "base",
+        "cities": 16,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 24.6879296205,
+        "date": "2025-12-15_00-53-14-617034",
+        "baseline": "base",
+        "cities": 16,
+        "threads": 30,
+        "cutoff": 8
+    }
+]
