@@ -407,7 +407,7 @@ def run_missing_for_baseline(baseline, git_hash):
                 "--prepare",
             )
             cmd.insert(
-                3, "sleep 2"
+                3, "sleep 1"
             )  # because some of the commands are taking increasingly more time when run in loop without any break
 
         subprocess.call(cmd)
