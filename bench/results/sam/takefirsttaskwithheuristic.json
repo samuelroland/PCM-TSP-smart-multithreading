@@ -1,0 +1,114 @@
+[
+    {
+        "mean": 0.0016590434799999998,
+        "date": "2025-12-15_00-57-22-698548",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 5,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.003967308473333334,
+        "date": "2025-12-15_00-57-23-896297",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 5,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.0029245626,
+        "date": "2025-12-15_00-57-43-938453",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 10,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.0043978373000000005,
+        "date": "2025-12-15_00-58-03-995179",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 10,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.015819416700000002,
+        "date": "2025-12-15_00-58-24-167296",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 12,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.0225579051,
+        "date": "2025-12-15_00-58-44-406430",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 12,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.1032642418,
+        "date": "2025-12-15_00-59-05-454198",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 13,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.10410811210000001,
+        "date": "2025-12-15_00-59-26-509675",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 13,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.23703451720000004,
+        "date": "2025-12-15_00-59-37-703328",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 14,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.226273903,
+        "date": "2025-12-15_00-59-48-842764",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 14,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 1.4591079246,
+        "date": "2025-12-15_01-00-06-147125",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 15,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 1.4642467426,
+        "date": "2025-12-15_01-00-23-477089",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 15,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 12.806040313,
+        "date": "2025-12-15_01-00-53-093550",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 16,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 14.1986562635,
+        "date": "2025-12-15_01-01-25-495964",
+        "baseline": "takefirsttaskwithheuristic",
+        "cities": 16,
+        "threads": 30,
+        "cutoff": 8
+    }
+]
