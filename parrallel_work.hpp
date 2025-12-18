@@ -12,6 +12,31 @@
 #include <thread>
 
 
+/// --------------------------------------------------------
+/// Pre calculation of nodes
+/// --------------------------------------------------------
+constexpr int MAX_CITIES = 35;
+constexpr long double subtree_nodes(int k) {
+    long double sum = 0.0L;
+    long double perm = 1.0L;
+
+    for (int i = 0; i <= k; ++i) {
+        sum += perm;
+        perm *= (k - i);
+    }
+    return sum;
+}
+
+constexpr auto make_table() {
+    std::array<long double, MAX_CITIES + 1> t{};
+    for (int k = 0; k <= MAX_CITIES; ++k)
+        t[k] = subtree_nodes(k);
+    return t;
+}
+
+constexpr auto NB_NODES = make_table();
+
+
 class FastTaskDS;
 class TSPParraTask;
 /// --------------------------------------------------------
@@ -161,6 +186,7 @@ private:
         estimated_cost = _path.distance() - _path.size();// actual distance - path already done > probably a better way
     }
 
+
 public:
     TSPParraTask() : _id(_counter++) {
         _cutoff_size = TSPPath::full();
@@ -186,13 +212,13 @@ public:
      * Return:
      *  return the number of item in TaskCollection
      * return 0 : must be resolve
-     * return < 0: cut the branch, distance is too long
+     * return < 0: cut the branch, distance is too long, return the nb of node cut
      * return > 0: continue to split
      */
     int split(TaskCollection* collection) override {
         collection->clear();
         if (_path.size() >= _cutoff_size) return 0;
-        if (_path.distance() >= _shortest.distance()) return -1;// the branch must be cut
+        if (_path.distance() >= _shortest.distance()) return -(TSPPath::full() - _path.size());// return the path size cutted
         int count = 0;
         for (int i = 0; i < TSPPath::full(); i++) {
             if (!_path.contains(i)) {
@@ -285,8 +311,8 @@ private:
     // variables for thread pool
     std::vector<std::thread> workers;// list with all threads ready to work
     LockFreeQueue _tasks;
-    std::atomic<bool> _stop{false};        // Flag to indicate whether the thread pool should stop or not
-    std::atomic<int> _tasks_in_progress{0};// to check the finalization of computing
+    std::atomic<bool> _stop{false};// Flag to indicate whether the thread pool should stop or not
+    std::atomic<uint64_t> _visited_nodes_remaining;
 
     void recurse(Task* t) {
         // 		Task* space[_size];
@@ -294,12 +320,15 @@ private:
         FastTaskDS coll(_size);
         int n = t->split(&coll);
         if (n < 0) {
+            // n = -_path.size
+            _visited_nodes_remaining.fetch_sub(NB_NODES[-n], std::memory_order_relaxed);
             //std::cout << "cut the branch " << "\n";
             t->merge(&coll);
             delete t;
             return;// the split has defined we are over the shortest path on this branch so we cut the branch
         }
         if (n > 0) {
+            _visited_nodes_remaining.fetch_sub(1, std::memory_order_relaxed);
             _splits++;
             // keep the first task selfishly
             Task* next_local = coll[0];
@@ -311,6 +340,7 @@ private:
             // continue with local task
             recurse(next_local);
         } else {
+            _visited_nodes_remaining.fetch_sub(1, std::memory_order_relaxed);
             _solves++;
             t->solve();
             delete t;
@@ -325,18 +355,19 @@ private:
         while (true) {
             Task* t = nullptr;
             if (!_tasks.dequeue(t)) {
-                if (_stop.load() && _tasks_in_progress.load() == 0)
+                if (_stop.load() && _visited_nodes_remaining.load(std::memory_order_relaxed) == 0) {
                     return;
+                }
                 std::this_thread::yield();
                 continue;
             }
             recurse(t);
-            _tasks_in_progress--;
         }
     }
 
 public:
     ParallelTaskRunner(int size, unsigned int nbThreads) : _size(size), _splits(0), _solves(0) {
+        _visited_nodes_remaining.store(NB_NODES[TSPPath::full() - 1]);
         // create thread pool, put at the end of the queue
         for (unsigned int i = 0; i < nbThreads; ++i)
             workers.emplace_back(&ParallelTaskRunner::worker, this);// emplace_back, like push_back but create objet in the call
@@ -355,7 +386,7 @@ public:
         // give the first task to be consumed by the thread pool
         enqueue(rootTask);
         // wait until all threads finished
-        while (_tasks_in_progress.load() > 0)
+        while (_visited_nodes_remaining.load(std::memory_order_relaxed) > 0)
             std::this_thread::yield();
 
         TaskRunner::stopTimer();
@@ -365,7 +396,6 @@ public:
 
     // Enqueue task for execution by the thread pool
     void enqueue(Task* t) {
-        _tasks_in_progress++;
         _tasks.enqueue(t);
     }
 };
