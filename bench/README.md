@@ -41,5 +41,12 @@ Saves existing results (from previous `run` execution) from `fresh.json` as a ba
 uv run bench.py baseline save
 ```
 
+### complete
+When working with other developers, one might commit `bench/versions` containing baselines that were not measured locally. In other cases, the generation had to be stopped in the middle of a `run`. To complete all missing results and missing binaries, you can just run this `complete` subcommand, you'll see what is missing and you'll be able to choose what to complete.
+
+```bash
+uv run bench.py complete
+```
+
 ## Example Workflow
 TODO

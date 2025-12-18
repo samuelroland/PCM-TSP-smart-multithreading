@@ -34,13 +34,25 @@
 
 #front-slide(authors: "Olivia Manz and Samuel Roland", info: "Cours de PCM - 2025", title: "Multi-threading optimization for TSP")
 
+#slide(title: "Our core structure")[
+  - A simple `LockFreeQueue` based on the course
+  - A small tweak in `split()`:
+    #text(size: 0.9em)[
+    ```cpp
+    if (_path.distance() >= _shortest.distance()) return -1;// the branch must be cut
+    ```
+    ]
+    -> skip call to `solve()` and directly call `merge()`
+  - called the "base" version
+]
+
 #slide(title: "Open questions")[
 
 We want to optimize for *any cities count* and *for the server*
-+ What is the best cutoff for the server ?
++ What is the best general cutoff ?
 + What is the best threads number with cutoff of zero ?
 + What is the best threads number for the best cutoff ?
-+ What core optimisations are going to improve the time for all cities ?
++ What core optimisations can improve the time ?
 ]
 
 #slide(title: "Benchmarking with Hyperfine")[
@@ -128,21 +140,104 @@ Execution with comparisons
 ]
 ]
 
-#slide(title: "Cutoff analysis - 256 threads")[
+#slide(title: "Cutoff analysis - 256 threads - on server")[
   #image("bench/plots/srv2-cutoff-analysis.svg", width: 100%)
 ]
 
-#slide(title: "Threads analysis with cutoff at zero")[
+#slide(title: "Threads analysis with cutoff at zero - on server")[
   #image("bench/plots/srv2-threads-analysis-cutoff-zero.svg", width: 100%)
 ]
 
-#slide(title: "Threads analysis with optimal cutoff at 8 on server")[
+#slide(title: "Threads analysis with optimal cutoff at 8 - on server")[
   #image("bench/plots/srv2-threads-analysis-cutoff-optimal.svg", width: 100%)
 ]
 
-#slide(title: "Threads analysis with optimal cutoff at 8 on laptop")[
+#slide(title: "Threads analysis with optimal cutoff at 8 - on laptop")[
   #image("bench/plots/sam-threads-analysis.svg", width: 100%)
 ]
+
+#slide(title: "Optimal parameters ?")[
+  - 30 and 256 threads
+  - cutoff to 8
+]
+
+#slide(title: "Optimisation 1")[
+  - Named "Keep first task in your hand" in `recurse()`
+
+  #text(size: 0.9em)[
+  ```diff
+          if (n > 0) {
+              _splits++;
+  -            for (int i = 0; i < n; i++) {
+  +            // keep the first task selfishly
+  +            Task* next_local = coll[0];
+  +            for (int i = 1; i < n; i++) {
+                  Task* sub = coll[i];
+                  enqueue(sub);
+              }
+              delete t;
+  +            // continue with local task
+  +            recurse(next_local);
+          } else {
+              _solves++;
+              t->solve();
+  ```
+  ]
+]
+
+#slide(title: "Optimisation 2")[
+  - Named "Take first task heuristic"
+  ```cpp
+  // actual distance - path already done > probably a better way
+  estimated_cost = _path.distance() - _path.size();
+  ```
+]
+#slide(title: "Optimisations results - on server")[
+  #image("bench/plots/srv2-baseline-cmp.svg", width: 100%)
+]
+
+#slide(title: "Optimisations results - on laptop")[
+  #image("bench/plots/sam-baseline-cmp.svg", width: 100%)
+]
+
+
+
+// #slide(title: "Perspectives")[
+// ```sh
+// > hyperfine './tsp-direct dj38.tsp 12'
+// Benchmark 1: ./tsp-direct dj38.tsp 12
+//   Time (mean ± σ):      67.8 ms ±   3.4 ms    [User: 66.3 ms, System: 0.9 ms]
+//   Range (min … max):    62.2 ms …  76.9 ms    46 runs
+//
+// > hyperfine './bench/bin/tsp-base dj38.tsp 12 15 8'
+// Benchmark 1: ./bench/bin/tsp-base dj38.tsp 12 15 8
+//   Time (mean ± σ):      53.1 ms ±  43.3 ms    [User: 465.3 ms, System: 92.3 ms]
+//   Range (min … max):    16.4 ms … 260.0 ms    106 runs
+//
+// > hyperfine './bench/bin/tsp-takefirsttaskwithheuristic dj38.tsp 12 15 8'
+// Benchmark 1: ./bench/bin/tsp-takefirsttaskwithheuristic dj38.tsp 12 15 8
+//   Time (mean ± σ):      41.2 ms ±  37.9 ms    [User: 366.3 ms, System: 60.4 ms]
+//   Range (min … max):    12.7 ms … 167.3 ms    170 runs
+// ```
+// - 67.8ms -> 53.1ms -> 1.27x
+// - 67.8ms -> 41.2ms -> 1.6x
+// ]
+
+
+// #slide(title: "Final comparisons")[
+// ```sh
+// > hyperfine './tsp-direct dj38.tsp 16'
+// 25.263 s
+//
+// > hyperfine './bench/bin/tsp-base dj38.tsp 12 15 8'
+// worst
+//
+// > hyperfine './bench/bin/tsp-takefirsttaskwithheuristic dj38.tsp 12 15 8'
+// 19.561 s 
+// ```
+// - 67.8ms -> 53.1ms -> 1.27x
+// - 67.8ms -> 41.2ms -> 1.6x
+// ]
 
 // #slide(title: "Algorithm")[
 // #grid(columns: 2, column-gutter: 1em,

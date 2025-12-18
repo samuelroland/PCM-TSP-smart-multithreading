@@ -1,8 +1,7 @@
 {
-    "machine_id": "srv2",
+    "machine_id": "sam",
     "cities": [
         5,
-        8,
         10,
         12,
         13,
@@ -11,8 +10,8 @@
         16
     ],
     "threads": [
-        30,
-        256
+        12,
+        30
     ],
     "cutoff": [
         8
