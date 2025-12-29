@@ -1,111 +1,111 @@
 [
     {
-        "mean": 0.0016590434799999998,
-        "date": "2025-12-15_00-57-22-698548",
+        "mean": 0.003520393666666668,
+        "date": "2025-12-29_18-17-33-283217",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 5,
         "threads": 12,
         "cutoff": 8
     },
     {
-        "mean": 0.003967308473333334,
-        "date": "2025-12-15_00-57-23-896297",
+        "mean": 0.006300741080000003,
+        "date": "2025-12-29_18-17-35-192635",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 5,
         "threads": 30,
         "cutoff": 8
     },
     {
-        "mean": 0.0029245626,
-        "date": "2025-12-15_00-57-43-938453",
+        "mean": 0.0073248744000000005,
+        "date": "2025-12-29_18-17-45-297822",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 10,
         "threads": 12,
         "cutoff": 8
     },
     {
-        "mean": 0.0043978373000000005,
-        "date": "2025-12-15_00-58-03-995179",
+        "mean": 0.0107957308,
+        "date": "2025-12-29_18-17-55-433461",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 10,
         "threads": 30,
         "cutoff": 8
     },
     {
-        "mean": 0.015819416700000002,
-        "date": "2025-12-15_00-58-24-167296",
+        "mean": 0.04442780080000001,
+        "date": "2025-12-29_18-18-05-905531",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 12,
         "threads": 12,
         "cutoff": 8
     },
     {
-        "mean": 0.0225579051,
-        "date": "2025-12-15_00-58-44-406430",
+        "mean": 0.057597869499999996,
+        "date": "2025-12-29_18-18-16-510224",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 12,
         "threads": 30,
         "cutoff": 8
     },
     {
-        "mean": 0.1032642418,
-        "date": "2025-12-15_00-59-05-454198",
+        "mean": 0.23714238000000004,
+        "date": "2025-12-29_18-18-28-907921",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 13,
         "threads": 12,
         "cutoff": 8
     },
     {
-        "mean": 0.10410811210000001,
-        "date": "2025-12-15_00-59-26-509675",
+        "mean": 0.2456599331,
+        "date": "2025-12-29_18-18-41-392613",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 13,
         "threads": 30,
         "cutoff": 8
     },
     {
-        "mean": 0.23703451720000004,
-        "date": "2025-12-15_00-59-37-703328",
+        "mean": 0.5734160312000001,
+        "date": "2025-12-29_18-18-49-276372",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 14,
         "threads": 12,
         "cutoff": 8
     },
     {
-        "mean": 0.226273903,
-        "date": "2025-12-15_00-59-48-842764",
+        "mean": 0.5481755412000001,
+        "date": "2025-12-29_18-18-57-033216",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 14,
         "threads": 30,
         "cutoff": 8
     },
     {
-        "mean": 1.4591079246,
-        "date": "2025-12-15_01-00-06-147125",
+        "mean": 3.6037451131999996,
+        "date": "2025-12-29_18-19-20-068272",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 15,
         "threads": 12,
         "cutoff": 8
     },
     {
-        "mean": 1.4642467426,
-        "date": "2025-12-15_01-00-23-477089",
+        "mean": 3.5850349494,
+        "date": "2025-12-29_18-19-43-009207",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 15,
         "threads": 30,
         "cutoff": 8
     },
     {
-        "mean": 12.806040313,
-        "date": "2025-12-15_01-00-53-093550",
+        "mean": 29.179963367,
+        "date": "2025-12-29_18-20-43-378845",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 16,
         "threads": 12,
         "cutoff": 8
     },
     {
-        "mean": 14.1986562635,
-        "date": "2025-12-15_01-01-25-495964",
+        "mean": 28.5082018525,
+        "date": "2025-12-29_18-24-05-641630",
         "baseline": "takefirsttaskwithheuristic",
         "cities": 16,
         "threads": 30,
