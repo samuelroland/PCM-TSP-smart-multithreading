@@ -4,37 +4,54 @@
 #include "task.hpp"
 #include "tsptask.hpp"
 
+#include <array>
 #include <atomic>
-#include <condition_variable>
-#include <functional>
-#include <mutex>
-#include <queue>
 #include <thread>
 
 
-/// --------------------------------------------------------
-/// Pre calculation of nodes
-/// --------------------------------------------------------
-constexpr int MAX_CITIES = 35;
-constexpr long double subtree_nodes(int k) {
-    long double sum = 0.0L;
-    long double perm = 1.0L;
+/// Pre calculation of subtree sizes based on the tree height.
+/// This is done at compile time only to avoid any runtime cost
+/// We are using long double to store 16 bytes integers, instead of 8 bytes long long that are overflowing
+///
+/// Here are the first 10 results as a preview
+/// 0 => 0 -> no tree, zero node
+/// 1 => 1
+/// 2 => 2
+/// 3 => 5 -> height of 3 -> level 0: 1, level 1: 2, level 2: 2. sum=1+2+2=5
+/// 4 => 16
+/// 5 => 65
+/// 6 => 326
+/// 7 => 1957
+/// 8 => 13700
+/// 9 => 109601
+constexpr int MAX_CITIES = 25;
+constexpr long double subtree_nodes_count(int tree_height) {
+    long double nodes_count = 0.0L;
+    long double branches_at_level_i = 1.0L;// a virtual branch holding the root node
 
+    int k = tree_height - 1;// the number of "other cities" in a tour is the height -1
+    // Example: for a 4 cities tour,
+    // we use cities 1 as the start and the 3 remaining cities 2,3,4
+    // are used to create 3 branches on second level,
+    // then 3*2 branches on third level,
+    // and finally 3*2*1 branches on fourth level.
+    // Which does a sum of all branches of 1 + 3 + 6 + 6 = 16 nodes in total
     for (int i = 0; i <= k; ++i) {
-        sum += perm;
-        perm *= (k - i);
+        nodes_count += branches_at_level_i;
+        branches_at_level_i *= k - i;
     }
-    return sum;
+    return nodes_count;
 }
 
-constexpr auto make_table() {
+constexpr auto make_subtree_nodes_count_table() {
     std::array<long double, MAX_CITIES + 1> t{};
-    for (int k = 0; k <= MAX_CITIES; ++k)
-        t[k] = subtree_nodes(k);
+    for (int k = 0; k <= MAX_CITIES; ++k) {
+        t[k] = subtree_nodes_count(k);
+    }
     return t;
 }
 
-constexpr auto NB_NODES = make_table();
+constexpr auto SUBTREE_NODES_COUNT_BY_TREE_HEIGHT = make_subtree_nodes_count_table();
 
 
 class FastTaskDS;
@@ -321,7 +338,7 @@ private:
         int n = t->split(&coll);
         if (n < 0) {
             // n = -_path.size
-            _visited_nodes_remaining.fetch_sub(NB_NODES[-n], std::memory_order_relaxed);
+            _visited_nodes_remaining.fetch_sub(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[-n], std::memory_order_relaxed);
             //std::cout << "cut the branch " << "\n";
             t->merge(&coll);
             delete t;
@@ -367,7 +384,7 @@ private:
 
 public:
     ParallelTaskRunner(int size, unsigned int nbThreads) : _size(size), _splits(0), _solves(0) {
-        _visited_nodes_remaining.store(NB_NODES[TSPPath::full() - 1]);
+        _visited_nodes_remaining.store(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full() - 1]);
         // create thread pool, put at the end of the queue
         for (unsigned int i = 0; i < nbThreads; ++i)
             workers.emplace_back(&ParallelTaskRunner::worker, this);// emplace_back, like push_back but create objet in the call
