@@ -236,7 +236,7 @@ public:
     int split(TaskCollection* collection) override {
         collection->clear();
         if (_path.size() >= _cutoff_size) return 0;
-        if (_path.distance() >= _shortest.distance()) return -(TSPPath::full() - _path.size());// return the path size cutted
+        if (_path.distance() >= _shortest.distance()) return -(TSPPath::full() - _path.size());// return a negative value as a marker
         int count = 0;
         for (int i = 0; i < TSPPath::full(); i++) {
             if (!_path.contains(i)) {
@@ -330,23 +330,24 @@ private:
     // variables for thread pool
     std::vector<std::thread> workers;// list with all threads ready to work
     LockFreeQueue _tasks;
-    std::atomic<uint64_t> _visited_nodes_remaining;
+    std::atomic<uint64_t> _remaining_tasks_count;
 
     void recurse(Task* t) {
         // 		Task* space[_size];
         //		FixedTaskStack coll(space, _size);
         FastTaskDS coll(_size);
         int n = t->split(&coll);
+        // The path has been cut because it is too long
         if (n < 0) {
-            // n = -_path.size
-            _visited_nodes_remaining.fetch_sub(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[-n], std::memory_order_relaxed);
-            //std::cout << "cut the branch " << "\n";
+            // as n is negative to be marker in the returned value, we need to change it in positive again, thus the -n
+            _remaining_tasks_count.fetch_sub(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[-n + 1], std::memory_order_relaxed); // subtree of task including current one (thus +1)
             t->merge(&coll);
             delete t;
             return;// the split has defined we are over the shortest path on this branch so we cut the branch
         }
+        // The path need to be explored further, let's continue with given subtasks
         if (n > 0) {
-            _visited_nodes_remaining.fetch_sub(1, std::memory_order_relaxed);
+            _remaining_tasks_count.fetch_sub(1, std::memory_order_relaxed); // current task is done
             _splits++;
             // keep the first task selfishly
             Task* next_local = coll[0];
@@ -357,8 +358,12 @@ private:
             delete t;
             // continue with local task
             recurse(next_local);
-        } else {
-            _visited_nodes_remaining.fetch_sub(1, std::memory_order_relaxed);
+        } else {// the current path has reached the end of the tree or the cutoff was reached, we need to solve the task
+            // The number of nodes in the subtree of height cutoff + 1 (because the cutoff is stopped at the parent task)
+            // This also work with a zero cutoff, 0 + 1 = 1, SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[1] = 1
+            // We can do this before the solve, to possibly allow threads to stop before we end our last solve()
+            long toremove = SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[_cutoff + 1];
+            _remaining_tasks_count.fetch_sub(toremove, std::memory_order_relaxed);
             _solves++;
             t->solve();
             delete t;
@@ -373,7 +378,7 @@ private:
         while (true) {
             Task* t = nullptr;
             if (!_tasks.dequeue(t)) {
-                if (_visited_nodes_remaining.load(std::memory_order_relaxed) == 0) {
+                if (_remaining_tasks_count == 0) {
                     return;
                 }
                 std::this_thread::yield();
@@ -384,8 +389,8 @@ private:
     }
 
 public:
-        _visited_nodes_remaining.store(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full() - 1]);
     ParallelTaskRunner(int size, unsigned int nbThreads, int cutoff) : _size(size), _splits(0), _solves(0), _cutoff(cutoff) {
+        _remaining_tasks_count.store(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]);
         // create thread pool, put at the end of the queue
         for (unsigned int i = 0; i < nbThreads; ++i)
             workers.emplace_back(&ParallelTaskRunner::worker, this);// emplace_back, like push_back but create objet in the call
@@ -396,7 +401,7 @@ public:
         // give the first task to be consumed by the thread pool
         enqueue(rootTask);
         // wait until all threads finished
-        while (_visited_nodes_remaining.load(std::memory_order_relaxed) > 0)
+        while (_remaining_tasks_count.load(std::memory_order_relaxed) > 0)
             std::this_thread::yield();
 
         // Joining all worker threads to ensure they have completed their tasks
