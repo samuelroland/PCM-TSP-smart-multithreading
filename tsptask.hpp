@@ -183,7 +183,7 @@ public:
     }
 
     void write(std::ostream& os) const override {
-        std::cout << "Task(c=" << _cutoff_size << ')' << _path;
+        os << "Task(c=" << _cutoff_size << ')' << _path;
     }
 };
 
