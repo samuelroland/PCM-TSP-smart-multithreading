@@ -190,9 +190,7 @@ def setup_config(machine_id) -> dict:
 
 def get_git_hash():
     try:
-        head = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-        dirty = subprocess.call(["git", "diff", "--quiet"]) != 0
-        return head + ("+dirty" if dirty else "")
+        return subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     except Exception:
         return "tmp"
 
@@ -315,7 +313,7 @@ def cmd_baseline():
     )
 
 
-def cmd_baseline_new(args):
+def cmd_baseline_new():
     ensure_dirs()
     build()
 
@@ -323,16 +321,14 @@ def cmd_baseline_new(args):
     desc = input("Baseline description: ").strip()
     git_hash = get_git_hash()
 
-    target = BIN_DIR / f"tsp-{name}"
-    shutil.copy2(TSP_BINARY, target)
+    ensure_baseline_binary(name, git_hash)
 
     # save line after that to avoid comparison with itself
     with open(VERSIONS_FILE, "a") as f:
         f.write(f"{name} {git_hash} {desc}\n")
 
     # run benchmarks immediately
-    args.baseline = name
-    cmd_run(args)
+    cmd_run(baseline=name)
 
 
 def cmd_baseline_save():
@@ -491,12 +487,11 @@ def cmd_complete():
         run_missing_for_baseline(name, git_hash)
 
 
-def cmd_run(args):
+def cmd_run(baseline=FRESH_NAME):
     build()
     ensure_dirs()
     mid = load_machine_id() or prompt_machine_id()
     cfg = load_config(mid)
-    baseline = getattr(args, "baseline", FRESH_NAME)
     results = []
 
     tsp_binary_for_baseline = (
