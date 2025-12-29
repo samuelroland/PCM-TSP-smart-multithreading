@@ -29,16 +29,17 @@ constexpr long double subtree_nodes_count(int tree_height) {
     long double nodes_count = 0.0L;
     long double branches_at_level_i = 1.0L;// a virtual branch holding the root node
 
-    int k = tree_height - 1;// the number of "other cities" in a tour is the height -1
-    // Example: for a 4 cities tour,
-    // we use cities 1 as the start and the 3 remaining cities 2,3,4
+    // Example of execution: for a 4 cities tour (tree_height = 4)
+    // we use the city 1 as the start and the 3 remaining cities 2,3,4
     // are used to create 3 branches on second level,
     // then 3*2 branches on third level,
     // and finally 3*2*1 branches on fourth level.
-    // Which does a sum of all branches of 1 + 3 + 6 + 6 = 16 nodes in total
-    for (int i = 0; i <= k; ++i) {
+    // The sum of all branches is 1 + 3 + 6 + 6 = 16 nodes in total
+
+    // remaining_nodes is the number of "other cities" in a tour as the first city is chosen, thus the height -1
+    for (int remaining_nodes = tree_height - 1; remaining_nodes >= 0; remaining_nodes--) {
         nodes_count += branches_at_level_i;
-        branches_at_level_i *= k - i;
+        branches_at_level_i *= remaining_nodes;
     }
     return nodes_count;
 }
