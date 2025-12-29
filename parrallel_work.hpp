@@ -330,7 +330,6 @@ private:
     // variables for thread pool
     std::vector<std::thread> workers;// list with all threads ready to work
     LockFreeQueue _tasks;
-    std::atomic<bool> _stop{false};// Flag to indicate whether the thread pool should stop or not
     std::atomic<uint64_t> _visited_nodes_remaining;
 
     void recurse(Task* t) {
@@ -374,7 +373,7 @@ private:
         while (true) {
             Task* t = nullptr;
             if (!_tasks.dequeue(t)) {
-                if (_stop.load() && _visited_nodes_remaining.load(std::memory_order_relaxed) == 0) {
+                if (_visited_nodes_remaining.load(std::memory_order_relaxed) == 0) {
                     return;
                 }
                 std::this_thread::yield();
@@ -391,15 +390,7 @@ public:
         for (unsigned int i = 0; i < nbThreads; ++i)
             workers.emplace_back(&ParallelTaskRunner::worker, this);// emplace_back, like push_back but create objet in the call
     }
-    // never called ;-)
-    ~ParallelTaskRunner() {
-        _stop.store(true);
 
-        // Joining all worker threads to ensure they have completed their tasks
-        for (auto& thread: workers) {
-            thread.join();
-        }
-    }
     virtual void run(Task* rootTask) override {
         TaskRunner::startTimer();
         // give the first task to be consumed by the thread pool
@@ -408,6 +399,10 @@ public:
         while (_visited_nodes_remaining.load(std::memory_order_relaxed) > 0)
             std::this_thread::yield();
 
+        // Joining all worker threads to ensure they have completed their tasks
+        for (auto& thread: workers) {
+            thread.join();
+        }
         TaskRunner::stopTimer();
     }
     int solves() { return _solves; }
