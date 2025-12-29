@@ -49,12 +49,14 @@ int main(int argc, char** argv) {
     int cutoff = 0;
     if (argc > 4) {
         cutoff = atoi(argv[4]);
+        if (cutoff >= graph.size())
+            cutoff = graph.size() - 1;// nothing above is making sense TODO: okay ?
         tsp3->cutoff(cutoff);
     }
 
     std::cout << "running parallel with " << graph.size() << " cities and " << num_threads << " threads with cutoff = " << cutoff << "\n";
 
-    ParallelTaskRunner r3(TSPPath::MAX_GRAPH, num_threads);
+    ParallelTaskRunner r3(TSPPath::MAX_GRAPH, num_threads, cutoff);
     r3.run(tsp3);
     std::cout << "parallel: " << tsp3->result() << " t:" << r3.duration()
               << " s:" << r3.solves() << "/" << r3.splits() << std::endl;

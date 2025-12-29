@@ -324,6 +324,7 @@ private:
     std::atomic<int> _size;
     std::atomic<int> _splits;
     std::atomic<int> _solves;
+    const int _cutoff;
 
     // variables for thread pool
     std::vector<std::thread> workers;// list with all threads ready to work
@@ -365,7 +366,7 @@ private:
         // TODO: implement the glouton approach by giving an empty FastTaskDS to split(), then keeping a task to continue, and pushing other in the global FastTaskDS
     }
 
-    ParallelTaskRunner() {}// cannot use default constructor
+    ParallelTaskRunner() : _cutoff(0) {}// cannot use default constructor
 
     // manage work for thread
     void worker() {
@@ -383,8 +384,8 @@ private:
     }
 
 public:
-    ParallelTaskRunner(int size, unsigned int nbThreads) : _size(size), _splits(0), _solves(0) {
         _visited_nodes_remaining.store(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full() - 1]);
+    ParallelTaskRunner(int size, unsigned int nbThreads, int cutoff) : _size(size), _splits(0), _solves(0), _cutoff(cutoff) {
         // create thread pool, put at the end of the queue
         for (unsigned int i = 0; i < nbThreads; ++i)
             workers.emplace_back(&ParallelTaskRunner::worker, this);// emplace_back, like push_back but create objet in the call
