@@ -3,6 +3,7 @@
 
 #include "task.hpp"
 #include "tsptask.hpp"
+#include "wsd.hpp"
 
 #include <array>
 #include <atomic>
@@ -326,13 +327,14 @@ private:
     std::atomic<int> _splits;
     std::atomic<int> _solves;
     const int _cutoff;// a copy of the cutoff (the complement of the cutoff size !) to let recurse() access it
+    const int _nbThreads;
 
     // variables for thread pool
-    std::vector<std::thread> workers;// list with all threads ready to work
-    LockFreeQueue _tasks;
+    std::vector<std::thread> workers;                          // list with all threads ready to work
+    std::vector<std::unique_ptr<CircularWSDeque<Task*>>> _wsds;// work stealing deques for each thread
     std::atomic<uint64_t> _remaining_tasks_count;
 
-    void recurse(Task* t) {
+    void recurse(Task* t, unsigned tid) {
         // 		Task* space[_size];
         //		FixedTaskStack coll(space, _size);
         FastTaskDS coll(_size);
@@ -353,11 +355,11 @@ private:
             Task* next_local = coll[0];
             for (int i = 1; i < n; i++) {
                 Task* sub = coll[i];
-                enqueue(sub);
+                enqueue(sub, tid);
             }
             delete t;
             // continue with local task
-            recurse(next_local);
+            recurse(next_local, tid);
         } else {// the current path has reached the end of the tree or the cutoff was reached, we need to solve the task
             // The number of nodes in the subtree of height cutoff + 1 (because the cutoff is stopped at the parent task)
             // This also work with a zero cutoff, 0 + 1 = 1, SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[1] = 1
@@ -371,20 +373,21 @@ private:
         // TODO: implement the glouton approach by giving an empty FastTaskDS to split(), then keeping a task to continue, and pushing other in the global FastTaskDS
     }
 
-    ParallelTaskRunner() : _cutoff(0) {}// cannot use default constructor
+    ParallelTaskRunner() : _nbThreads(0), _cutoff(0) {}// cannot use default constructor
 
-    // manage work for thread
-    void worker() {
+    // The entrypoint for a thread, with a thread id (tid)
+    void worker(unsigned tid) {
         while (true) {
-            Task* t = nullptr;
-            if (!_tasks.dequeue(t)) {
+            Task* t = _wsds[tid]->popBottom();
+            if (t == CircularWSDeque<Task*>::Empty) {
                 if (_remaining_tasks_count == 0) {
                     return;
                 }
                 std::this_thread::yield();
                 continue;
+                }
             }
-            recurse(t);
+            recurse(t, tid);
         }
     }
 
@@ -395,8 +398,15 @@ public:
         TaskRunner::startTimer();
 
         _remaining_tasks_count.store(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]);
+        _wsds.reserve(_nbThreads);// reserve space to avoid reallocation for push_back
+        // std::cout << "Starting counter with TSPPath::full() = " << TSPPath::full() << "and for _remaining_nodes_to_visit " << _remaining_tasks_count << std::endl;
+        // create thread pool, put at the end of the queue
+        for (unsigned int i = 0; i < _nbThreads; ++i) {
+            _wsds.emplace_back(std::make_unique<CircularWSDeque<Task*>>());
+        }
+
         // give the first task to be consumed by the thread pool
-        enqueue(rootTask);
+        enqueue(rootTask, 0);
 
         for (unsigned int i = 0; i < _nbThreads; ++i) {
             workers.emplace_back(&ParallelTaskRunner::worker, this, i);// emplace_back, like push_back but create objet in the call
@@ -415,8 +425,8 @@ public:
     int splits() { return _splits; }
 
     // Enqueue task for execution by the thread pool
-    void enqueue(Task* t) {
-        _tasks.enqueue(t);
+    void enqueue(Task* t, unsigned tid) {
+        _wsds[tid]->pushBottom(t);
     }
 };
 
