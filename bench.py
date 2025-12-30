@@ -220,12 +220,12 @@ def max_runs_for_cities(c):
         return 300
     if c <= 12:
         return 200
-    if c < 14:
-        return 40
-    if c < 16:
-        return 5
-    if c < 17:
-        return 2
+    # if c < 14:
+    #     return 40
+    # if c < 16:
+    #     return 5
+    # if c < 17:
+    #     return 2
     return 1  # above 16 it's getting very slow with best parameters
 
 
