@@ -325,7 +325,7 @@ private:
     std::atomic<int> _size;
     std::atomic<int> _splits;
     std::atomic<int> _solves;
-    const int _cutoff;
+    const int _cutoff;// a copy of the cutoff (the complement of the cutoff size !) to let recurse() access it
 
     // variables for thread pool
     std::vector<std::thread> workers;// list with all threads ready to work
@@ -340,14 +340,14 @@ private:
         // The path has been cut because it is too long
         if (n < 0) {
             // as n is negative to be marker in the returned value, we need to change it in positive again, thus the -n
-            _remaining_tasks_count.fetch_sub(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[-n + 1], std::memory_order_relaxed); // subtree of task including current one (thus +1)
+            _remaining_tasks_count.fetch_sub(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[-n + 1], std::memory_order_relaxed);// subtree of task including current one (thus +1)
             t->merge(&coll);
             delete t;
             return;// the split has defined we are over the shortest path on this branch so we cut the branch
         }
         // The path need to be explored further, let's continue with given subtasks
         if (n > 0) {
-            _remaining_tasks_count.fetch_sub(1, std::memory_order_relaxed); // current task is done
+            _remaining_tasks_count.fetch_sub(1, std::memory_order_relaxed);// current task is done
             _splits++;
             // keep the first task selfishly
             Task* next_local = coll[0];
@@ -389,17 +389,18 @@ private:
     }
 
 public:
-    ParallelTaskRunner(int size, unsigned int nbThreads, int cutoff) : _size(size), _splits(0), _solves(0), _cutoff(cutoff) {
-        _remaining_tasks_count.store(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]);
-        // create thread pool, put at the end of the queue
-        for (unsigned int i = 0; i < nbThreads; ++i)
-            workers.emplace_back(&ParallelTaskRunner::worker, this);// emplace_back, like push_back but create objet in the call
-    }
+    ParallelTaskRunner(int size, unsigned int nbThreads, int cutoff) : _size(size), _nbThreads(nbThreads), _splits(0), _solves(0), _cutoff(cutoff) {}
 
     virtual void run(Task* rootTask) override {
         TaskRunner::startTimer();
+
+        _remaining_tasks_count.store(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]);
         // give the first task to be consumed by the thread pool
         enqueue(rootTask);
+
+        for (unsigned int i = 0; i < _nbThreads; ++i) {
+            workers.emplace_back(&ParallelTaskRunner::worker, this, i);// emplace_back, like push_back but create objet in the call
+        }
         // wait until all threads finished
         while (_remaining_tasks_count.load(std::memory_order_relaxed) > 0)
             std::this_thread::yield();
