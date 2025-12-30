@@ -7,6 +7,7 @@
 
 #include <array>
 #include <atomic>
+#include <sstream>
 #include <thread>
 
 
@@ -339,6 +340,9 @@ private:
         //		FixedTaskStack coll(space, _size);
         FastTaskDS coll(_size);
         int n = t->split(&coll);
+        // std::ostringstream ss;
+        // ss << "Calling recurse with tid " << tid << " on task " << *t << " with split returned " << n << std::endl;
+        // std::cout << ss.str();
         // The path has been cut because it is too long
         if (n < 0) {
             // as n is negative to be marker in the returned value, we need to change it in positive again, thus the -n
@@ -377,14 +381,36 @@ private:
 
     // The entrypoint for a thread, with a thread id (tid)
     void worker(unsigned tid) {
+        unsigned nextTidToStealFrom = (tid + 1) % _nbThreads;
         while (true) {
             Task* t = _wsds[tid]->popBottom();
+            // STEALING STRATEGY
             if (t == CircularWSDeque<Task*>::Empty) {
+                // TODO: good idea to check that after stealing or before ?
                 if (_remaining_tasks_count == 0) {
                     return;
                 }
-                std::this_thread::yield();
-                continue;
+                // Try to steal the next thread
+                t = _wsds[nextTidToStealFrom]->steal();
+                if (t != CircularWSDeque<Task*>::Empty && t != CircularWSDeque<Task*>::Abort) {
+                    // yoopi we stole a task !
+                    // std::ostringstream os;
+                    // os << "thread " << tid << " stole task on thread " << nextTidToStealFrom << std::endl;
+                    // std::cout << os.str();
+                } else {
+                    if (t == CircularWSDeque<Task*>::Empty) {
+                        std::ostringstream os;
+                        // os << "thread " << tid << " failed to steal with EMPTY on thread " << nextTidToStealFrom << std::endl;
+                        // std::cout << os.str();
+                        nextTidToStealFrom = (nextTidToStealFrom + 1) % _nbThreads;
+                    }
+                    if (t == CircularWSDeque<Task*>::Abort) {
+                        // std::ostringstream os;
+                        // os << "thread " << tid << " failed to steal with ABORT on thread " << nextTidToStealFrom << std::endl;
+                        // std::cout << os.str();
+                        std::this_thread::yield();
+                    }
+                    continue;
                 }
             }
             recurse(t, tid);
@@ -404,6 +430,12 @@ public:
         for (unsigned int i = 0; i < _nbThreads; ++i) {
             _wsds.emplace_back(std::make_unique<CircularWSDeque<Task*>>());
         }
+
+        // TODO: try to better init the wsds to avoid too much stealing at first
+        // or even fully init them before starting threads ??
+        // FastTaskDS coll(_size);
+        // int n = rootTask->split(&coll);
+        // rootTask->split(TaskCollection *collection)
 
         // give the first task to be consumed by the thread pool
         enqueue(rootTask, 0);

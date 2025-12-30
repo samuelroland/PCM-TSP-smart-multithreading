@@ -8,3 +8,5 @@ docs/report.pdf
 sync.sh
 bench/bin
 __pycache__
+callgrind.*
+perf.*
