@@ -331,8 +331,8 @@ private:
     const int _nbThreads;
 
     // variables for thread pool
-    std::vector<std::thread> workers;                          // list with all threads ready to work
-    std::vector<std::unique_ptr<CircularWSDeque<Task*>>> _wsds;// work stealing deques for each thread
+    std::vector<std::thread> workers;                         // list with all threads ready to work
+    std::vector<std::unique_ptr<CircularWSDeque<Task>>> _wsds;// work stealing deques for each thread
     std::atomic<uint64_t> _remaining_tasks_count;
 
     void recurse(Task* t, unsigned tid) {
@@ -385,26 +385,26 @@ private:
         while (true) {
             Task* t = _wsds[tid]->popBottom();
             // STEALING STRATEGY
-            if (t == CircularWSDeque<Task*>::Empty) {
+            if (t == CircularWSDeque<Task>::Empty) {
                 // TODO: good idea to check that after stealing or before ?
                 if (_remaining_tasks_count == 0) {
                     return;
                 }
                 // Try to steal the next thread
                 t = _wsds[nextTidToStealFrom]->steal();
-                if (t != CircularWSDeque<Task*>::Empty && t != CircularWSDeque<Task*>::Abort) {
+                if (t != CircularWSDeque<Task>::Empty && t != CircularWSDeque<Task>::Abort) {
                     // yoopi we stole a task !
                     // std::ostringstream os;
                     // os << "thread " << tid << " stole task on thread " << nextTidToStealFrom << std::endl;
                     // std::cout << os.str();
                 } else {
-                    if (t == CircularWSDeque<Task*>::Empty) {
+                    if (t == CircularWSDeque<Task>::Empty) {
                         std::ostringstream os;
                         // os << "thread " << tid << " failed to steal with EMPTY on thread " << nextTidToStealFrom << std::endl;
                         // std::cout << os.str();
                         nextTidToStealFrom = (nextTidToStealFrom + 1) % _nbThreads;
                     }
-                    if (t == CircularWSDeque<Task*>::Abort) {
+                    if (t == CircularWSDeque<Task>::Abort) {
                         // std::ostringstream os;
                         // os << "thread " << tid << " failed to steal with ABORT on thread " << nextTidToStealFrom << std::endl;
                         // std::cout << os.str();
@@ -428,7 +428,7 @@ public:
         // std::cout << "Starting counter with TSPPath::full() = " << TSPPath::full() << "and for _remaining_nodes_to_visit " << _remaining_tasks_count << std::endl;
         // create thread pool, put at the end of the queue
         for (unsigned int i = 0; i < _nbThreads; ++i) {
-            _wsds.emplace_back(std::make_unique<CircularWSDeque<Task*>>());
+            _wsds.emplace_back(std::make_unique<CircularWSDeque<Task>>());
         }
 
         // TODO: try to better init the wsds to avoid too much stealing at first

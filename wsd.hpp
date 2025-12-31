@@ -14,18 +14,18 @@
 #include <atomic>
 #include <cstdlib>
 
-// TODO: I used T in expecting to receive Task*, should we switch to Task, and use T* instead ?
 // First structure defined in Figure 4: Growable Circular Array
 // It grows by doubling the capacity each time the size is reached
 template<typename T>
 class CircularArray {
 private:
-    int log_size;// the segment has a size of 2^log_size
-    T* segment;
+    int log_size;    // the segment has a size of 2^log_size
+    long stored_size;// 2^log_size to avoid recalculation each time we call size
+    T** segment;
 
 public:
-    CircularArray<T>(int log_size) : log_size(log_size) {
-        segment = (T*) malloc((1 << log_size) * sizeof(T*));
+    CircularArray<T>(int log_size) : log_size(log_size), stored_size(1 << log_size) {
+        segment = (T**) malloc(stored_size * sizeof(T**));
     }
     ~CircularArray() {
         // NOTE: an idea would be to shallow free and free tasks from the task free list only  ??
@@ -34,12 +34,12 @@ public:
         // TODO: should we delete tasks as well ???
     }
     long size() {
-        return 1 << log_size;
+        return stored_size;
     }
-    T get(long i) {
+    T* get(long i) {
         return segment[i % size()];
     }
-    void put(long i, T new_object) {
+    void put(long i, T* new_object) {
         segment[i % size()] = new_object;
     }
     CircularArray<T>* grow(long bottom_index, long top_index) {
@@ -55,8 +55,8 @@ public:
 template<typename T>
 class CircularWSDeque {
 public:
-    static T Empty;
-    static T Abort;
+    static T* Empty;
+    static T* Abort;
     static int LogInitialSize;
 
 private:
@@ -69,7 +69,7 @@ private:
     // this needs further understanding of the algo in the paper...
 
 public:
-    void pushBottom(T o) {
+    void pushBottom(T* o) {
         // std::cout << "pushBottom of " << *o << std::endl;
         long b = bottom;
         long t = top;
@@ -83,7 +83,7 @@ public:
         bottom = b + 1;
     }
 
-    T popBottom() {
+    T* popBottom() {
         // std::cout << "popBottom\n";
         long b = bottom;
         CircularArray<T>* a = &activeArray;
@@ -96,7 +96,7 @@ public:
             // std::cout << "pop got empty...\n";
             return Empty;
         }
-        T o = a->get(b);
+        T* o = a->get(b);
         if (size > 0)
             return o;
         if (!top.compare_exchange_strong(t, t + 1))// TODO: strong or weak option ? memory order to specify or not ?
@@ -107,14 +107,14 @@ public:
         return o;
     }
 
-    T steal() {
+    T* steal() {
         // std::cout << "steal !\n";
         long t = top;
         long b = bottom;
         CircularArray<T>* a = &activeArray;
         long size = b - t;
         if (size <= 0) return Empty;
-        T o = a->get(t);
+        T* o = a->get(t);
         if (!top.compare_exchange_strong(t, t + 1))// TODO: strong or weak option ? memory order to specify or not ?
             return Abort;
         return o;
@@ -127,9 +127,10 @@ int CircularWSDeque<T>::LogInitialSize = 5;// TODO: make it bigger or initialize
 // This is a hack to avoid sentinel values in a struct, that would add some additionnals byte to allocate
 // This is using special static pointers that are returned to mean Empty or Abort, keeping the 8 bytes size of a pointer
 // TODO: is this okay or should we change it ?
+static long a = 1;
 template<typename T>
-T CircularWSDeque<T>::Empty = nullptr;
+T* CircularWSDeque<T>::Empty = nullptr;
 template<typename T>
-T CircularWSDeque<T>::Abort = reinterpret_cast<T>(1);
+T* CircularWSDeque<T>::Abort = reinterpret_cast<T*>(&a);
 
 #endif
