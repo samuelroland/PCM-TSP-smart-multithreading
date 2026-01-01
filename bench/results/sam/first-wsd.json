@@ -1,0 +1,26 @@
+[
+    {
+        "mean": 0.890333942,
+        "date": "2026-01-01_02-48-09-176142",
+        "baseline": "first-wsd",
+        "cities": 15,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 5.928325357,
+        "date": "2026-01-01_02-48-15-107349",
+        "baseline": "first-wsd",
+        "cities": 16,
+        "threads": 12,
+        "cutoff": 8
+    },
+    {
+        "mean": 40.473433223,
+        "date": "2026-01-01_02-48-55-586208",
+        "baseline": "first-wsd",
+        "cities": 17,
+        "threads": 12,
+        "cutoff": 8
+    }
+]
