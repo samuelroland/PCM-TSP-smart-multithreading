@@ -356,12 +356,12 @@ private:
             _remaining_tasks_count.fetch_sub(1, std::memory_order_relaxed);// current task is done
             _splits++;
             // keep the first task selfishly
-            Task* next_local = coll[0];
+            Task* next_local = coll.pop();
             // std::ostringstream ss;
             // ss << "Keeping next_local task " << *next_local << std::endl;
             // std::cout << ss.str();
             for (int i = 1; i < n; i++) {
-                Task* sub = coll[i];
+                Task* sub = coll.pop();
                 // std::ostringstream ss;
                 // ss << "Enqueuing task " << *sub << std::endl;
                 // std::cout << ss.str();
