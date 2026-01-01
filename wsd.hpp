@@ -37,10 +37,10 @@ public:
         return stored_size;
     }
     T* get(long i) {
-        return segment[i % size()];
+        return segment[i % stored_size];
     }
     void put(long i, T* new_object) {
-        segment[i % size()] = new_object;
+        segment[i % stored_size] = new_object;
     }
     CircularArray<T>* grow(long bottom_index, long top_index) {
         CircularArray<T>* a = new CircularArray(log_size + 1);
@@ -62,31 +62,31 @@ public:
 private:
     long bottom = 0;
     std::atomic<long> top = 0;
-    CircularArray<T> activeArray = CircularArray<T>(LogInitialSize);
+    CircularArray<T>* activeArray = new CircularArray<T>(LogInitialSize);
     // TODO: current segfault a probably caused by these issues here, race conditions between steal and pushbottom or grow(). when I remove the stealing part it seems segfault disappear
     // by commenting line "nextTidToStealFrom = (nextTidToStealFrom + 1) % _nbThreads;" in wsd.hpp and running "./tsp dj38.tsp 14 10 8", this is segfaulting all the time for me
     // TODO: refactor the management of activeArray to maybe have atomic pointers ? at least we don't want to do copies like CircularArray a = activeArray;
     // this needs further understanding of the algo in the paper...
 
 public:
-    void pushBottom(T* o) {
+    void pushBottom(T* new_object) {
         // std::cout << "pushBottom of " << *o << std::endl;
         long b = bottom;
         long t = top;
-        CircularArray<T>* a = &activeArray;
+        CircularArray<T>* a = activeArray;
         long size = b - t;
         if (size >= a->size() - 1) {
             a = a->grow(b, t);
-            activeArray = *a;
+            activeArray = a;
         }
-        a->put(b, o);
+        a->put(b, new_object);
         bottom = b + 1;
     }
 
     T* popBottom() {
         // std::cout << "popBottom\n";
         long b = bottom;
-        CircularArray<T>* a = &activeArray;
+        CircularArray<T>* a = activeArray;
         b = b - 1;
         bottom = b;
         long t = top;
@@ -111,7 +111,7 @@ public:
         // std::cout << "steal !\n";
         long t = top;
         long b = bottom;
-        CircularArray<T>* a = &activeArray;
+        CircularArray<T>* a = activeArray;
         long size = b - t;
         if (size <= 0) return Empty;
         T* o = a->get(t);
