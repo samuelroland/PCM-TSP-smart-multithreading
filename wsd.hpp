@@ -1,11 +1,11 @@
 // An implementation of the "Dynamic Circular Work-Stealing Deque" as presented in paper of the same name, from David Chase and Yossi Lev
-// TODO: provide link to paper PDF
+// See article page: https://dl.acm.org/doi/10.1145/1073970.1073974
 // This implements the basic algorithm presented in the paper without the further improvements.
 // TODO: correct ?
 //
 // Adaptation
 // 1. To avoid storing tasks directly but pointers to task like in the Java in the paper, we use a T** segment
-// 2. The casTop() method has been replaced by compare_excha TODO
+// 2. The casTop() method has been replaced by compare_exchange_strong
 // 3. Added destructor to CircularWSDeque
 //
 #ifndef WSD
@@ -13,6 +13,8 @@
 
 #include <atomic>
 #include <cstdlib>
+#include <iostream>
+#include <sstream>
 
 // First structure defined in Figure 4: Growable Circular Array
 // It grows by doubling the capacity each time the size is reached
@@ -25,7 +27,8 @@ private:
 
 public:
     CircularArray<T>(int log_size) : log_size(log_size), stored_size(1 << log_size) {
-        segment = (T**) malloc(stored_size * sizeof(T**));
+        segment = (T**) malloc(stored_size * sizeof(T*));
+        if (!segment) std::abort();
     }
     ~CircularArray() {
         // NOTE: an idea would be to shallow free and free tasks from the task free list only  ??
@@ -43,6 +46,9 @@ public:
         segment[i % stored_size] = new_object;
     }
     CircularArray<T>* grow(long bottom_index, long top_index) {
+        // std::ostringstream os;
+        // os << "GROWING from 2^" << log_size << "=" << stored_size << " to 2^" << (log_size + 1) << "=" << (1 << (log_size + 1)) << std::endl;
+        // std::cout << os.str();
         CircularArray<T>* a = new CircularArray(log_size + 1);
         for (long i = top_index; i < bottom_index; i++) {
             a->put(i, get(i));
@@ -60,62 +66,60 @@ public:
     static int LogInitialSize;
 
 private:
-    long bottom = 0;
+    std::atomic<long> bottom = 0;
     std::atomic<long> top = 0;
-    CircularArray<T>* activeArray = new CircularArray<T>(LogInitialSize);
-    // TODO: current segfault a probably caused by these issues here, race conditions between steal and pushbottom or grow(). when I remove the stealing part it seems segfault disappear
-    // by commenting line "nextTidToStealFrom = (nextTidToStealFrom + 1) % _nbThreads;" in wsd.hpp and running "./tsp dj38.tsp 14 10 8", this is segfaulting all the time for me
-    // TODO: refactor the management of activeArray to maybe have atomic pointers ? at least we don't want to do copies like CircularArray a = activeArray;
-    // this needs further understanding of the algo in the paper...
+    std::atomic<CircularArray<T>*> activeArray = new CircularArray<T>(LogInitialSize);
 
 public:
     void pushBottom(T* new_object) {
         // std::cout << "pushBottom of " << *o << std::endl;
-        long b = bottom;
-        long t = top;
-        CircularArray<T>* a = activeArray;
+        long b = bottom.load(std::memory_order_relaxed);
+        long t = top.load(std::memory_order_acquire);
+        CircularArray<T>* a = activeArray.load(std::memory_order_acquire);
         long size = b - t;
         if (size >= a->size() - 1) {
             a = a->grow(b, t);
-            activeArray = a;
+            activeArray.store(a, std::memory_order_release);
+            // std::cout << "growing done !\n";
         }
         a->put(b, new_object);
-        bottom = b + 1;
+        bottom.store(b + 1, std::memory_order_release);
     }
 
     T* popBottom() {
         // std::cout << "popBottom\n";
-        long b = bottom;
-        CircularArray<T>* a = activeArray;
+        // NOTE: relaxed memory orders on bottom is fine because
+        // only one thread is changing this value
+        // and stealers will be updated when they load with acquire order but only when they need it
+        long b = bottom.load(std::memory_order_relaxed);
+        CircularArray<T>* a = activeArray.load(std::memory_order_acquire);
         b = b - 1;
-        bottom = b;
-        long t = top;
+        bottom.store(b, std::memory_order_relaxed);
+        long t = top.load(std::memory_order_acquire);
         long size = b - t;
         if (size < 0) {
-            bottom = t;
+            bottom.store(t, std::memory_order_relaxed);
             // std::cout << "pop got empty...\n";
             return Empty;
         }
         T* o = a->get(b);
         if (size > 0)
             return o;
-        if (!top.compare_exchange_strong(t, t + 1))// TODO: strong or weak option ? memory order to specify or not ?
+        if (!top.compare_exchange_strong(t, t + 1))
             o = Empty;
-        bottom = t + 1;
-        // std::cout << "pop got -> ptr ";
-        // printf("%p\n", o);
+        bottom.store(t + 1, std::memory_order_relaxed);
         return o;
     }
 
     T* steal() {
-        // std::cout << "steal !\n";
-        long t = top;
-        long b = bottom;
-        CircularArray<T>* a = activeArray;
+        long t = top.load(std::memory_order_acquire);
+        long b = bottom.load(std::memory_order_acquire);
+
+        CircularArray<T>* a = activeArray.load(std::memory_order_acquire);
         long size = b - t;
         if (size <= 0) return Empty;
         T* o = a->get(t);
-        if (!top.compare_exchange_strong(t, t + 1))// TODO: strong or weak option ? memory order to specify or not ?
+        if (!top.compare_exchange_strong(t, t + 1, std::memory_order_acq_rel, std::memory_order_relaxed))
             return Abort;
         return o;
     }
