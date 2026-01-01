@@ -27,7 +27,7 @@ private:
 
 public:
     CircularArray<T>(int log_size) : log_size(log_size), stored_size(1 << log_size) {
-        segment = (T**) malloc(stored_size * sizeof(T*));
+        segment = static_cast<T**>(calloc(stored_size, sizeof(T*)));
         if (!segment) std::abort();
     }
     ~CircularArray() {
@@ -119,7 +119,7 @@ public:
         long size = b - t;
         if (size <= 0) return Empty;
         T* o = a->get(t);
-        if (!top.compare_exchange_strong(t, t + 1, std::memory_order_acq_rel, std::memory_order_relaxed))
+        if (!top.compare_exchange_strong(t, t + 1))
             return Abort;
         return o;
     }

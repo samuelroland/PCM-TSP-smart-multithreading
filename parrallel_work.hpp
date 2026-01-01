@@ -186,7 +186,7 @@ private:
     double estimated_cost;// actual distance + heuristic
 
     // DEBUG
-    static std::atomic<int> _counter;
+    static std::atomic<long> _counter;
     int _id;
 
 
@@ -283,7 +283,7 @@ public:
     }
 
     void write(std::ostream& os) const override {
-        os << "Task(c=" << _cutoff_size << ')' << _path;
+        os << "Task(id=" << _id << ",c=" << _cutoff_size << ')' << _path;
     }
 };
 // TODO: transform this collection with CAS using atomic_stamped
@@ -473,6 +473,6 @@ public:
 
 
 TSPPath TSPParraTask::_shortest = [] { TSPPath s; s.maximise(); return s; }();
-std::atomic<int> TSPParraTask::_counter{0};
+std::atomic<long> TSPParraTask::_counter{0};
 FastTaskDS* TSPParraTask::_free_list = nullptr;
 #endif
