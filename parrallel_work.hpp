@@ -357,8 +357,14 @@ private:
             _splits++;
             // keep the first task selfishly
             Task* next_local = coll[0];
+            // std::ostringstream ss;
+            // ss << "Keeping next_local task " << *next_local << std::endl;
+            // std::cout << ss.str();
             for (int i = 1; i < n; i++) {
                 Task* sub = coll[i];
+                // std::ostringstream ss;
+                // ss << "Enqueuing task " << *sub << std::endl;
+                // std::cout << ss.str();
                 enqueue(sub, tid);
             }
             delete t;
@@ -381,13 +387,16 @@ private:
 
     // The entrypoint for a thread, with a thread id (tid)
     void worker(unsigned tid) {
-        unsigned nextTidToStealFrom = (tid + 1) % _nbThreads;
+        unsigned nextTidToStealFrom = 0;
         while (true) {
             Task* t = _wsds[tid]->popBottom();
             // STEALING STRATEGY
             if (t == CircularWSDeque<Task>::Empty) {
                 // TODO: good idea to check that after stealing or before ?
                 if (_remaining_tasks_count == 0) {
+                    // std::ostringstream os;
+                    // os << "exiting thread " << tid << std::endl;
+                    // std::cout << os.str();
                     return;
                 }
                 // Try to steal the next thread
@@ -395,11 +404,11 @@ private:
                 if (t != CircularWSDeque<Task>::Empty && t != CircularWSDeque<Task>::Abort) {
                     // yoopi we stole a task !
                     // std::ostringstream os;
-                    // os << "thread " << tid << " stole task on thread " << nextTidToStealFrom << std::endl;
+                    // os << "thread " << tid << " stole task on thread " << nextTidToStealFrom << ": " << *t << std::endl;
                     // std::cout << os.str();
                 } else {
                     if (t == CircularWSDeque<Task>::Empty) {
-                        std::ostringstream os;
+                        // std::ostringstream os;
                         // os << "thread " << tid << " failed to steal with EMPTY on thread " << nextTidToStealFrom << std::endl;
                         // std::cout << os.str();
                         nextTidToStealFrom = (nextTidToStealFrom + 1) % _nbThreads;
