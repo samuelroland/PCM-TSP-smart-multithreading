@@ -181,7 +181,7 @@ class TSPParraTask : public Task {
 
 private:
     static TSPPath _shortest;
-    static FastTaskDS* _free_list;
+    static LockFreeQueue* _free_list;
 
     double estimated_cost;// actual distance + heuristic
 
@@ -189,25 +189,48 @@ private:
     static std::atomic<long> _counter;
     int _id;
 
-
+    // Get a free task from free_list or allocate a new one
     TSPParraTask* reusealloc(int node) {
-        return new TSPParraTask(this, node);// TODO: fix that
-    }
-
-    void reusefree(TSPParraTask* p) {
-        delete p;// TODO: fix that
+        Task* existing_task = nullptr;
+        if (_free_list->dequeue(existing_task)) {
+            auto existing_para_task = (TSPParraTask*) existing_task;
+            *existing_para_task = *this;
+            existing_para_task->init(node);
+            return existing_para_task;
+        } else {
+            Task* new_task = new TSPParraTask(this, node);
+            return (TSPParraTask*) new_task;
+        }
     }
 
     TSPPath _path;
     int _cutoff_size;
 
     TSPParraTask(TSPParraTask* task, int node) : _path(task->_path), _cutoff_size(task->_cutoff_size), _id(_counter++) {
+        init(node);
+    }
+
+    // This is used to fill an existing TSPParraTask on the free_list
+    TSPParraTask& operator=(TSPParraTask& task) {
+        this->_path = task._path;
+        this->_cutoff_size = task._cutoff_size;
+        this->_id = _counter++;
+        return *this;
+    }
+
+    void init(int node) {
         _path.push(node);
         estimated_cost = _path.distance() - _path.size();// actual distance - path already done > probably a better way
     }
 
 
 public:
+    // Release a task and put it in the free_list
+    static void reusefree(TSPParraTask* p) {
+        _free_list->enqueue(p);
+    }
+
+
     TSPParraTask() : _id(_counter++) {
         _cutoff_size = TSPPath::full();
         //std::cout << "Create task " << _id << std::endl;
@@ -258,8 +281,7 @@ public:
     void merge(TaskCollection* collection) override {
         for (int p = 0; p < collection->size(); p++) {
             TSPParraTask* t = (TSPParraTask*) collection->pop();
-            delete t;
-            //reusefree(t);
+            reusefree(t);
         }
     }
 
@@ -348,7 +370,7 @@ private:
             // as n is negative to be marker in the returned value, we need to change it in positive again, thus the -n
             _remaining_tasks_count.fetch_sub(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[-n + 1], std::memory_order_relaxed);// subtree of task including current one (thus +1)
             t->merge(&coll);
-            delete t;
+            TSPParraTask::reusefree((TSPParraTask*) t);
             return;// the split has defined we are over the shortest path on this branch so we cut the branch
         }
         // The path need to be explored further, let's continue with given subtasks
@@ -367,7 +389,7 @@ private:
                 // std::cout << ss.str();
                 enqueue(sub, tid);
             }
-            delete t;
+            TSPParraTask::reusefree((TSPParraTask*) t);
             // continue with local task
             recurse(next_local, tid);
         } else {// the current path has reached the end of the tree or the cutoff was reached, we need to solve the task
@@ -376,9 +398,10 @@ private:
             // We can do this before the solve, to possibly allow threads to stop before we end our last solve()
             long toremove = SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[_cutoff + 1];
             _remaining_tasks_count.fetch_sub(toremove, std::memory_order_relaxed);
+
             _solves++;
             t->solve();
-            delete t;
+            TSPParraTask::reusefree((TSPParraTask*) t);
         }
         // TODO: implement the glouton approach by giving an empty FastTaskDS to split(), then keeping a task to continue, and pushing other in the global FastTaskDS
     }
@@ -474,5 +497,5 @@ public:
 
 TSPPath TSPParraTask::_shortest = [] { TSPPath s; s.maximise(); return s; }();
 std::atomic<long> TSPParraTask::_counter{0};
-FastTaskDS* TSPParraTask::_free_list = nullptr;
+LockFreeQueue* TSPParraTask::_free_list = new LockFreeQueue;
 #endif
