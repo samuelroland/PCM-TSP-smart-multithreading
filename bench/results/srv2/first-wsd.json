@@ -1,0 +1,90 @@
+[
+    {
+        "mean": 0.01968200454545453,
+        "date": "2026-01-01_02-01-48-093815",
+        "baseline": "first-wsd",
+        "cities": 5,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.09501857803125002,
+        "date": "2026-01-01_02-01-51-161684",
+        "baseline": "first-wsd",
+        "cities": 5,
+        "threads": 256,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.01919536478676472,
+        "date": "2026-01-01_02-01-53-812022",
+        "baseline": "first-wsd",
+        "cities": 8,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.09415117006451613,
+        "date": "2026-01-01_02-01-56-750933",
+        "baseline": "first-wsd",
+        "cities": 8,
+        "threads": 256,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.021243959200000002,
+        "date": "2026-01-01_02-02-07-046473",
+        "baseline": "first-wsd",
+        "cities": 10,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.0947027138,
+        "date": "2026-01-01_02-02-18-077183",
+        "baseline": "first-wsd",
+        "cities": 10,
+        "threads": 256,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.0399460052,
+        "date": "2026-01-01_02-02-28-552259",
+        "baseline": "first-wsd",
+        "cities": 12,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.0982845026,
+        "date": "2026-01-01_02-02-39-614286",
+        "baseline": "first-wsd",
+        "cities": 12,
+        "threads": 256,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.15547749100000002,
+        "date": "2026-01-01_02-02-40-789388",
+        "baseline": "first-wsd",
+        "cities": 13,
+        "threads": 30,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.12240750700000001,
+        "date": "2026-01-01_02-02-41-929033",
+        "baseline": "first-wsd",
+        "cities": 13,
+        "threads": 256,
+        "cutoff": 8
+    },
+    {
+        "mean": 0.30804613000000003,
+        "date": "2026-01-01_02-02-43-256050",
+        "baseline": "first-wsd",
+        "cities": 14,
+        "threads": 30,
+        "cutoff": 8
+    }
+]
