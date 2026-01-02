@@ -1,6 +1,7 @@
 #ifndef PARALLEL_WORK
 #define PARALLEL_WORK
 
+#include "atomic.hpp"
 #include "task.hpp"
 #include "tsptask.hpp"
 #include "wsd.hpp"
@@ -180,7 +181,8 @@ public:
 class TSPParraTask : public Task {
 
 private:
-    static TSPPath _shortest;
+    static atomic_stamped<TSPPath> _shortest;
+    static std::atomic<int> _shortest_distance;
     static LockFreeQueue* _free_list;
 
     double estimated_cost;// actual distance + heuristic
@@ -246,7 +248,10 @@ public:
 
     // cutoff set, expressed as a distance from full path
     void cutoff(int c) { _cutoff_size = TSPPath::full() - c; }
-    TSPPath& result() { return _shortest; }
+    TSPPath& result() {
+        uint64_t stamp;
+        return  *(_shortest.get(stamp));
+    }
 
     // Task interface implementation: split, merge, solve, write
     /*
@@ -261,7 +266,7 @@ public:
     int split(TaskCollection* collection) override {
         collection->clear();
         if (_path.size() >= _cutoff_size) return 0;
-        if (_path.distance() >= _shortest.distance()) return -(TSPPath::full() - _path.size());// return a negative value as a marker
+        if (_path.distance() >= _shortest_distance.load()) return -(TSPPath::full() - _path.size());// return a negative value as a marker
         int count = 0;
         for (int i = 0; i < TSPPath::full(); i++) {
             if (!_path.contains(i)) {
@@ -289,14 +294,35 @@ public:
         //std::cout << "solving " << _path << "\n";
         if (_path.size() == TSPPath::full()) {
             _path.push(TSPPath::FIRST_NODE);// last node = first node
-            if (_path.distance() < _shortest.distance())
-                _shortest = _path;
+
+            int current_distance = _path.distance();
+
+            int old_distance = _shortest_distance.load(std::memory_order_acquire);
+            if (current_distance < old_distance){
+                if (_shortest_distance.compare_exchange_weak(old_distance, current_distance,
+                                                 std::memory_order_release,
+                                                 std::memory_order_relaxed)) {
+                    TSPPath* new_path = new TSPPath(_path);
+                    uint64_t stamp;
+                    TSPPath* old_path = _shortest.get(stamp);
+                    while (true) {
+                        if (_shortest.cas(old_path, new_path, stamp, stamp + 1)) {
+                            // CAS succeed : delete old path
+                            delete old_path;
+                            break;
+                        } else {
+                            // CAS failed
+                            old_path = _shortest.get(stamp);
+                        }
+                    }
+                }
+            }
             _path.pop();
         } else {
             for (int i = 0; i < TSPPath::full(); i++) {
                 if (!_path.contains(i)) {
                     _path.push(i);
-                    if (_path.distance() < _shortest.distance())
+                    if (_path.distance() < _shortest_distance.load())
                         solve();
                     _path.pop();
                 }
@@ -495,7 +521,12 @@ public:
 };
 
 
-TSPPath TSPParraTask::_shortest = [] { TSPPath s; s.maximise(); return s; }();
+atomic_stamped<TSPPath> TSPParraTask::_shortest = [] {
+    TSPPath* p = new TSPPath();
+    p->maximise();
+    return atomic_stamped<TSPPath>(p, 0);
+}();
+std::atomic<int> TSPParraTask::_shortest_distance{INT_MAX};
 std::atomic<long> TSPParraTask::_counter{0};
 LockFreeQueue* TSPParraTask::_free_list = new LockFreeQueue;
 #endif
