@@ -192,13 +192,13 @@ public:
 
             int current_distance = _path.distance();
 
-            int global_best_distance = _shortest_distance.load(std::memory_order_acquire);
+            int global_best_distance = _shortest_distance.load(std::memory_order_relaxed);
             if (current_distance < global_best_distance) {
                 _best_results[tls_tid] = _path;
             }
             while (current_distance < global_best_distance &&
                    !_shortest_distance.compare_exchange_weak(global_best_distance, current_distance,
-                                                             std::memory_order_release,
+                                                             std::memory_order_relaxed,
                                                              std::memory_order_relaxed)) {
             }
             _path.pop();
@@ -206,7 +206,7 @@ public:
             for (int i = 0; i < TSPPath::full(); i++) {
                 if (!_path.contains(i)) {
                     _path.push(i);
-                    if (_path.distance() < _shortest_distance.load())
+                    if (_path.distance() < _shortest_distance.load(std::memory_order_relaxed))
                         solve();
                     _path.pop();
                 }
@@ -288,7 +288,7 @@ private:
             _tasks_done.fetch_add(1, std::memory_order_relaxed);// current task is done
 
             long done = _tasks_done.load(std::memory_order_relaxed);
-            if ((done & 0x1FFF) == 0) {// each 0xFFF task
+            if ((done % 100000) == 0) {// each 100000 task
                 double percent = 100.0 * done / _total_todo_tasks_counter;
                 std::cout << "[progress] " << percent << "% done" << std::endl;
             }
@@ -331,9 +331,9 @@ private:
             if (t == CircularWSDeque<Task>::Empty) {
                 // TODO: good idea to check that after stealing or before ?
 
-                DEBUG "_tasks_done = " << _tasks_done;
+                TRACE "_tasks_done = " << _tasks_done;
                 if (_tasks_done >= SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]) {
-                    TRACE "exiting thread " << tid;
+                    DEBUG "exiting thread " << tid;
                     return;
                 }
                 // Try to steal the next thread
@@ -353,6 +353,7 @@ private:
                             failedStolenTasks = 0;
                             double percent_done = (double) _tasks_done.load() / _total_todo_tasks_counter;
                             if (percent_done >= QUIT_THRESHOLD) {
+                                DEBUG "exiting thread because almost done " << tid;
                                 return;// almost done, we quit
                             }
                             std::this_thread::yield();
@@ -397,9 +398,6 @@ public:
         for (unsigned int i = 0; i < _nbThreads; ++i) {
             workers.emplace_back(&ParallelTaskRunner::worker, this, i);// emplace_back, like push_back but create objet in the call
         }
-        // wait until all threads finished
-        while (_tasks_done.load(std::memory_order_relaxed) < _total_todo_tasks_counter)
-            std::this_thread::yield();
 
         // Joining all worker threads to ensure they have completed their tasks
         for (auto& thread: workers) {
