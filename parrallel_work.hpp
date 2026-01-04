@@ -386,14 +386,16 @@ public:
             TSPParraTask::_best_results[i].maximise();
         }
 
-        // TODO: try to better init the wsds to avoid too much stealing at first
-        // or even fully init them before starting threads ??
-        // FastTaskDS coll(_size);
-        // int n = rootTask->split(&coll);
-        // rootTask->split(TaskCollection *collection)
-
-        // give the first task to be consumed by the thread pool
-        enqueue(rootTask, 0);
+        // Basic init of some queues, by doing a first split of the root task
+        // Ideally this should be done in breath first until we have a starting task for all threads
+        PriorityStack coll(_nbThreads * 2);
+        int n = rootTask->split(&coll);
+        long size = coll.size();
+        for (unsigned int i = 0; i < size; ++i) {
+            auto a = coll.pop();
+            DEBUG "pushing pretask " << *a;
+            enqueue(a, i % _nbThreads);
+        }
 
         for (unsigned int i = 0; i < _nbThreads; ++i) {
             workers.emplace_back(&ParallelTaskRunner::worker, this, i);// emplace_back, like push_back but create objet in the call
