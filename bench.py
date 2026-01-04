@@ -78,6 +78,7 @@ def ensure_baseline_binary(baseline, git_hash):
 
 def build():
     try:
+        subprocess.check_call(["make", "clean"])
         subprocess.check_call(["make"])
     except Exception as e:
         print(e)
@@ -526,6 +527,7 @@ def cmd_run(baseline=FRESH_NAME):
             f"./{tsp_binary_for_baseline} {TSP_INSTANCE} {cities} {threads} {cutoff}",
             "--export-json",
             str(out_json),
+            "--show-output",
         ]
         if mr:
             cmd.insert(2, "--max-runs")
