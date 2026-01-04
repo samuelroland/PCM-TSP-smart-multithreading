@@ -59,7 +59,7 @@ constexpr auto make_subtree_nodes_count_table() {
 constexpr auto SUBTREE_NODES_COUNT_BY_TREE_HEIGHT = make_subtree_nodes_count_table();
 
 
-class FastTaskDS;
+class PriorityStack;
 class TSPParraTask;
 
 
@@ -126,7 +126,7 @@ private:
 public:
     static TSPPath _shortest;
     static std::vector<TSPPath> _best_results;
-    static thread_local unsigned tls_tid;
+    static thread_local unsigned tid_copy;
     // Release a task and put it in the free_list
     static void reusefree(TSPParraTask* p) {
         TRACE "Freeing task " << *p;
@@ -160,7 +160,6 @@ public:
      * return > 0: continue to split
      */
     int split(TaskCollection* collection) override {
-        collection->clear();
         if (_path.size() >= _cutoff_size) return 0;
         if (_path.distance() >= _shortest_distance.load()) return -(TSPPath::full() - _path.size());// return a negative value as a marker
         int count = 0;
@@ -194,7 +193,7 @@ public:
 
             int global_best_distance = _shortest_distance.load(std::memory_order_relaxed);
             if (current_distance < global_best_distance) {
-                _best_results[tls_tid] = _path;
+                _best_results[tid_copy] = _path;
             }
             while (current_distance < global_best_distance &&
                    !_shortest_distance.compare_exchange_weak(global_best_distance, current_distance,
@@ -219,16 +218,17 @@ public:
     }
 };
 
-class FastTaskDS : public TaskCollection {
+// Single threaded stack of TSPParraTask with a basic priority system to pop first what has the weakest estimated cost
+class PriorityStack : public TaskCollection {
 private:
     std::vector<TSPParraTask*> _tab;
 
 public:
-    FastTaskDS(int cap) { _tab.reserve(cap); }
+    PriorityStack(int cap) { _tab.reserve(cap); }
     int size() const override { return _tab.size(); }
     Task* operator[](int i) override { return (Task*) _tab[i]; }
 
-    void push(Task* t) {
+    void push(Task* t) override {
         TSPParraTask* tp = static_cast<TSPParraTask*>(t);
         // sorted insert
         auto it = std::upper_bound(_tab.begin(), _tab.end(), tp,
@@ -242,7 +242,9 @@ public:
         _tab.pop_back();
         return (Task*) ret;
     }
-    void clear() override { _tab.clear(); }
+    void clear() override {
+        _tab.clear();
+    }
 };
 
 
@@ -272,7 +274,7 @@ private:
     void recurse(Task* t, unsigned tid) {
         // 		Task* space[_size];
         //		FixedTaskStack coll(space, _size);
-        FastTaskDS coll(_size);
+        PriorityStack coll(_size);
         int n = t->split(&coll);
         TRACE "Calling recurse with tid " << tid << " on task " << *t << " with split returned " << n;
         // The path has been cut because it is too long
@@ -322,15 +324,13 @@ private:
 
     // The entrypoint for a thread, with a thread id (tid)
     void worker(unsigned tid) {
-        TSPParraTask::tls_tid = tid;
+        TSPParraTask::tid_copy = tid;// initialize this copy for each thread locally before starting
         unsigned nextTidToStealFrom = 0;
         unsigned failedStolenTasks = 0;
+        // While there are tasks to work on somewhere
         while (true) {
             Task* t = _wsds[tid]->popBottom();
-            // STEALING STRATEGY
             if (t == CircularWSDeque<Task>::Empty) {
-                // TODO: good idea to check that after stealing or before ?
-
                 TRACE "_tasks_done = " << _tasks_done;
                 if (_tasks_done >= SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]) {
                     DEBUG "exiting thread " << tid;
@@ -429,5 +429,5 @@ TSPPath TSPParraTask::_shortest = [] { TSPPath s; s.maximise(); return s; }();
 std::atomic<int> TSPParraTask::_shortest_distance{INT_MAX};
 thread_local LockFreeQueue<Task>* TSPParraTask::_free_list = new LockFreeQueue<Task>;
 std::vector<TSPPath> TSPParraTask::_best_results;// best result for each thread
-thread_local unsigned TSPParraTask::tls_tid = 0;
+thread_local unsigned TSPParraTask::tid_copy = 0;
 #endif
