@@ -3,3 +3,4 @@ keepfirsttaskinyourhand a2f1efdd07fc1f01516ddf043aab62902e53844d
 takefirsttaskwithheuristic c02f0e13490b8f7c94bdd1691f5ce6a60b7a24e7 
 betterstop 1ff6dee4b40d0fd0971de65e00331fd689179b37 Better stop implementation with total counter of remaining tasks to be managed
 first-wsd 59cc1958518943d4d06f78bea5edb44ed1ce632c First WorkStealing Deque implementation with a basic stealing strategy and initilisation
+final 675509761b81b93639e7820b110e928ef118bf68 
