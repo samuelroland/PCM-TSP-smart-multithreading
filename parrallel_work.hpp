@@ -2,6 +2,7 @@
 #define PARALLEL_WORK
 
 #include "LockFreeQueue.hpp"
+#include "atomic.hpp"
 #include "task.hpp"
 #include "tsptask.hpp"
 #include "util.hpp"
@@ -77,8 +78,8 @@ class TSPParraTask;
 class TSPParraTask : public Task {
 
 private:
-    static TSPPath _shortest;
     static LockFreeQueue<Task>* _free_list;
+    static std::atomic<int> _shortest_distance;
 
     double estimated_cost;// actual distance + heuristic
 
@@ -91,7 +92,12 @@ private:
         Task* existing_task = nullptr;
         if (_free_list->dequeue(existing_task)) {
             auto existing_para_task = (TSPParraTask*) existing_task;
-            *existing_para_task = *this;
+
+            //*existing_para_task = *this;
+            existing_para_task->_path = TSPPath(this->_path);
+            existing_para_task->_cutoff_size = this->_cutoff_size;
+            existing_para_task->_id = _counter++;
+
             existing_para_task->init(node);
             DEBUG "Allocated new task " << *existing_para_task;
             return existing_para_task;
@@ -124,6 +130,9 @@ private:
 
 
 public:
+    static TSPPath _shortest;
+    static std::vector<TSPPath> _best_results;
+    static thread_local unsigned tls_tid;
     // Release a task and put it in the free_list
     static void reusefree(TSPParraTask* p) {
         TRACE "Freeing task " << *p;
@@ -159,7 +168,7 @@ public:
     int split(TaskCollection* collection) override {
         collection->clear();
         if (_path.size() >= _cutoff_size) return 0;
-        if (_path.distance() >= _shortest.distance()) return -(TSPPath::full() - _path.size());// return a negative value as a marker
+        if (_path.distance() >= _shortest_distance.load()) return -(TSPPath::full() - _path.size());// return a negative value as a marker
         int count = 0;
         for (int i = 0; i < TSPPath::full(); i++) {
             if (!_path.contains(i)) {
@@ -186,14 +195,24 @@ public:
     void solve() override {
         if (_path.size() == TSPPath::full()) {
             _path.push(TSPPath::FIRST_NODE);// last node = first node
-            if (_path.distance() < _shortest.distance())
-                _shortest = _path;
+
+            int current_distance = _path.distance();
+
+            int global_best_distance = _shortest_distance.load(std::memory_order_acquire);
+            if (current_distance < global_best_distance) {
+                _best_results[tls_tid] = _path;
+            }
+            while (current_distance < global_best_distance &&
+                   !_shortest_distance.compare_exchange_weak(global_best_distance, current_distance,
+                                                             std::memory_order_release,
+                                                             std::memory_order_relaxed)) {
+            }
             _path.pop();
         } else {
             for (int i = 0; i < TSPPath::full(); i++) {
                 if (!_path.contains(i)) {
                     _path.push(i);
-                    if (_path.distance() < _shortest.distance())
+                    if (_path.distance() < _shortest_distance.load())
                         solve();
                     _path.pop();
                 }
@@ -252,7 +271,8 @@ private:
     // variables for thread pool
     std::vector<std::thread> workers;                         // list with all threads ready to work
     std::vector<std::unique_ptr<CircularWSDeque<Task>>> _wsds;// work stealing deques for each thread
-    std::atomic<uint64_t> _remaining_tasks_count;
+
+    std::atomic<uint64_t> _tasks_done;
 
     void recurse(Task* t, unsigned tid) {
         // 		Task* space[_size];
@@ -263,14 +283,14 @@ private:
         // The path has been cut because it is too long
         if (n < 0) {
             // as n is negative to be marker in the returned value, we need to change it in positive again, thus the -n
-            _remaining_tasks_count.fetch_sub(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[-n + 1], std::memory_order_relaxed);// subtree of task including current one (thus +1)
+            _tasks_done.fetch_add(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[-n + 1], std::memory_order_relaxed);// subtree of task including current one (thus +1)
             t->merge(&coll);
             TSPParraTask::reusefree((TSPParraTask*) t);
             return;// the split has defined we are over the shortest path on this branch so we cut the branch
         }
         // The path need to be explored further, let's continue with given subtasks
         if (n > 0) {
-            _remaining_tasks_count.fetch_sub(1, std::memory_order_relaxed);// current task is done
+            _tasks_done.fetch_add(1, std::memory_order_relaxed);// current task is done
             _splits++;
             // keep the first task selfishly
             Task* next_local = coll.pop();
@@ -288,7 +308,7 @@ private:
             // This also work with a zero cutoff, 0 + 1 = 1, SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[1] = 1
             // We can do this before the solve, to possibly allow threads to stop before we end our last solve()
             long toremove = SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[_cutoff + 1];
-            _remaining_tasks_count.fetch_sub(toremove, std::memory_order_relaxed);
+            _tasks_done.fetch_add(toremove, std::memory_order_relaxed);
 
             _solves++;
             t->solve();
@@ -301,13 +321,14 @@ private:
 
     // The entrypoint for a thread, with a thread id (tid)
     void worker(unsigned tid) {
+        TSPParraTask::tls_tid = tid;
         unsigned nextTidToStealFrom = 0;
         while (true) {
             Task* t = _wsds[tid]->popBottom();
             // STEALING STRATEGY
             if (t == CircularWSDeque<Task>::Empty) {
                 // TODO: good idea to check that after stealing or before ?
-                if (_remaining_tasks_count == 0) {
+                if (_tasks_done >= SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]) {
                     TRACE "exiting thread " << tid;
                     return;
                 }
@@ -334,14 +355,17 @@ private:
 
 public:
     ParallelTaskRunner(int size, unsigned int nbThreads, int cutoff) : _size(size), _nbThreads(nbThreads), _splits(0), _solves(0), _cutoff(cutoff) {}
-
     virtual void run(Task* rootTask) override {
         TaskRunner::startTimer();
 
-        _remaining_tasks_count.store(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]);
+        _tasks_done.store(0);
         _wsds.reserve(_nbThreads);// reserve space to avoid reallocation for push_back
+        TSPParraTask::_best_results.resize(_nbThreads);
+        std::cout << "Tasks done " << _tasks_done << " on " << SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()] << "  with TSPPath::full() = " << TSPPath::full() << std::endl;
+        // create thread pool, put at the end of the queue
         for (unsigned int i = 0; i < _nbThreads; ++i) {
             _wsds.emplace_back(std::make_unique<CircularWSDeque<Task>>());
+            TSPParraTask::_best_results[i].maximise();
         }
 
         // TODO: try to better init the wsds to avoid too much stealing at first
@@ -357,12 +381,22 @@ public:
             workers.emplace_back(&ParallelTaskRunner::worker, this, i);// emplace_back, like push_back but create objet in the call
         }
         // wait until all threads finished
-        while (_remaining_tasks_count.load(std::memory_order_relaxed) > 0)
+        while (_tasks_done.load(std::memory_order_relaxed) < SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()])
             std::this_thread::yield();
 
         // Joining all worker threads to ensure they have completed their tasks
         for (auto& thread: workers) {
             thread.join();
+        }
+
+        TSPPath* global_best = nullptr;
+        for (TSPPath& path: TSPParraTask::_best_results) {
+            if (!global_best || path.distance() < global_best->distance()) {
+                global_best = &path;
+            }
+        }
+        if (global_best) {
+            TSPParraTask::_shortest = *global_best;
         }
         TaskRunner::stopTimer();
     }
@@ -377,6 +411,9 @@ public:
 
 
 TSPPath TSPParraTask::_shortest = [] { TSPPath s; s.maximise(); return s; }();
+std::atomic<int> TSPParraTask::_shortest_distance{INT_MAX};
 std::atomic<long> TSPParraTask::_counter{0};
 LockFreeQueue<Task>* TSPParraTask::_free_list = new LockFreeQueue<Task>;
+std::vector<TSPPath> TSPParraTask::_best_results;// best result for each thread
+thread_local unsigned TSPParraTask::tls_tid = 0;
 #endif
