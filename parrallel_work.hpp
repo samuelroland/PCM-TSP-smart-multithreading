@@ -351,7 +351,7 @@ private:
                             // nothing to store after trying all other thread.
                             // if we reach the end, we return to avoid too many concurrency
                             failedStolenTasks = 0;
-                            double percent_done = _tasks_done.load() / _total_todo_tasks_counter;
+                            double percent_done = (double) _tasks_done.load() / _total_todo_tasks_counter;
                             if (percent_done >= QUIT_THRESHOLD) {
                                 return;// almost done, we quit
                             }
