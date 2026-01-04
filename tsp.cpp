@@ -1,6 +1,7 @@
 #include "parrallel_work.hpp"
 #include "tsptask.hpp"
 #include <iostream>
+#include <ostream>
 
 /*****************************************************************
   Program to solve a TSP problem
@@ -59,7 +60,8 @@ int main(int argc, char** argv) {
     ParallelTaskRunner r3(TSPPath::MAX_GRAPH, num_threads, cutoff);
     r3.run(tsp3);
     std::cout << "parallel: " << tsp3->result() << " t:" << r3.duration()
-              << " s:" << r3.solves() << "/" << r3.splits() << std::endl;
+              << " s:" << r3.solves() << "/" << r3.splits() << std::endl
+              << "with aborts count = " << r3.aborts() << " and empties count = " << r3.empties() << std::endl;
 
     return 0;
 }

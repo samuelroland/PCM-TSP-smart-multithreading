@@ -255,11 +255,13 @@ public:
  * - enqueue task in _tasks pool after split
  */
 
-const double QUIT_THRESHOLD = 0.95;
+const double QUIT_THRESHOLD = 0.90;
 class ParallelTaskRunner : public TaskRunner {
 private:
     std::atomic<int> _size;
     std::atomic<int> _splits;
+    std::atomic<int> _empties;// the number of times stealing got an empty queue
+    std::atomic<int> _aborts; // the number of times stealing got an abort because it was concurrent to another steal
     std::atomic<int> _solves;
     const int _cutoff;// a copy of the cutoff (the complement of the cutoff size !) to let recurse() access it
     const int _nbThreads;
@@ -339,19 +341,21 @@ private:
                         TRACE "thread " << tid << " failed to steal with EMPTY on thread " << nextTidToStealFrom;
                         nextTidToStealFrom = (nextTidToStealFrom + 1) % _nbThreads;
                         failedStolenTasks++;
+                        _empties.fetch_add(1, std::memory_order_relaxed);
                         if (failedStolenTasks > _nbThreads) {
                             // nothing to store after trying all other thread.
                             // if we reach the end, we return to avoid too many concurrent steal()
                             failedStolenTasks = 0;
                             double percent_done = (double) _tasks_done.load() / _total_todo_tasks_counter;
                             if (percent_done >= QUIT_THRESHOLD) {
-                                DEBUG "exiting thread because almost done " << tid;
+                                TRACE "exiting thread because almost done " << tid;
                                 return;// almost done, we quit
                             }
                             std::this_thread::yield();
                         }
                     } else if (t == CircularWSDeque<Task>::Abort) {
                         TRACE "thread " << tid << " failed to steal with ABORT on thread " << nextTidToStealFrom;
+                        _aborts.fetch_add(1, std::memory_order_relaxed);
                         std::this_thread::yield();
                     } else {
                         // yoopi we stole a task !
@@ -371,7 +375,7 @@ private:
     }
 
 public:
-    ParallelTaskRunner(int size, unsigned int nbThreads, int cutoff) : _size(size), _nbThreads(nbThreads), _splits(0), _solves(0), _cutoff(cutoff) {}
+    ParallelTaskRunner(int size, unsigned int nbThreads, int cutoff) : _size(size), _nbThreads(nbThreads), _splits(0), _solves(0), _aborts(0), _empties(0), _cutoff(cutoff) {}
     virtual void run(Task* rootTask) override {
         TaskRunner::startTimer();
 
@@ -393,7 +397,6 @@ public:
         long size = coll.size();
         for (unsigned int i = 0; i < size; ++i) {
             auto a = coll.pop();
-            DEBUG "pushing pretask " << *a;
             enqueue(a, i % _nbThreads);
         }
 
@@ -419,6 +422,9 @@ public:
     }
     int solves() { return _solves; }
     int splits() { return _splits; }
+
+    int empties() { return _empties; }
+    int aborts() { return _aborts; }
 
     // Enqueue task for execution by the thread pool
     void enqueue(Task* t, unsigned tid) {
