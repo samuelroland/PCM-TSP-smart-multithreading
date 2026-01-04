@@ -363,6 +363,7 @@ public:
  * - enqueue task in _tasks pool after split
  */
 
+const double QUIT_THRESHOLD = 0.95;
 class ParallelTaskRunner : public TaskRunner {
 private:
     std::atomic<int> _size;
@@ -376,6 +377,7 @@ private:
     std::vector<std::unique_ptr<CircularWSDeque<Task>>> _wsds;// work stealing deques for each thread
 
     std::atomic<uint64_t> _tasks_done;
+    uint64_t _total_todo_tasks_counter;
 
     void recurse(Task* t, unsigned tid) {
         // 		Task* space[_size];
@@ -397,11 +399,11 @@ private:
         if (n > 0) {
             _tasks_done.fetch_add(1, std::memory_order_relaxed);// current task is done
 
-            /*long done = _tasks_done.load(std::memory_order_relaxed);
-            if (done % 1000 == 0) {  // toutes les 100 000 tâches
-                double percent = 100.0 * done / SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()];
-                std::cout << "[progress] " << percent << "% done" << std::endl;
-            }*/
+            // long done = _tasks_done.load(std::memory_order_relaxed);
+            // if ((done & 0xFFF) == 0) {// each 0xFFF task
+            //     double percent = 100.0 * done / _total_todo_tasks_counter;
+            //     std::cout << "[progress] " << percent << "% done" << std::endl;
+            // }
             _splits++;
             // keep the first task selfishly
             Task* next_local = coll.pop();
@@ -422,8 +424,8 @@ private:
             // The number of nodes in the subtree of height cutoff + 1 (because the cutoff is stopped at the parent task)
             // This also work with a zero cutoff, 0 + 1 = 1, SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[1] = 1
             // We can do this before the solve, to possibly allow threads to stop before we end our last solve()
-            long toremove = SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[_cutoff + 1];
-            _tasks_done.fetch_add(toremove, std::memory_order_relaxed);
+            long subtree_nodes_count = SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[_cutoff + 1];
+            _tasks_done.fetch_add(subtree_nodes_count, std::memory_order_relaxed);
 
             _solves++;
             t->solve();
@@ -443,7 +445,6 @@ private:
             Task* t = _wsds[tid]->popBottom();
             // STEALING STRATEGY
             if (t == CircularWSDeque<Task>::Empty) {
-
 
 
                 // TODO: good idea to check that after stealing or before ?
@@ -473,13 +474,12 @@ private:
                             // nothing to store after trying all other thread.
                             // if we reach the end, we return to avoid too many concurrency
                             badStole = 0;
-                            double percent_done = 100.0 * _tasks_done.load() / SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()];
-                            if (percent_done >= 95.0) {
-                                return; // almost done, we quit
+                            double percent_done = _tasks_done.load() / _total_todo_tasks_counter;
+                            if (percent_done >= QUIT_THRESHOLD) {
+                                return;// almost done, we quit
                             }
                             std::this_thread::yield();
                         }
-
                     }
                     if (t == CircularWSDeque<Task>::Abort) {
                         // std::ostringstream os;
@@ -500,6 +500,7 @@ public:
         TaskRunner::startTimer();
 
         _tasks_done.store(0);
+        _total_todo_tasks_counter = SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()];
         _wsds.reserve(_nbThreads);// reserve space to avoid reallocation for push_back
         TSPParraTask::_best_results.resize(_nbThreads);
         //std::cout << "Tasks done " << _tasks_done << " on " << SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()] << "  with TSPPath::full() = " << TSPPath::full() << std::endl;
@@ -522,7 +523,7 @@ public:
             workers.emplace_back(&ParallelTaskRunner::worker, this, i);// emplace_back, like push_back but create objet in the call
         }
         // wait until all threads finished
-        while (_tasks_done.load(std::memory_order_relaxed) < SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()])
+        while (_tasks_done.load(std::memory_order_relaxed) < _total_todo_tasks_counter)
             std::this_thread::yield();
 
         // Joining all worker threads to ensure they have completed their tasks
