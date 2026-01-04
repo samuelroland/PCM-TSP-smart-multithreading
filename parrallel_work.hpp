@@ -181,7 +181,6 @@ public:
 class TSPParraTask : public Task {
 
 private:
-    static atomic_stamped<TSPPath> _shortest;
     static std::atomic<int> _shortest_distance;
     static LockFreeQueue* _free_list;
 
@@ -227,6 +226,9 @@ private:
 
 
 public:
+    static TSPPath _shortest;
+    static std::vector<TSPPath> _best_results;
+    static thread_local unsigned tls_tid;
     // Release a task and put it in the free_list
     static void reusefree(TSPParraTask* p) {
         _free_list->enqueue(p);
@@ -248,10 +250,7 @@ public:
 
     // cutoff set, expressed as a distance from full path
     void cutoff(int c) { _cutoff_size = TSPPath::full() - c; }
-    TSPPath& result() {
-        uint64_t stamp;
-        return  *(_shortest.get(stamp));
-    }
+    TSPPath& result() { return _shortest; }
 
     // Task interface implementation: split, merge, solve, write
     /*
@@ -297,25 +296,14 @@ public:
 
             int current_distance = _path.distance();
 
-            int old_distance = _shortest_distance.load(std::memory_order_acquire);
-            if (current_distance < old_distance){
-                if (_shortest_distance.compare_exchange_weak(old_distance, current_distance,
-                                                 std::memory_order_release,
-                                                 std::memory_order_relaxed)) {
-                    TSPPath* new_path = new TSPPath(_path);
-                    uint64_t stamp;
-                    TSPPath* old_path = _shortest.get(stamp);
-                    while (true) {
-                        if (_shortest.cas(old_path, new_path, stamp, stamp + 1)) {
-                            // CAS succeed : delete old path
-                            delete old_path;
-                            break;
-                        } else {
-                            // CAS failed
-                            old_path = _shortest.get(stamp);
-                        }
-                    }
-                }
+            int global_best_distance = _shortest_distance.load(std::memory_order_acquire);
+            if (current_distance < global_best_distance) {
+                _best_results[tls_tid] = _path;
+            }
+            while (current_distance < global_best_distance &&
+                   !_shortest_distance.compare_exchange_weak(global_best_distance, current_distance,
+                                                             std::memory_order_release,
+                                                             std::memory_order_relaxed)) {
             }
             _path.pop();
         } else {
@@ -381,6 +369,7 @@ private:
     // variables for thread pool
     std::vector<std::thread> workers;                         // list with all threads ready to work
     std::vector<std::unique_ptr<CircularWSDeque<Task>>> _wsds;// work stealing deques for each thread
+
     std::atomic<uint64_t> _remaining_tasks_count;
 
     void recurse(Task* t, unsigned tid) {
@@ -436,6 +425,7 @@ private:
 
     // The entrypoint for a thread, with a thread id (tid)
     void worker(unsigned tid) {
+        TSPParraTask::tls_tid = tid;
         unsigned nextTidToStealFrom = 0;
         while (true) {
             Task* t = _wsds[tid]->popBottom();
@@ -477,16 +467,17 @@ private:
 
 public:
     ParallelTaskRunner(int size, unsigned int nbThreads, int cutoff) : _size(size), _nbThreads(nbThreads), _splits(0), _solves(0), _cutoff(cutoff) {}
-
     virtual void run(Task* rootTask) override {
         TaskRunner::startTimer();
 
         _remaining_tasks_count.store(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]);
         _wsds.reserve(_nbThreads);// reserve space to avoid reallocation for push_back
+        TSPParraTask::_best_results.resize(_nbThreads);
         // std::cout << "Starting counter with TSPPath::full() = " << TSPPath::full() << "and for _remaining_nodes_to_visit " << _remaining_tasks_count << std::endl;
         // create thread pool, put at the end of the queue
         for (unsigned int i = 0; i < _nbThreads; ++i) {
             _wsds.emplace_back(std::make_unique<CircularWSDeque<Task>>());
+            TSPParraTask::_best_results[i].maximise();
         }
 
         // TODO: try to better init the wsds to avoid too much stealing at first
@@ -509,6 +500,16 @@ public:
         for (auto& thread: workers) {
             thread.join();
         }
+
+        TSPPath* global_best = nullptr;
+        for (TSPPath& path: TSPParraTask::_best_results) {
+            if (!global_best || path.distance() < global_best->distance()) {
+                global_best = &path;
+            }
+        }
+        if (global_best) {
+            TSPParraTask::_shortest = *global_best;
+        }
         TaskRunner::stopTimer();
     }
     int solves() { return _solves; }
@@ -521,12 +522,10 @@ public:
 };
 
 
-atomic_stamped<TSPPath> TSPParraTask::_shortest = [] {
-    TSPPath* p = new TSPPath();
-    p->maximise();
-    return atomic_stamped<TSPPath>(p, 0);
-}();
+TSPPath TSPParraTask::_shortest = [] { TSPPath s; s.maximise(); return s; }();
 std::atomic<int> TSPParraTask::_shortest_distance{INT_MAX};
 std::atomic<long> TSPParraTask::_counter{0};
 LockFreeQueue* TSPParraTask::_free_list = new LockFreeQueue;
+std::vector<TSPPath> TSPParraTask::_best_results;// best result for each thread
+thread_local unsigned TSPParraTask::tls_tid = 0;
 #endif
