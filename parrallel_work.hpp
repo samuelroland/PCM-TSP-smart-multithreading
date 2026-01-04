@@ -195,7 +195,12 @@ private:
         Task* existing_task = nullptr;
         if (_free_list->dequeue(existing_task)) {
             auto existing_para_task = (TSPParraTask*) existing_task;
-            *existing_para_task = *this;
+
+            //*existing_para_task = *this;
+            existing_para_task->_path = TSPPath(this->_path);
+            existing_para_task->_cutoff_size = this->_cutoff_size;
+            existing_para_task->_id = _counter++;
+
             existing_para_task->init(node);
             return existing_para_task;
         } else {
