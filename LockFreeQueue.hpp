@@ -3,14 +3,14 @@
 // Given in course, chap5 in java, inspired from Michael & Scott
 // modified to delete dummy in destructor to avoid read-after-free or memory leak
 /// --------------------------------------------------------
-#include "task.hpp"
 #include <atomic>
+template<typename T>
 class LockFreeQueue {
 private:
     struct Node {
-        Task* value;
+        T* value;
         std::atomic<Node*> next;
-        Node(Task* t) : value(t), next(nullptr) {}
+        Node(T* t) : value(t), next(nullptr) {}
     };
 
     std::atomic<Node*> head;
@@ -44,7 +44,7 @@ public:
         }
     }
 
-    void enqueue(Task* t) {
+    void enqueue(T* t) {
         Node* node = new Node(t);
         while (true) {
             Node* last = tail.load(std::memory_order_acquire);
@@ -69,7 +69,7 @@ public:
         }
     }
 
-    bool dequeue(Task*& result) {
+    bool dequeue(T*& result) {
         while (true) {
             Node* first = head.load(std::memory_order_acquire);
             Node* last = tail.load(std::memory_order_acquire);

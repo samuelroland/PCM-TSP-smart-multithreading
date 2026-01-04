@@ -78,7 +78,7 @@ class TSPParraTask : public Task {
 
 private:
     static TSPPath _shortest;
-    static LockFreeQueue* _free_list;
+    static LockFreeQueue<Task>* _free_list;
 
     double estimated_cost;// actual distance + heuristic
 
@@ -378,5 +378,5 @@ public:
 
 TSPPath TSPParraTask::_shortest = [] { TSPPath s; s.maximise(); return s; }();
 std::atomic<long> TSPParraTask::_counter{0};
-LockFreeQueue* TSPParraTask::_free_list = new LockFreeQueue;
+LockFreeQueue<Task>* TSPParraTask::_free_list = new LockFreeQueue<Task>;
 #endif
