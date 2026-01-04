@@ -13,7 +13,6 @@
 
 #include "util.hpp"
 #include <atomic>
-#include <cstdlib>
 
 // First structure defined in Figure 4: Growable Circular Array
 // It grows by doubling the capacity each time the size is reached
@@ -81,9 +80,14 @@ public:
         long size = b - t;
         if (size >= a->size() - 1) {
             a = a->grow(b, t);
+            // NOTE: old CircularArray instances are intentionally leaked
+            // until a safe way to reuse or free them is implemented
             activeArray.store(a, std::memory_order_release);
         }
         a->put(b, new_object);
+
+        // This is a test to ensure all changes before are visible
+        std::atomic_thread_fence(std::memory_order_seq_cst);
         bottom.store(b + 1, std::memory_order_release);
     }
 
@@ -95,6 +99,10 @@ public:
         CircularArray<T>* a = activeArray.load(std::memory_order_acquire);
         b = b - 1;
         bottom.store(b, std::memory_order_relaxed);
+
+        // This is a test to ensure all changes before are visible
+        std::atomic_thread_fence(std::memory_order_seq_cst);
+
         long t = top.load(std::memory_order_acquire);
         long size = b - t;
         if (size < 0) {
@@ -119,6 +127,9 @@ public:
         long size = b - t;
         if (size <= 0) return Empty;
         T* o = a->get(t);
+
+        // This is a test to ensure all changes before are visible
+        std::atomic_thread_fence(std::memory_order_seq_cst);
         if (!top.compare_exchange_strong(t, t + 1, std::memory_order_acq_rel,
                                          std::memory_order_acquire))
             return Abort;
