@@ -331,25 +331,17 @@ private:
         while (true) {
             Task* t = _wsds[tid]->popBottom();
             if (t == CircularWSDeque<Task>::Empty) {
-                TRACE "_tasks_done = " << _tasks_done;
-                if (_tasks_done >= SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]) {
-                    DEBUG "exiting thread " << tid;
-                    return;
-                }
-                // Try to steal the next thread
-                t = _wsds[nextTidToStealFrom]->steal();
-                if (t != CircularWSDeque<Task>::Empty && t != CircularWSDeque<Task>::Abort) {
-                    // yoopi we stole a task !
-                    failedStolenTasks = 0;
-                    TRACE "thread " << tid << " stole task on thread " << nextTidToStealFrom << ": " << *t;
-                } else {
+                // While searching for other tasks by stealing...
+                while (true) {
+                    // Try to steal the next thread
+                    t = _wsds[nextTidToStealFrom]->steal();
                     if (t == CircularWSDeque<Task>::Empty) {
                         TRACE "thread " << tid << " failed to steal with EMPTY on thread " << nextTidToStealFrom;
                         nextTidToStealFrom = (nextTidToStealFrom + 1) % _nbThreads;
                         failedStolenTasks++;
                         if (failedStolenTasks > _nbThreads) {
                             // nothing to store after trying all other thread.
-                            // if we reach the end, we return to avoid too many concurrency
+                            // if we reach the end, we return to avoid too many concurrent steal()
                             failedStolenTasks = 0;
                             double percent_done = (double) _tasks_done.load() / _total_todo_tasks_counter;
                             if (percent_done >= QUIT_THRESHOLD) {
@@ -358,12 +350,20 @@ private:
                             }
                             std::this_thread::yield();
                         }
-                    }
-                    if (t == CircularWSDeque<Task>::Abort) {
+                    } else if (t == CircularWSDeque<Task>::Abort) {
                         TRACE "thread " << tid << " failed to steal with ABORT on thread " << nextTidToStealFrom;
                         std::this_thread::yield();
+                    } else {
+                        // yoopi we stole a task !
+                        failedStolenTasks = 0;
+                        TRACE "thread " << tid << " stole task on thread " << nextTidToStealFrom << ": " << *t;
+                        break;// break the internal while to recurse and go back to popBottom after that
                     }
-                    continue;
+                    TRACE "_tasks_done = " << _tasks_done;
+                    if (_tasks_done >= SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]) {
+                        DEBUG "exiting thread " << tid;
+                        return;
+                    }
                 }
             }
             recurse(t, tid);
