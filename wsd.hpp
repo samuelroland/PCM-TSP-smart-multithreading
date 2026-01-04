@@ -22,27 +22,33 @@ class CircularArray {
 private:
     int log_size;    // the segment has a size of 2^log_size
     long stored_size;// 2^log_size to avoid recalculation each time we call size
-    T** segment;
+    std::atomic<T*>* segment;
 
 public:
-    CircularArray<T>(int log_size) : log_size(log_size), stored_size(1 << log_size) {
-        segment = static_cast<T**>(calloc(stored_size, sizeof(T*)));
-        if (!segment) std::abort();
+    explicit CircularArray(int log_size)
+        : log_size(log_size),
+          stored_size(1L << log_size),
+          segment(new std::atomic<T*>[stored_size]) {
+        // Initialize all slots to nullptr
+        for (long i = 0; i < stored_size; ++i) {
+            segment[i].store(nullptr, std::memory_order_relaxed);
+        }
     }
     ~CircularArray() {
-        // NOTE: an idea would be to shallow free and free tasks from the task free list only  ??
-        free(segment);
+        // IMPORTANT:
+        // - This destroys atomic<T*> objects
+        // - It does NOT delete the T* values
+        delete[] segment;
         segment = nullptr;
-        // TODO: should we delete tasks as well ???
     }
     long size() {
         return stored_size;
     }
     T* get(long i) {
-        return segment[i % stored_size];
+        return segment[i % stored_size].load(std::memory_order_acquire);
     }
     void put(long i, T* new_object) {
-        segment[i % stored_size] = new_object;
+        segment[i % stored_size].store(new_object, std::memory_order_release);
     }
     CircularArray<T>* grow(long bottom_index, long top_index) {
         TRACE "GROWING from 2^" << log_size << "=" << stored_size << " to 2^" << (log_size + 1) << "=" << (1 << (log_size + 1));
@@ -98,7 +104,8 @@ public:
         T* o = a->get(b);
         if (size > 0)
             return o;
-        if (!top.compare_exchange_strong(t, t + 1))
+        if (!top.compare_exchange_strong(t, t + 1, std::memory_order_acq_rel,
+                                         std::memory_order_acquire))
             o = Empty;
         bottom.store(t + 1, std::memory_order_relaxed);
         return o;
@@ -112,7 +119,8 @@ public:
         long size = b - t;
         if (size <= 0) return Empty;
         T* o = a->get(t);
-        if (!top.compare_exchange_strong(t, t + 1))
+        if (!top.compare_exchange_strong(t, t + 1, std::memory_order_acq_rel,
+                                         std::memory_order_acquire))
             return Abort;
         return o;
     }
