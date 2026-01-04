@@ -83,10 +83,6 @@ private:
 
     double estimated_cost;// actual distance + heuristic
 
-    // DEBUG
-    static std::atomic<long> _counter;
-    int _id;
-
     // Get a free task from free_list or allocate a new one
     TSPParraTask* reusealloc(int node) {
         Task* existing_task = nullptr;
@@ -96,7 +92,6 @@ private:
             //*existing_para_task = *this;
             existing_para_task->_path = TSPPath(this->_path);
             existing_para_task->_cutoff_size = this->_cutoff_size;
-            existing_para_task->_id = _counter++;
 
             existing_para_task->init(node);
             DEBUG "Allocated new task at addr " << existing_para_task << " with content " << *existing_para_task;
@@ -111,7 +106,7 @@ private:
     TSPPath _path;
     int _cutoff_size;
 
-    TSPParraTask(TSPParraTask* task, int node) : _path(task->_path), _cutoff_size(task->_cutoff_size), _id(_counter++) {
+    TSPParraTask(TSPParraTask* task, int node) : _path(task->_path), _cutoff_size(task->_cutoff_size) {
         init(node);
     }
 
@@ -119,7 +114,6 @@ private:
     TSPParraTask& operator=(TSPParraTask& task) {
         this->_path = task._path;
         this->_cutoff_size = task._cutoff_size;
-        this->_id = _counter++;
         return *this;
     }
 
@@ -140,7 +134,7 @@ public:
     }
 
 
-    TSPParraTask() : _id(_counter++) {
+    TSPParraTask() {
         _cutoff_size = TSPPath::full();
     }
     ~TSPParraTask() override {
@@ -221,11 +215,10 @@ public:
     }
 
     void write(std::ostream& os) const override {
-        os << "Task(id=" << _id << ",c=" << _cutoff_size << ')' << _path;
+        os << "Task(c=" << _cutoff_size << ')' << _path;
     }
 };
-// TODO: transform this collection with CAS using atomic_stamped
-// TODO: implement a first queue structure SAMUEL
+
 class FastTaskDS : public TaskCollection {
 private:
     std::vector<TSPParraTask*> _tab;
@@ -294,11 +287,11 @@ private:
         if (n > 0) {
             _tasks_done.fetch_add(1, std::memory_order_relaxed);// current task is done
 
-            // long done = _tasks_done.load(std::memory_order_relaxed);
-            // if ((done & 0xFFF) == 0) {// each 0xFFF task
-            //     double percent = 100.0 * done / _total_todo_tasks_counter;
-            //     std::cout << "[progress] " << percent << "% done" << std::endl;
-            // }
+            long done = _tasks_done.load(std::memory_order_relaxed);
+            if ((done & 0x1FFF) == 0) {// each 0xFFF task
+                double percent = 100.0 * done / _total_todo_tasks_counter;
+                std::cout << "[progress] " << percent << "% done" << std::endl;
+            }
             _splits++;
             // keep the first task selfishly
             Task* next_local = coll.pop();
@@ -438,7 +431,7 @@ public:
 
 TSPPath TSPParraTask::_shortest = [] { TSPPath s; s.maximise(); return s; }();
 std::atomic<int> TSPParraTask::_shortest_distance{INT_MAX};
-std::atomic<long> TSPParraTask::_counter{0};
+// std::atomic<long> TSPParraTask::_counter{0};
 thread_local LockFreeQueue<Task>* TSPParraTask::_free_list = new LockFreeQueue<Task>;
 std::vector<TSPPath> TSPParraTask::_best_results;// best result for each thread
 thread_local unsigned TSPParraTask::tls_tid = 0;

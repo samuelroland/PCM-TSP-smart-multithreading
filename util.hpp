@@ -11,7 +11,7 @@ enum class LogLevel {
     TRACE = 3
 };
 
-constexpr LogLevel GLOBAL_LOG_LEVEL = LogLevel::DEBUG;
+constexpr LogLevel GLOBAL_LOG_LEVEL = LogLevel::NONE;
 
 struct LogLine {
     std::ostringstream ss;
