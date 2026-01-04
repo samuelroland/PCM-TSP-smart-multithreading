@@ -438,7 +438,6 @@ private:
     void worker(unsigned tid) {
         TSPParraTask::tls_tid = tid;
         unsigned nextTidToStealFrom = 0;
-        bool tryToStole = false;
         unsigned badStole = 0;
         while (true) {
             Task* t = _wsds[tid]->popBottom();
