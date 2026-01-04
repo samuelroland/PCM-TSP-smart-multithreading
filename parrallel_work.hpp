@@ -78,7 +78,7 @@ class TSPParraTask;
 class TSPParraTask : public Task {
 
 private:
-    static LockFreeQueue<Task>* _free_list;
+    static thread_local LockFreeQueue<Task>* _free_list;
     static std::atomic<int> _shortest_distance;
 
     double estimated_cost;// actual distance + heuristic
@@ -99,11 +99,11 @@ private:
             existing_para_task->_id = _counter++;
 
             existing_para_task->init(node);
-            DEBUG "Allocated new task " << *existing_para_task;
+            DEBUG "Allocated new task at addr " << existing_para_task << " with content " << *existing_para_task;
             return existing_para_task;
         } else {
             Task* new_task = new TSPParraTask(this, node);
-            DEBUG "Allocated new task " << *new_task;
+            DEBUG "Allocated new task at addr " << new_task << " with content " << *new_task;
             return (TSPParraTask*) new_task;
         }
     }
@@ -135,7 +135,7 @@ public:
     static thread_local unsigned tls_tid;
     // Release a task and put it in the free_list
     static void reusefree(TSPParraTask* p) {
-        TRACE "Freeing task " << *p;
+        DEBUG "Freeing task " << *p;
         _free_list->enqueue(p);
     }
 
@@ -328,6 +328,8 @@ private:
             // STEALING STRATEGY
             if (t == CircularWSDeque<Task>::Empty) {
                 // TODO: good idea to check that after stealing or before ?
+
+                DEBUG "_tasks_done = " << _tasks_done;
                 if (_tasks_done >= SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]) {
                     TRACE "exiting thread " << tid;
                     return;
@@ -413,7 +415,7 @@ public:
 TSPPath TSPParraTask::_shortest = [] { TSPPath s; s.maximise(); return s; }();
 std::atomic<int> TSPParraTask::_shortest_distance{INT_MAX};
 std::atomic<long> TSPParraTask::_counter{0};
-LockFreeQueue<Task>* TSPParraTask::_free_list = new LockFreeQueue<Task>;
+thread_local LockFreeQueue<Task>* TSPParraTask::_free_list = new LockFreeQueue<Task>;
 std::vector<TSPPath> TSPParraTask::_best_results;// best result for each thread
 thread_local unsigned TSPParraTask::tls_tid = 0;
 #endif

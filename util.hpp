@@ -7,10 +7,11 @@
 enum class LogLevel {
     NONE = 0,
     DEBUG = 1,
-    TRACE = 2
+    INFO = 2,
+    TRACE = 3
 };
 
-constexpr LogLevel GLOBAL_LOG_LEVEL = LogLevel::NONE;
+constexpr LogLevel GLOBAL_LOG_LEVEL = LogLevel::DEBUG;
 
 struct LogLine {
     std::ostringstream ss;
@@ -36,6 +37,11 @@ struct LogLine {
 #define TRACE                                            \
     if constexpr (!LOG_LEVEL_ENABLED(LogLevel::TRACE)) { \
     } else                                               \
+        LogLine{std::cout} <<
+
+#define INFO                                            \
+    if constexpr (!LOG_LEVEL_ENABLED(LogLevel::INFO)) { \
+    } else                                              \
         LogLine{std::cout} <<
 
 #define DEBUG                                            \
