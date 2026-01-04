@@ -396,6 +396,12 @@ private:
         // The path need to be explored further, let's continue with given subtasks
         if (n > 0) {
             _tasks_done.fetch_add(1, std::memory_order_relaxed);// current task is done
+
+            /*long done = _tasks_done.load(std::memory_order_relaxed);
+            if (done % 1000 == 0) {  // toutes les 100 000 tâches
+                double percent = 100.0 * done / SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()];
+                std::cout << "[progress] " << percent << "% done" << std::endl;
+            }*/
             _splits++;
             // keep the first task selfishly
             Task* next_local = coll.pop();
@@ -432,10 +438,15 @@ private:
     void worker(unsigned tid) {
         TSPParraTask::tls_tid = tid;
         unsigned nextTidToStealFrom = 0;
+        bool tryToStole = false;
+        unsigned badStole = 0;
         while (true) {
             Task* t = _wsds[tid]->popBottom();
             // STEALING STRATEGY
             if (t == CircularWSDeque<Task>::Empty) {
+
+
+
                 // TODO: good idea to check that after stealing or before ?
                 if (_tasks_done >= SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]) {
                     // std::ostringstream os;
@@ -447,15 +458,29 @@ private:
                 t = _wsds[nextTidToStealFrom]->steal();
                 if (t != CircularWSDeque<Task>::Empty && t != CircularWSDeque<Task>::Abort) {
                     // yoopi we stole a task !
+                    badStole = 0;
                     // std::ostringstream os;
                     // os << "thread " << tid << " stole task on thread " << nextTidToStealFrom << ": " << *t << std::endl;
                     // std::cout << os.str();
                 } else {
                     if (t == CircularWSDeque<Task>::Empty) {
+
                         // std::ostringstream os;
                         // os << "thread " << tid << " failed to steal with EMPTY on thread " << nextTidToStealFrom << std::endl;
                         // std::cout << os.str();
                         nextTidToStealFrom = (nextTidToStealFrom + 1) % _nbThreads;
+                        badStole++;
+                        if (badStole > _nbThreads) {
+                            // nothing to store after trying all other thread.
+                            // if we reach the end, we return to avoid too many concurrency
+                            badStole = 0;
+                            double percent_done = 100.0 * _tasks_done.load() / SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()];
+                            if (percent_done >= 95.0) {
+                                return; // almost done, we quit
+                            }
+                            std::this_thread::yield();
+                        }
+
                     }
                     if (t == CircularWSDeque<Task>::Abort) {
                         // std::ostringstream os;
@@ -478,7 +503,7 @@ public:
         _tasks_done.store(0);
         _wsds.reserve(_nbThreads);// reserve space to avoid reallocation for push_back
         TSPParraTask::_best_results.resize(_nbThreads);
-        std::cout << "Tasks done " << _tasks_done << " on " << SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()] << "  with TSPPath::full() = " << TSPPath::full() << std::endl;
+        //std::cout << "Tasks done " << _tasks_done << " on " << SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()] << "  with TSPPath::full() = " << TSPPath::full() << std::endl;
         // create thread pool, put at the end of the queue
         for (unsigned int i = 0; i < _nbThreads; ++i) {
             _wsds.emplace_back(std::make_unique<CircularWSDeque<Task>>());
