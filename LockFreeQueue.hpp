@@ -3,7 +3,9 @@
 // Given in course, chap5 in java, inspired from Michael & Scott
 // modified to delete dummy in destructor to avoid read-after-free or memory leak
 /// --------------------------------------------------------
+#include "util.hpp"
 #include <atomic>
+#include <iostream>
 template<typename T>
 class LockFreeQueue {
 private:
@@ -79,23 +81,27 @@ public:
                 if (first == last) {
                     if (next == nullptr)
                         return false;// queue vide
-                    tail.compare_exchange_weak(last, next,
-                                               std::memory_order_release,
-                                               std::memory_order_relaxed);
+                    tail.compare_exchange_strong(last, next,
+                                                 std::memory_order_release,
+                                                 std::memory_order_relaxed);
                 } else {
                     result = next->value;
-                    if (head.compare_exchange_weak(first, next,
-                                                   std::memory_order_release,
-                                                   std::memory_order_relaxed)) {
+                    if (head.compare_exchange_strong(first, next,
+                                                     std::memory_order_release,
+                                                     std::memory_order_relaxed)) {
 
-                        // store dummy node
-                        Node* old = retired_head.load(std::memory_order_relaxed);
+                        // Store removed node in another list to free it later
+                        Node* old;
                         do {
-                            first->next.store(old, std::memory_order_relaxed);
-                        } while (!retired_head.compare_exchange_weak(
-                                old, first,
-                                std::memory_order_release,
-                                std::memory_order_relaxed));
+                            old = retired_head.load(std::memory_order_acquire);
+                            first->next.store(old, std::memory_order_release);
+
+                            if (retired_head.compare_exchange_strong(
+                                        old, first,
+                                        std::memory_order_release,
+                                        std::memory_order_relaxed)) break;
+                            DEBUG "again " << first;
+                        } while (true);
 
                         return true;
                         //delete first; // do not delete dummy here to avoid use-after-free
