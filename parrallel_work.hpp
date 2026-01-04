@@ -3,11 +3,11 @@
 
 #include "task.hpp"
 #include "tsptask.hpp"
+#include "util.hpp"
 #include "wsd.hpp"
 
 #include <array>
 #include <atomic>
-#include <sstream>
 #include <thread>
 
 
@@ -196,9 +196,11 @@ private:
             auto existing_para_task = (TSPParraTask*) existing_task;
             *existing_para_task = *this;
             existing_para_task->init(node);
+            DEBUG "Allocated new task " << *existing_para_task;
             return existing_para_task;
         } else {
             Task* new_task = new TSPParraTask(this, node);
+            DEBUG "Allocated new task " << *new_task;
             return (TSPParraTask*) new_task;
         }
     }
@@ -227,16 +229,15 @@ private:
 public:
     // Release a task and put it in the free_list
     static void reusefree(TSPParraTask* p) {
+        TRACE "Freeing task " << *p;
         _free_list->enqueue(p);
     }
 
 
     TSPParraTask() : _id(_counter++) {
         _cutoff_size = TSPPath::full();
-        //std::cout << "Create task " << _id << std::endl;
     }
     ~TSPParraTask() override {
-        //std::cout << "Delete task " << _id << std::endl;
     }
 
     double get_estimated_cost() const { return estimated_cost; }
@@ -286,7 +287,6 @@ public:
     }
 
     void solve() override {
-        //std::cout << "solving " << _path << "\n";
         if (_path.size() == TSPPath::full()) {
             _path.push(TSPPath::FIRST_NODE);// last node = first node
             if (_path.distance() < _shortest.distance())
@@ -362,9 +362,7 @@ private:
         //		FixedTaskStack coll(space, _size);
         FastTaskDS coll(_size);
         int n = t->split(&coll);
-        // std::ostringstream ss;
-        // ss << "Calling recurse with tid " << tid << " on task " << *t << " with split returned " << n << std::endl;
-        // std::cout << ss.str();
+        TRACE "Calling recurse with tid " << tid << " on task " << *t << " with split returned " << n;
         // The path has been cut because it is too long
         if (n < 0) {
             // as n is negative to be marker in the returned value, we need to change it in positive again, thus the -n
@@ -379,14 +377,10 @@ private:
             _splits++;
             // keep the first task selfishly
             Task* next_local = coll.pop();
-            // std::ostringstream ss;
-            // ss << "Keeping next_local task " << *next_local << std::endl;
-            // std::cout << ss.str();
+            TRACE "Keeping next_local task " << *next_local;
             for (int i = 1; i < n; i++) {
                 Task* sub = coll.pop();
-                // std::ostringstream ss;
-                // ss << "Enqueuing task " << *sub << std::endl;
-                // std::cout << ss.str();
+                TRACE "Enqueuing task " << *sub;
                 enqueue(sub, tid);
             }
             TSPParraTask::reusefree((TSPParraTask*) t);
@@ -417,29 +411,21 @@ private:
             if (t == CircularWSDeque<Task>::Empty) {
                 // TODO: good idea to check that after stealing or before ?
                 if (_remaining_tasks_count == 0) {
-                    // std::ostringstream os;
-                    // os << "exiting thread " << tid << std::endl;
-                    // std::cout << os.str();
+                    TRACE "exiting thread " << tid;
                     return;
                 }
                 // Try to steal the next thread
                 t = _wsds[nextTidToStealFrom]->steal();
                 if (t != CircularWSDeque<Task>::Empty && t != CircularWSDeque<Task>::Abort) {
                     // yoopi we stole a task !
-                    // std::ostringstream os;
-                    // os << "thread " << tid << " stole task on thread " << nextTidToStealFrom << ": " << *t << std::endl;
-                    // std::cout << os.str();
+                    TRACE "thread " << tid << " stole task on thread " << nextTidToStealFrom << ": " << *t;
                 } else {
                     if (t == CircularWSDeque<Task>::Empty) {
-                        // std::ostringstream os;
-                        // os << "thread " << tid << " failed to steal with EMPTY on thread " << nextTidToStealFrom << std::endl;
-                        // std::cout << os.str();
+                        TRACE "thread " << tid << " failed to steal with EMPTY on thread " << nextTidToStealFrom;
                         nextTidToStealFrom = (nextTidToStealFrom + 1) % _nbThreads;
                     }
                     if (t == CircularWSDeque<Task>::Abort) {
-                        // std::ostringstream os;
-                        // os << "thread " << tid << " failed to steal with ABORT on thread " << nextTidToStealFrom << std::endl;
-                        // std::cout << os.str();
+                        TRACE "thread " << tid << " failed to steal with ABORT on thread " << nextTidToStealFrom;
                         std::this_thread::yield();
                     }
                     continue;
@@ -457,8 +443,6 @@ public:
 
         _remaining_tasks_count.store(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]);
         _wsds.reserve(_nbThreads);// reserve space to avoid reallocation for push_back
-        // std::cout << "Starting counter with TSPPath::full() = " << TSPPath::full() << "and for _remaining_nodes_to_visit " << _remaining_tasks_count << std::endl;
-        // create thread pool, put at the end of the queue
         for (unsigned int i = 0; i < _nbThreads; ++i) {
             _wsds.emplace_back(std::make_unique<CircularWSDeque<Task>>());
         }

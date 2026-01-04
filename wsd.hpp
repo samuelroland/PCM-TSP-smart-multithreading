@@ -11,10 +11,9 @@
 #ifndef WSD
 #define WSD
 
+#include "util.hpp"
 #include <atomic>
 #include <cstdlib>
-#include <iostream>
-#include <sstream>
 
 // First structure defined in Figure 4: Growable Circular Array
 // It grows by doubling the capacity each time the size is reached
@@ -46,9 +45,7 @@ public:
         segment[i % stored_size] = new_object;
     }
     CircularArray<T>* grow(long bottom_index, long top_index) {
-        // std::ostringstream os;
-        // os << "GROWING from 2^" << log_size << "=" << stored_size << " to 2^" << (log_size + 1) << "=" << (1 << (log_size + 1)) << std::endl;
-        // std::cout << os.str();
+        TRACE "GROWING from 2^" << log_size << "=" << stored_size << " to 2^" << (log_size + 1) << "=" << (1 << (log_size + 1));
         CircularArray<T>* a = new CircularArray(log_size + 1);
         for (long i = top_index; i < bottom_index; i++) {
             a->put(i, get(i));
@@ -72,7 +69,6 @@ private:
 
 public:
     void pushBottom(T* new_object) {
-        // std::cout << "pushBottom of " << *o << std::endl;
         long b = bottom.load(std::memory_order_relaxed);
         long t = top.load(std::memory_order_acquire);
         CircularArray<T>* a = activeArray.load(std::memory_order_acquire);
@@ -80,14 +76,12 @@ public:
         if (size >= a->size() - 1) {
             a = a->grow(b, t);
             activeArray.store(a, std::memory_order_release);
-            // std::cout << "growing done !\n";
         }
         a->put(b, new_object);
         bottom.store(b + 1, std::memory_order_release);
     }
 
     T* popBottom() {
-        // std::cout << "popBottom\n";
         // NOTE: relaxed memory orders on bottom is fine because
         // only one thread is changing this value
         // and stealers will be updated when they load with acquire order but only when they need it
@@ -99,7 +93,6 @@ public:
         long size = b - t;
         if (size < 0) {
             bottom.store(t, std::memory_order_relaxed);
-            // std::cout << "pop got empty...\n";
             return Empty;
         }
         T* o = a->get(b);
