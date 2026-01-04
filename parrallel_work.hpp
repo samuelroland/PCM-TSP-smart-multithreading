@@ -370,7 +370,7 @@ private:
     std::vector<std::thread> workers;                         // list with all threads ready to work
     std::vector<std::unique_ptr<CircularWSDeque<Task>>> _wsds;// work stealing deques for each thread
 
-    std::atomic<uint64_t> _remaining_tasks_count;
+    std::atomic<uint64_t> _tasks_done;
 
     void recurse(Task* t, unsigned tid) {
         // 		Task* space[_size];
@@ -383,14 +383,14 @@ private:
         // The path has been cut because it is too long
         if (n < 0) {
             // as n is negative to be marker in the returned value, we need to change it in positive again, thus the -n
-            _remaining_tasks_count.fetch_sub(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[-n + 1], std::memory_order_relaxed);// subtree of task including current one (thus +1)
+            _tasks_done.fetch_add(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[-n + 1], std::memory_order_relaxed);// subtree of task including current one (thus +1)
             t->merge(&coll);
             TSPParraTask::reusefree((TSPParraTask*) t);
             return;// the split has defined we are over the shortest path on this branch so we cut the branch
         }
         // The path need to be explored further, let's continue with given subtasks
         if (n > 0) {
-            _remaining_tasks_count.fetch_sub(1, std::memory_order_relaxed);// current task is done
+            _tasks_done.fetch_add(1, std::memory_order_relaxed);// current task is done
             _splits++;
             // keep the first task selfishly
             Task* next_local = coll.pop();
@@ -412,7 +412,7 @@ private:
             // This also work with a zero cutoff, 0 + 1 = 1, SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[1] = 1
             // We can do this before the solve, to possibly allow threads to stop before we end our last solve()
             long toremove = SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[_cutoff + 1];
-            _remaining_tasks_count.fetch_sub(toremove, std::memory_order_relaxed);
+            _tasks_done.fetch_add(toremove, std::memory_order_relaxed);
 
             _solves++;
             t->solve();
@@ -432,7 +432,7 @@ private:
             // STEALING STRATEGY
             if (t == CircularWSDeque<Task>::Empty) {
                 // TODO: good idea to check that after stealing or before ?
-                if (_remaining_tasks_count == 0) {
+                if (_tasks_done >= SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]) {
                     // std::ostringstream os;
                     // os << "exiting thread " << tid << std::endl;
                     // std::cout << os.str();
@@ -470,10 +470,10 @@ public:
     virtual void run(Task* rootTask) override {
         TaskRunner::startTimer();
 
-        _remaining_tasks_count.store(SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()]);
+        _tasks_done.store(0);
         _wsds.reserve(_nbThreads);// reserve space to avoid reallocation for push_back
         TSPParraTask::_best_results.resize(_nbThreads);
-        // std::cout << "Starting counter with TSPPath::full() = " << TSPPath::full() << "and for _remaining_nodes_to_visit " << _remaining_tasks_count << std::endl;
+        std::cout << "Tasks done " << _tasks_done << " on " << SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()] << "  with TSPPath::full() = " << TSPPath::full() << std::endl;
         // create thread pool, put at the end of the queue
         for (unsigned int i = 0; i < _nbThreads; ++i) {
             _wsds.emplace_back(std::make_unique<CircularWSDeque<Task>>());
@@ -493,7 +493,7 @@ public:
             workers.emplace_back(&ParallelTaskRunner::worker, this, i);// emplace_back, like push_back but create objet in the call
         }
         // wait until all threads finished
-        while (_remaining_tasks_count.load(std::memory_order_relaxed) > 0)
+        while (_tasks_done.load(std::memory_order_relaxed) < SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[TSPPath::full()])
             std::this_thread::yield();
 
         // Joining all worker threads to ensure they have completed their tasks
