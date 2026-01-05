@@ -34,8 +34,6 @@ The goal of this project is to optimize the repartition of work among a large nu
 
 The main ideas were to implement a lock free queue to replace the existing stack. This implementation also required to migrate part of the code to be safe in a multithreaded context. To further optimize the first results, we search for dedicated structures for this kind of problem and found the work-stealing deque, with the paper #quote("Dynamic circular work-stealing deque") @wsdpaper. We measured the speedup and efficiency of the final version. Along the way we measured several combinations of the 3 available parameters: number of cities, number of thread and cutoff.
 
-TODO: résumé des résultats sans chiffres précis
-
 = Data structures
 In this section we present the structure of 2 core datastructures and one secondary structure also used. The first part is developed inside `parrallel_work.hpp`.
 
@@ -59,8 +57,6 @@ After performing the split, the thread that generated the subtasks continues its
 To build this priority system, we use a simple `std::vector`, where we just insertion at the right place and pop at the back. The sort criterion is an estimated cost.
 
 The remaining subtasks are pushed into the thread's work-stealing deque, where they become available to other threads. This approach combines local depth-first exploitation of promising branches with global load balancing, ensuring both efficient exploration and effective parallelism.
-
-// TODO: est-ce quon sest pas gouré de sens de tri, comme on fait des popback ? pas bien capté upper_bound et le tri à vrai dire.
 
 #figure(
 ```cpp
@@ -274,25 +270,21 @@ Along the development of each versions, it was interesting to compare them for a
   image("bench/plots/srv2-baseline-cmp.svg", width: 100%),
   caption: [Performance evolution during the development, on the server],
 )
-TODO clean the graph.
-
 == Speedup results
 
 Note: to avoid measuring ourself like all other groups the same values for `direct`, we took these specific values from Rafael and Gaspard. We made all the other measures ourself.
 
-This speedup graph of the version `final` compared to the `direct` versions on @best is showing us a maximum speedup to 45x for 
+This speedup graph of the version `final` compared to the `direct` versions on @best is showing us a maximum speedup to 45x for 15 cities and 36x for 16 cities. This is strange to see a higher speedup for 15 cities. The effect of the parallelism has worked as our speedup is only growing with more threads until the number of cores.
 
-TODO complete
 #figure(
   image("bench/plots/srv2-speedup-final-vs-start.svg", width: 100%),
-  caption: [TODO 1],
+  caption: [`final` version speedup compared to `direct`],
 ) <best>
 
 
-TODO: which baseline has used the LockFreeQueue ?
-
 == Efficiency
-As discussed in class, we measured the efficiency 
+As discussed in class, we measured the efficiency of the `final` version, on several threads count for cities 15 and 16. We are showing the number of `aborts` (times where a `steal` operation has aborted because of concurrency) and number of `empties` (when `steal` or `popBottom` is returning empty).
+
 #table(
   columns: 6,
   [Cities], [Threads], [Cutoff], [Mean time (s)], [Aborts], [Empties],
@@ -310,11 +302,23 @@ As discussed in class, we measured the efficiency
   [16], [256], [8], [5.85474], [914], [124653],
 )
 
-// TODO efficiency graph kinda... how to it better ?
+We also visualized this table with dedicated plots @somplots. We can observe that the more we have threads, the more we are going to lose time in concurrent operations on the same deques. This is also caused by the fact that threads are stealing on the same place on the current implementation at start of the execution.
+
+Regarding the empties counter, we see that after 200 threads, the counter is growing faster. This means there a lot of empty queues, which means a lot of threads are inactive (not working on tasks). They are inactive and spend time trying to steal tasks on empty queues most of the time.
+
+This show an imbalance starting at 200 threads of work distribution, some threads are more busy with bigger tasks, a lot of others are waiting and working on small tasks that are quickly solved.
+
 #figure(
   image("bench/plots/srv2-abort-and-empties-vs-threads.svg", width: 100%),
-  caption: [TODO 2],
-)
+  caption: [Aborts and empties counters comparison versus threads],
+) <somplots>
+
+It's normal to see the 2 curves to be near, because thread efficiency doesn't depend on the number of tasks (linked to the number of cities), but depends more on the number of threads (because more threads = more deques and more activity).
+
+// garder graphique
+// axe X a rajouter au premier
+// aborts analyse
+
 
 // Le rapport livré contiendra 5 ou 6 pages A4 en PDF, police de taille 12. Des fichiers Word ne seront pas acceptés !
 //
@@ -331,11 +335,7 @@ As discussed in class, we measured the efficiency
 
 = Conclusion
 
-We managed to 
-
-TODO x% au max dans lintro
-
-TODO conclusion résultats: avec comparaisons de baselines, pourcentage code final vs direct. max villes supportées.
+We managed to achieve a maximum of 45X speedup in best cases, between 30x and 40x in average. Our program has still segfaults, but 16 cities are still supported.
 
 We already a few possible improvements for future projects, but here is a brief resume of the priority features
 - Fix the concurrency bugs still present on the work-stealing deque. The help of unit tests could be a good way to fix some issues.

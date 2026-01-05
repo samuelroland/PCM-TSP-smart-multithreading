@@ -10,3 +10,8 @@ bench/bin
 __pycache__
 callgrind.*
 perf.*
+sam-14-256-8-tasks-list.txt
+debug.fish
+watch.fish
+wsd_tests
+docs/report.typ
