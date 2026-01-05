@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 import os
 from bench import load_machine_id, load_versions, results_file
 
@@ -238,9 +239,223 @@ def plot_baselines_cmp(
     return plt
 
 
+import re
+from typing import List, Dict, Optional
+
+
+def parse_benchmark_output(path_str: str) -> List[Dict[str, object]]:
+    """
+    Parse benchmark output and extract successful benchmark results.
+
+    Returns a list of dictionaries with keys:
+    - cities (int)
+    - threads (int)
+    - cutoff (int)
+    - mean (float)
+    - aborts (int)
+    - empties (int)
+    """
+    # Read the benchmark output file
+    path = Path(path_str)
+    text = path.read_text(encoding="utf-8", errors="ignore")
+
+    benchmark_re = re.compile(r"Benchmark\s+\d+:\s+.*\s+(\d+)\s+(\d+)\s+(\d+)")
+    parallel_re = re.compile(r"parallel:.*\bt:([0-9.]+)")
+    counts_re = re.compile(
+        r"with aborts count\s*=\s*(\d+)\s*and empties count\s*=\s*(\d+)"
+    )
+
+    results = []
+    current: Optional[Dict[str, object]] = None
+    waiting_for_parallel = False
+
+    lines = text.splitlines()
+
+    for line in lines:
+        # New benchmark detected
+        m = benchmark_re.search(line)
+        if m:
+            # If we were waiting for a parallel result, discard it (failed run)
+            current = {
+                "cities": int(m.group(1)),
+                "threads": int(m.group(2)),
+                "cutoff": int(m.group(3)),
+            }
+            waiting_for_parallel = True
+            continue
+
+        if not waiting_for_parallel or current is None:
+            continue
+
+        # Look for parallel result
+        m = parallel_re.search(line)
+        if m:
+            current["mean"] = float(m.group(1))
+            continue
+
+        # Look for aborts / empties line
+        m = counts_re.search(line)
+        if m and "mean" in current:
+            current["aborts"] = int(m.group(1))
+            current["empties"] = int(m.group(2))
+
+            # Successful benchmark → store it
+            results.append(current)
+
+            # Reset state
+            current = None
+            waiting_for_parallel = False
+
+    return results
+
+
+def deduplicate_results(results_lists):
+    """
+    Deduplicate benchmark results by (cities, threads, cutoff).
+
+    If the same key appears multiple times, the *last* occurrence wins.
+    """
+
+    dedup = {}
+
+    for results in results_lists:
+        for r in results:
+            key = (r["cities"], r["threads"], r["cutoff"])
+            dedup[key] = r  # overwrite → last one wins
+
+    # Optional: return sorted list
+    return sorted(
+        dedup.values(), key=lambda r: (r["cities"], r["threads"], r["cutoff"])
+    )
+
+
+def plot_abort_empty_ratio(results):
+    """
+    X axis: cities
+    Y axis: (aborts + empties) / threads
+    """
+
+    # Group points by thread count (for colors / legend)
+    by_threads = defaultdict(list)
+
+    for r in results:
+        ratio = (r["aborts"] + r["empties"]) / r["threads"]
+        by_threads[r["threads"]].append((r["cities"], ratio))
+
+    plt.figure(figsize=(10, 6))
+
+    for threads, points in sorted(by_threads.items()):
+        xs = [p[0] for p in points]
+        ys = [p[1] for p in points]
+
+        plt.scatter(xs, ys, label=f"{threads} threads")
+
+        # Label each point with the ratio
+        for x, y in points:
+            plt.annotate(
+                f"{y:.1f}",
+                (x, y),
+                textcoords="offset points",
+                xytext=(5, 5),
+                fontsize=8,
+            )
+
+    plt.xlabel("Number of cities")
+    plt.ylabel("(aborts + empties) / threads")
+    plt.title("Abort + Empty ratio per thread vs cities")
+    plt.legend(title="Threads")
+    plt.grid(True, linestyle="--", alpha=0.4)
+
+    plt.tight_layout()
+    return plt
+
+
+from collections import defaultdict
+
+
+def plot_aborts_and_empties_vs_threads(results):
+    """
+    X axis: threads
+    Y axis: aborts / empties
+    One line per city for aborts
+    One line per city for empties
+    """
+
+    # Structure: city -> {threads -> value}
+    aborts = defaultdict(dict)
+    empties = defaultdict(dict)
+
+    for r in results:
+        city = r["cities"]
+        threads = r["threads"]
+        aborts[city][threads] = r["aborts"]
+        empties[city][threads] = r["empties"]
+
+    cities = sorted(aborts.keys())
+
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
+
+    # --- Aborts subplot ---
+    for city in cities:
+        xs = sorted(aborts[city].keys())
+        ys = [aborts[city][t] for t in xs]
+        ax1.plot(xs, ys, marker="o", label=f"{city} cities")
+
+    ax1.set_ylabel("Aborts count")
+    ax1.set_title("Aborts vs Threads")
+    ax1.grid(True, linestyle="--", alpha=0.4)
+    ax1.legend()
+
+    # --- Empties subplot ---
+    for city in cities:
+        xs = sorted(empties[city].keys())
+        ys = [empties[city][t] for t in xs]
+        ax2.plot(xs, ys, marker="o", label=f"{city} cities")
+
+    ax2.set_xlabel("Threads")
+    ax2.set_ylabel("Empties count")
+    ax2.set_title("Empties vs Threads")
+    ax2.grid(True, linestyle="--", alpha=0.4)
+    ax2.legend()
+
+    plt.tight_layout()
+    return plt
+
+
 # ------
 
 print("Plots generation")
+
+print("Printing txt results parsed")
+# Parse results
+megaresults = [
+    parse_benchmark_output("./bench/results/srv2/txt/hyperfinebythreadsafterfix1.txt"),
+    parse_benchmark_output("./bench/results/srv2/txt/hyperfinebythreadsafterfix2.txt"),
+    parse_benchmark_output("./bench/results/srv2/txt/hyperfinebythreadsafterfix3.txt"),
+]
+results = deduplicate_results(megaresults)
+
+file = "bench/plots/srv2-abort-empty-ratio.svg"
+plot_abort_empty_ratio(results).savefig(file)
+print(f"Generated {file}")
+
+file = "bench/plots/srv2-abort-and-empties-vs-threads.svg"
+plot_aborts_and_empties_vs_threads(results).savefig(file)
+print(f"Generated {file}")
+
+# Print results
+for r in results:
+    print(
+        f"cities={r['cities']}, "
+        f"threads={r['threads']}, "
+        f"cutoff={r['cutoff']}, "
+        f"mean={r['mean']}, "
+        f"aborts={r['aborts']}, "
+        f"empties={r['empties']}"
+    )
+
+exit(2)
+
 file = "bench/plots/srv2-cutoff-analysis.svg"
 plot_cutoff_impact("./bench/results/srv2/base-cutoff-analysis.json").savefig(file)
 print(f"Generated {file}")
@@ -299,7 +514,7 @@ print(f"Generated {file}")
 file = "bench/plots/sam-baseline-cmp.svg"
 xticks = [13, 14, 15, 16]
 yticks = [0.05, 0.1, 0.5, 1, 2, 3]
-plot_baselines_cmp("sam", False, xticks, yticks, 13).savefig(file)
+plot_baselines_cmp("sam", True, xticks, yticks, 13).savefig(file)
 print(f"Generated {file}")
 
 file = "bench/plots/olivia-baseline-cmp.svg"
