@@ -422,7 +422,92 @@ def plot_aborts_and_empties_vs_threads(results):
     return plt
 
 
+def load_start_times(path: Path) -> dict[int, float]:
+    """
+    Load start.json: cities -> mean time
+    """
+    data = json.loads(path.read_text())
+    return {int(k): float(v) for k, v in data.items()}
+
+
+from collections import defaultdict
+
+
+def compute_speedup(results, start_times):
+    """
+    Returns:
+      city -> {threads -> speedup}
+    """
+    by_city = defaultdict(dict)
+
+    for r in results:
+        city = r["cities"]
+        threads = r["threads"]
+
+        if city not in start_times:
+            continue  # ignore cities not in start.json
+
+        speedup = start_times[city] / r["mean"]
+        by_city[city][threads] = speedup
+
+    return by_city
+
+
+def plot_speedup(speedup_by_city, version_name):
+    plt.figure(figsize=(10, 6))
+
+    for city in sorted(speedup_by_city.keys()):
+        xs = sorted(speedup_by_city[city].keys())
+        ys = [speedup_by_city[city][t] for t in xs]
+
+        plt.plot(xs, ys, marker="o", label=f"{city} cities")
+
+        # Optional point labels
+        for x, y in zip(xs, ys):
+            plt.annotate(
+                f"{y:.2f}",
+                (x, y),
+                textcoords="offset points",
+                xytext=(5, 5),
+                fontsize=8,
+            )
+
+    plt.xlabel("Threads")
+    plt.ylabel("Speedup (start / mean)")
+    plt.title(f"Speedup vs Threads — {version_name}")
+    plt.grid(True, linestyle="--", alpha=0.4)
+    plt.legend(title="Cities")
+    plt.tight_layout()
+    return plt
+
+
+def gen_speedup_plot():
+    MACHINE_ID = "srv2"
+    START_JSON = Path("./bench/results/srv2/start.json")
+
+    SELECTED_VERSIONS = {"base", "first-wsd", "final"}
+
+    start_times = load_start_times(START_JSON)
+
+    for name, git_hash, desc in load_versions():
+        if name not in SELECTED_VERSIONS:
+            continue
+
+        path = results_file(MACHINE_ID, name)
+        if not path.exists():
+            continue
+
+        results = load_results(path)
+        speedup = compute_speedup(results, start_times)
+
+        file = f"bench/plots/srv2-speedup-{name}.svg"
+        plot_speedup(speedup, name).savefig(file)
+        print(f"Generated {file}")
+
+
 # ------
+
+gen_speedup_plot()
 
 print("Plots generation")
 
@@ -442,6 +527,7 @@ print(f"Generated {file}")
 file = "bench/plots/srv2-abort-and-empties-vs-threads.svg"
 plot_aborts_and_empties_vs_threads(results).savefig(file)
 print(f"Generated {file}")
+
 
 # Print results
 for r in results:
