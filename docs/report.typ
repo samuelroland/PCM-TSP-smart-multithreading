@@ -9,16 +9,22 @@
     radius: 2pt,
     stroke: 1pt + luma(200)
 )
-#set page(margin: 1.5cm)
 
+#set page(header: none, margin: 1.5cm)
 #set text(font: "Cantarell", size: 12pt)
 
-#text(size: 3em)[Multi-threading optimization for TSP]
+#align(center)[
 
-TODO slide page, page headers
-Authors: Olivia Manz and Samuel Roland
-PCM Course - 2025
-#outline()
+#text(size: 30pt)[Multi-threading optimization for TSP]
+
+#text(size: 18pt)[Using lock-free programming to improve the speed of branch and bound, on the Traveling Salesman Problem.]
+
+#text(size: 14pt)[PCM Course - 2025]
+
+#text(size: 14pt)[Olivia Manz and Samuel Roland]
+]
+
+#outline(title: "Table of contents")
 
 #pagebreak()
 
@@ -39,10 +45,20 @@ In this section we present the structure of 2 core datastructures and one second
 === Stop management
 To manage the exit of threads properly, all threads are checking a global counter to detect the end of the problem. For this, we initialize a global `std::atomic<uint64_t> _tasks_done;` to zero and a constant counter `uint64_t _total_todo_tasks_counter;` to the total amount of tasks to cover. To calculate how much tasks a tree or subtree contains, we precalculated at compile-time the amount of nodes in any tree for 0 to 25 cities in a global constant `SUBTREE_NODES_COUNT_BY_TREE_HEIGHT`. As an example, the tree with 3 cities is composed of 5 nodes (level 0: 1 node, level 1: 2 nodes, level 2: 2 nodes. The sum is $1+2+2=5$.) This allow us to know how many nodes (or tasks) there is for a path with a given number of city. When the cutoff of .i.e 8 is reached, we can cut a substree of all subpath of 8 cities. In this case, it would increment the counter of `SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[8] = 13700` elements with this call `_tasks_done.fetch_add(13700, std::memory_order_relaxed)`. We can simplify the memory ordering constraints from sequential consistency to `relaxed` because this is related to any other variable that would need to be changed in relation.
 
-== PriorityStack
-This is small structure which inherits `TaskCollection`, used in `ParallelTaskRunner`. This is not thread-safe but it is shared between threads. It is given to `Task::split()` to store the sub tasks based on a given task. The priority aspect on this stack is based on a simple idea. If we can pop the city that will give us the shortest path first, we'll reach the end of a good path faster. Then, this would allow us to cut more branches because the shortest distance found at this point is a bit shorter. To build a simple priority queue, we just sorted the insertion and pop at the back, on a simple `std::vector`. The sort criterion is an estimated cost.
+We chose to use a uint64_t type for the global task counter because the number of tasks grows exponentially with the size of the problem. Consequently, the counter must be able to represent very large values without overflowing. Moreover, since this counter is accessed and updated concurrently by multiple threads, it must be declared as atomic. In practice, atomic operations in C++ are only supported on primitive types, which makes `std::atomic<uint64_t>` a natural and efficient choice.
 
-TODO: explain the estimated cost formula.
+In addition, we deliberately chose an incrementing counter rather than a decrementing one to reduce the risk of incorrect termination due to underflow. When using an unsigned type, decrementing below zero causes a wrap-around to a very large value, which may result in the stop condition based on comparisons (e.g. > 0) never satisfied. By contrast, an incrementing counter avoids this class of errors: even if the counter were to exceed the theoretical number of tasks, the termination condition would still eventually be met. Although such an overshoot should not occur in a correct execution, this design choice provides an additional safety margin and helps prevent situations where the program might fail to terminate.
+
+At the end of the problem, only a few remaining threads are working on the last tasks, causing a high amount of threads to try stealing empty queues. To avoid slowing down the end of the execution, we implemented a way for stealers threads to exit if 90% of the tasks have been managed. If they have stolen every available queue without any success and this `QUIT_THRESHOLD = 0.90;` has been reached, they can stop themselves. In addition to this, we stopped checking the `_tasks_done` counter from the main thread, because this is an active wait. Instead, we just relied on calling `join()` on each thread directly, to be in passive wait.
+
+== PriorityStack
+This is small structure which inherits `TaskCollection`, used in `ParallelTaskRunner`. This is not thread-safe but it is not shared between threads. It is given to `Task::split()` to store the sub tasks based on a given task.
+
+After performing the split, the thread that generated the subtasks continues its execution by selecting the next task to process from its local collection. It pops a task from the collection, which yields the subtask with the lowest estimated cost, i.e. the most promising candidate for producing a shorter complete tour. By prioritizing such tasks, the algorithm is more likely to discover a high-quality solution early, which in turn tightens the global shortest-distance bound and enables more aggressive pruning of the search space.
+
+To build this priority system, we use a simple `std::vector`, where we just insertion at the right place and pop at the back. The sort criterion is an estimated cost.
+
+The remaining subtasks are pushed into the thread's work-stealing deque, where they become available to other threads. This approach combines local depth-first exploitation of promising branches with global load balancing, ensuring both efficient exploration and effective parallelism.
 
 // TODO: est-ce quon sest pas gouré de sens de tri, comme on fait des popback ? pas bien capté upper_bound et le tri à vrai dire.
 
@@ -60,7 +76,7 @@ void push(Task* t) override {
 )
 
 == LockFreeQueue
-This is implementation is available in file `LockFreeQueue.hpp`. This implementation is based on the course, in chapter 5, with memory ordering constraints added. It works with 2 pointers `head` and `tail` that are `std::atomic`, they are pointing on dummy nodes at start. They allow to build a simply-linked list to represent this queue, as a chain of `Node`. Instead of using null pointers to inform about the empty state, we return a boolean value (`false` if empty) and return the `result` by changing the pointer's reference.
+This is implementation is available in file `LockFreeQueue.hpp`. This implementation is based on the course, in chapter 5, with memory ordering constraints added. It works with 2 pointers `head` and `tail` that are `std::atomic`, they are pointing on a dummy node at start. They allow to build a simply-linked list to represent this queue, as a chain of `Node`. Instead of using null pointers to inform about the empty state, we return a boolean value (`false` if empty) and return the `result` by changing the pointer's reference.
 
 #figure(
   image("imgs/lockfreequeue-diagram.png", width: 70%),
@@ -74,12 +90,14 @@ One change from the course's definitions, is the fact that we needed to differ t
 //
 // est-ce que tu arrives à justifier la raison stp ?
 
-This queue was first used to store the list of shared tasks in baseline TODO.
+This queue was initially used to store the list of shared tasks before the task stealing mechanism was implemented. It is now used to manage memory reuse for tasks through a dedicated free list (`_free_list`). We will discuss this in detail in the "Memory Model" chapter.
+
+// TODO: mention the baseline in perf
 
 == Work-stealing deque
 This part is developed in `wsd.hpp` and integrated in `parrallel_work.hpp`.
 
-The structure presented in the paper @wsdpaper, is a circular and growable buffer, that is used a double ended queue. One side of the queue (the bottom), each thread will be able to push and pop some tasks. As the other end (the top), some other threads might come to steal some tasks, if their own queue is empty.
+The structure presented in the paper @wsdpaper, is a circular and growable buffer, that is used a double ended queue. On one side of the queue (the bottom), the queue's thread owner will be able to push and pop some tasks. At the other end (the top), other threads may attempt to steal tasks, if their own queue is empty.
 
 As visible in @wsd-basics `CircularArray` is the internal contiguous structure dynamically allocated, that can double its capacity when the buffer is full. It is using 2 indexes `bottom` and `top`, which are monotonic values (they always increment and never decrement). These indexes are used modulo the size of the buffer to avoid overflows and enable this circular style. Tasks are represented here with a number, to identify the portion of the buffer that is considered to be used.
 
@@ -88,7 +106,7 @@ The `CircularArray` class is used by `CircularWSDeque`.
   image("schemas/wsd-basics.png", width: 100%),
   caption: [The abstract view of the 2 structures `CircularArray` and `CircularWSDeque`],
 ) <wsd-basics>
-We are always sure that `top` is lower or equal to `bottom`. `top` is pointing on the top node but `bottom` is pointing on the next cell to be filled by a push on the bottom side. This is leaving an unused cell all the time. The steal on one side `steal()` and the `pushBottom()` and `popBottom()` working on the other side, allow to reduce frequency of threads wanting the work on the same elements. The `pushBottom` and `popBottom` can only be called by the thread owner of the queue. The `steal` method can be called by any thread. The only concurrency problem we have, is when the queue is empty or has one element, the `top` could be changed both from `steal` from other threads and by `popBottom`. This is why this index needs to be protected by a CAS (Compare And Swap).
+We are always sure that `top` is lower or equal to `bottom`. `top` is pointing on the top node but `bottom` is pointing on the next cell to be filled by a push on the bottom side. This is leaving an unused cell all the time. The steal on one side `steal()` and the `pushBottom()` and `popBottom()` is done on the other side. This separation helps to reduce the frequency of steal attempts on the owner's work. The `pushBottom` and `popBottom` can only be called by the thread owner of the queue. The `steal` method can be called by any thread. The only concurrency problem we have, is when the queue is empty or has one element, the `top` could be changed both from `steal` from other threads and by `popBottom`. This is why this index needs to be protected by a CAS (Compare And Swap).
 
 As visible in @fig-wsd-diagram, all attributes that do change are atomic (all of them, except the size and stored_size which are constant). Both classes are generic to make it possible to reuse it with other kind of elements outside of the `Task` interface.
 #figure(
@@ -138,19 +156,11 @@ To fix the previous issue, we need to make sure instructions cannot be reordered
 ```,
   caption: [An extract of the current `pushBottom` code, where `bottom` is `std::atomic` and we use memory ordering mode],
 ) <newcodebottom>
-#figure(
-```cpp
-```,
-  caption: [],
-)
-#figure(
-```cpp
-```,
-  caption: [],
-)
+
 
 === Integration
-As work-stealing deque is useless, how can we integrate it in the rest of the code ? We need one deque per thread and we need to define 2 strategies: how to init the deques and where to steal work ? First, we implemented a basic way to init the deques. The first deque gets the root task, and all threads are going to come steal their first task into this first deque. It will be filled by subtasks of the root task, splitted by the first thread.
+
+Each thread is assigned its own work-stealing deque. To distribute tasks initially and manage stealing, we implemented a simple strategy. The first thread's deque is initialized with the root task. This thread processes the root task and splits it into subtasks, which are added to its deque. Other threads that have no task available at start will come steal tasks from this first deque, to begin their work
 
 #figure(
   image("schemas/wsds-vector.png", width: 90%),
@@ -159,7 +169,8 @@ As work-stealing deque is useless, how can we integrate it in the rest of the co
 
 In `ParallelTaskRunner`, the vector of pointer to the deques (`wsds` in the schema) as defined as `std::vector<std::unique_ptr<CircularWSDeque<Task>>> _wsds;`.
 
-This is clearly not the best way to init the deques, as most threads will need to steal thread 1 at the same time, losing some time at start. We didn't have the chance to try it but we would definitly make sure all threads have at least one starting task, to avoid stealing at start. We only developed one level splitting of the root task, which gained us in a hand-made test 3s from 16s in total. We think that the ideal solution is to split the root task recursively in breadth, until we have enough tasks to cover all threads. We would push this list one by one to a different deques each time to ensure proper repartition. Then, it would make sense to have the first thread to steal to be the next one (by attributed thread id) and not the first thread, to avoid contention.
+*Potential improvements*\
+This is clearly not the best way to init the deques, as most threads will need to steal thread 1 at the same time, losing some time at start. We didn't have the chance to try it but we would definitly make sure all threads have at least one starting task, to avoid stealing at start. We only developed one level splitting of the root task, which reduced the total execution time from 16 seconds to 13 seconds in a hand-made test. We think that the ideal solution is to split the root task recursively in breadth, until we have enough tasks to cover all threads. We would push this list one by one to a different deques each time to ensure proper repartition. Then, it would make sense to have the first thread to steal to be the next one (by attributed thread id) and not the first thread, to avoid contention.
 
 === Memory model
 Our memory management strategy is as following:
@@ -169,12 +180,11 @@ Our memory management strategy is as following:
 
 The `static thread_local LockFreeQueue<Task>* _free_list;` attribute of `TSPParraTask` is used by `reusealloc` and `reusefree`. A shared list (with only `static`, not `thread_local`) had the first advantage of consuming a lower amount of total memory. But it became a central point of contention. This is why we added `thread_local`, so thread has its own list and doesn't wait on other threads. Now that only a single thread is using each list, we could have switched back a non thread-safe stack or queue implementation to avoid CAS operations.
 
-//TODO: bon du coup c'est bete mais jaurai du changer par qqch de pas lock free pour éviter les CAS alors que ya un seul thread... okay la note à ce sujet ?
-
 The work-stealing pointer to the circular buffer `activeArray` is not cleaned up after a `grow()` because other stealers might still reference the old pointer. We knowingly leak this memory by not calling `delete`. The paper describes a way to reuse this memory but this didn't seem to be an issue, especially with the 126GB of the server. The leaked amount of memory is almost linear to the number of threads (considering there are an almost fixed number of reallocations of and no shrinking).
 
 === Crashes
-We had a very hard time debugging and thus we spend a significant amount of time trying to fix numerous kind of crashes (use-after-free, segfault of task pointer, out of range on bitset, pop on empty path...). We still have segfaults or some exceptions throwing for cities >= 15. These issues have significantly slowed us down and made it impossible to measure time for more than 16 cities on the server.
+TODO: explain multiple steals + unit tests evidence
+We had a very hard time debugging and thus we spend a significant amount of time trying to fix numerous kind of crashes (use-after-free, segfault of task pointer, out of range on bitset, pop on empty path...). We still have segfaults or some exceptions throwing for cities >= 15. These issues have significantly slowed us down and made it impossible to measure time for more than 16 cities on the server. By the repetition of the last benchmarks, it seems we were able to fix some of them along the way and we restarted them enough to have some measures to discuss.
 
 #figure(
 ```
@@ -192,7 +202,7 @@ Thread 247 "tsp" received signal SIGSEGV, Segmentation fault.
 
 Some issues are caused by duplication of tasks. A task must be only managed by one thread, and because of issues with the Work-stealing deque implementation, some tasks are stolen or stolen+popBottom twice or even three times. We have discovered that by asking ChatGPT to write GoogleTest for us (see `wsd_tests.cpp`) but we just could figure out how to fix our structures. Some issues might be related to memory ordering again.
 
-By the repetition of the last benchmarks, it seems we were able to fix some of them along the way and we restarted them enough to have some measures to discuss.
+
 
 = Measures
 
@@ -202,7 +212,7 @@ Our program has the following arguments.
 Usage: ./tsp <file.tsp> [nb cities] [nb threads] [cutoff]
 ```
 
-We run most of our benchmarks with `hyperfine`, to make sure small we can take an average of several runs. In practice, this is taking too much time with > 15 cities, so we reduce the maximum of executions count.
+We run most of our benchmarks with `hyperfine`, to make sure small we can take an average of several runs. In practice, this is taking too much time with > 15 cities, so we reduce the maximum of executions count. Hyperfine is chosing itself how much runs to do, but sometimes is to slow to wait for 900 executions, when a lot of different combinations are tested. From 8 cities to 17 and above, we tried to reduce progressively (300 runs for 1-7, 200 runs for 8-9-10-11, 40 runs for 13, 5 runs for 15, 2 runs for 16...). Finally it was too slow, 
 ```sh
 > hyperfine './tsp dj38.tsp 12 50 4'
 Benchmark 1: ./tsp dj38.tsp 12 50 4
@@ -307,5 +317,15 @@ TODO: which baseline has used the LockFreeQueue ?
 
 = Conclusion
 
+TODO
+x% au max dans lintro
+
+conclusion résultats: avec comparaisons de baselines, pourcentage code final vs direct. max villes supportées.
+
+rappel des points principaux d'améliorations: 
+- corriger les bugs des concurrence sur la structure WSD avec les tests unitaires
+- optimiser linit des deques, potentiel important et améliorer la stratégie dordre de vol nexttidtosteal = tid + 1.
+- clean the code, plus particulièrement retirer lockfreequeue pour freeliist et passer à non thread safe.
+ but it is no longer required in the current version of the code.
 
 #bibliography("biblio.bib", style: "ieee")
