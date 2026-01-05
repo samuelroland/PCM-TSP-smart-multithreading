@@ -5,7 +5,6 @@
 /// --------------------------------------------------------
 #include "util.hpp"
 #include <atomic>
-#include <iostream>
 template<typename T>
 class LockFreeQueue {
 private:
