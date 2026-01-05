@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     unsigned int num_threads = std::thread::hardware_concurrency();
     if (argc > 3)
         num_threads = atoi(argv[3]);
-    if (num_threads == 0) num_threads = 4;// fallback
+    if (num_threads == 0) num_threads = 1;// fallback
 
     TSPPath::setup(&graph);
     //
@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
     // std::cout << "direct: " << tsp2.result() << " t:" << r2.duration() << std::endl;
     //
 
-    /*     TSPTask tsp1;
+    /*   TSPTask tsp1;
          tsp1.cutoff(0);
          PartitionedTaskStackRunner r1(TSPPath::MAX_GRAPH);
          r1.run(&tsp1);
@@ -50,9 +50,13 @@ int main(int argc, char** argv) {
     int cutoff = 0;
     if (argc > 4) {
         cutoff = atoi(argv[4]);
-        if (cutoff >= graph.size())
-            cutoff = graph.size() - 1;// nothing above is making sense TODO: okay ?
+        if (cutoff >= graph.size() - 1)
+            cutoff = graph.size() - 2;// nothing above is making sense, because of the first split
         tsp3->cutoff(cutoff);
+    }
+    // Do not use threads if the city count is small, and remove the cutoff
+    if (graph.size() <= 7) {
+        num_threads = 4;
     }
 
     std::cout << "running parallel with " << graph.size() << " cities and " << num_threads << " threads with cutoff = " << cutoff << "\n";
