@@ -4,7 +4,7 @@
 // TODO: correct ?
 //
 // Adaptation
-// 1. To avoid storing tasks directly but pointers to task like in the Java in the paper, we use a T** segment
+// 1. To avoid storing tasks directly but pointers to task like in the Java in the paper, we use a std::atomic<T*>* segment;
 // 2. The casTop() method has been replaced by compare_exchange_strong
 // 3. Added destructor to CircularWSDeque
 //
@@ -138,11 +138,10 @@ public:
 };
 
 template<typename T>
-int CircularWSDeque<T>::LogInitialSize = 5;// TODO: make it bigger or initialize that at the start depending on the size of the problem
+int CircularWSDeque<T>::LogInitialSize = 5;
 
 // This is a hack to avoid sentinel values in a struct, that would add some additionnals byte to allocate
 // This is using special static pointers that are returned to mean Empty or Abort, keeping the 8 bytes size of a pointer
-// TODO: is this okay or should we change it ?
 static long a = 1;
 template<typename T>
 T* CircularWSDeque<T>::Empty = nullptr;

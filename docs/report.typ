@@ -13,9 +13,9 @@
 
 #set text(font: "Cantarell", size: 12pt)
 
-= Multi-threading optimization for TSP
+#text(size: 3em)[Multi-threading optimization for TSP]
 
-TODO slide page
+TODO slide page, page headers
 Authors: Olivia Manz and Samuel Roland
 PCM Course - 2025
 #outline()
@@ -33,12 +33,56 @@ TODO: résumé des résultats sans chiffres précis
 = Data structures
 In this section we present the structure of 2 core datastructures and one secondary structure also used. The first part is developed inside `parrallel_work.hpp`.
 
+// TODO:on parle de ça ou on s'en fout ??
+// #slide(title: "Optimisation 1")[
+//   - Named "Keep first task in your hand" in `recurse()`
+//
+//   #text(size: 0.9em)[
+//   ```diff
+//           if (n > 0) {
+//               _splits++;
+//   -            for (int i = 0; i < n; i++) {
+//   +            // keep the first task selfishly
+//   +            Task* next_local = coll[0];
+//   +            for (int i = 1; i < n; i++) {
+//                   Task* sub = coll[i];
+//                   enqueue(sub);
+//               }
+//               delete t;
+//   +            // continue with local task
+//   +            recurse(next_local);
+//           } else {
+//               _solves++;
+//               t->solve();
+//   ```
+//   ]
+// ]
+//
+// #slide(title: "Optimisation 2")[
+//   - Named "Take first task heuristic"
+//   ```cpp
+//   // actual distance - path already done > probably a better way
+//   estimated_cost = _path.distance() - _path.size();
+//   ```
+// ]
+
 == TSPParraTask
 
 == PriorityStack
 
 == LockFreeQueue
 This is implementation in file `LockFreeQueue.hpp`.
+
+
+  - A small tweak in `split()`:
+    #text(size: 0.9em)[
+    ```cpp
+    if (_path.distance() >= _shortest.distance()) return -1;// the branch must be cut
+    ```
+    ]
+
+
+    -> skip call to `solve()` and directly call `merge()`
 
 == Work-stealing deque
 This part is developed in `wsd.hpp` and integrated in `parrallel_work.hpp`.
@@ -93,7 +137,7 @@ One major challenge of this implementation was the memory ordering which gave us
   caption: [An old code example where `bottom` was not `std::atomic`, inside `pushBottom`],
 ) <oldcodebottom>
 
-To fix the previous issue, we need to make sure instructions cannot be reordered in the wrong way. This is especially the case with lock-free algorithms, where the precise order is giving us very specific coherence or concurrency warranties!
+To fix the previous issue, we need to make sure instructions cannot be reordered in the wrong way. This is especially the case with lock-free algorithms, where the precise order is giving us very specific coherence or concurrency warranties! In the fixed @newcodebottom, we now have an `std::atomic` where we can call `store` with the release order, to make sure no instruction done before the store can be seen by other threads after store effect.
 
 #figure(
 ```cpp
@@ -107,6 +151,81 @@ To fix the previous issue, we need to make sure instructions cannot be reordered
 ```,
   caption: [],
 )
+#figure(
+```cpp
+```,
+  caption: [],
+)
+#figure(
+```cpp
+```,
+  caption: [],
+)
+
+= Measures
+
+Our program has the following arguments.
+```sh
+> ./tsp
+Usage: ./tsp <file.tsp> [nb cities] [nb threads] [cutoff]
+```
+
+We run most of our benchmarks with `hyperfine`, to make sure small we can take an average of several runs. In practice, this is taking too much time with > 15 cities, so we reduce the maximum of executions count.
+```sh
+> hyperfine './tsp dj38.tsp 12 50 4'
+Benchmark 1: ./tsp dj38.tsp 12 50 4
+  Time (mean ± σ):     745.4 ms ±  77.3 ms 
+  Range (min … max):   640.8 ms … 861.4 ms 10 runs
+```
+
+=== Benchmarking system
+  #text(size: 0.9em)[
+```console
+> uv run bench.py init
+Machine ID not found, please enter an ID for your machine: srv2
+Saved 'srv2' as Machine ID.
+No configuration found. Let's set it up.
+
+Enter cities counters (like 5,10,15): 5,10,13
+Enter threads counters: 256
+Enter cutoff values: 0,1,2,3,4,5,6,7,8,9,10,11,12,13
+
+Configuration saved to bench/configs/srv2.json
+```
+
+This is an example of the configuration file generated.
+```json
+{
+    "machine_id": "srv2",
+    "cities": [ 5, 10, 13 ],
+    "threads": [ 256 ],
+    "cutoff": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ]
+}
+```
+]
+
+Our system `bench.py` allowed us to compare different versions of our program and compare between execution with the previous results. More features are described in `bench/README.md` if needed.
+
+#figure(
+  image("bench/plots/srv2-cutoff-analysis.svg", width: 100%),
+  caption: [Cutoff analysis - 256 threads - on server],
+)
+
+
+#figure(
+  image("bench/plots/srv2-threads-analysis-cutoff-optimal.svg", width: 100%),
+  caption: [Threads analysis with optimal cutoff at 8 - on server],
+)
+
+After this first analysis, we decided the best default cutoff was *8 and* the numbers of threads to continue was *30*. We also continued to measure with *256* as the goal was to have this number of threads to be optimal.
+
+TODO
+
+#figure(
+  image("bench/plots/srv2-baseline-cmp.svg", width: 100%),
+  caption: [Optimisations results - on server],
+)
+
 = Baseline
 
 = Optimizations
