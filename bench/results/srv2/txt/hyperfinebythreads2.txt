@@ -1,0 +1,1390 @@
+skipping build
+Executing benchmarks on current code
+
+Benchmark 1: ./tsp dj38.tsp 10 10 8
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00834864 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00787303 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00801399 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00763847 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0077616 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00807256 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00775741 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00783426 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00762487 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00789176 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00793099 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00783391 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00817409 s:9/0
+with aborts count = 0 and empties count = 132
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00796701 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.007969 s:9/0
+with aborts count = 0 and empties count = 143
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00770915 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00821358 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00763305 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00774222 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00776837 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00797053 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00762099 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0079102 s:9/0
+with aborts count = 0 and empties count = 814
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00781382 s:9/0
+with aborts count = 0 and empties count = 132
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00801013 s:9/0
+with aborts count = 0 and empties count = 1122
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00802752 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00776357 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00792411 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00800418 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00814798 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00790004 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00793946 s:9/0
+with aborts count = 0 and empties count = 143
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00806555 s:9/0
+with aborts count = 0 and empties count = 154
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00760103 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00785117 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00810711 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00769789 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00828688 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00760263 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0075998 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00806566 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00800227 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00773171 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00776551 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00792729 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0080029 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00768825 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00802933 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00757709 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00775451 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00780657 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00772986 s:9/0
+with aborts count = 0 and empties count = 462
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00791313 s:9/0
+with aborts count = 0 and empties count = 715
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00804096 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00843716 s:9/0
+with aborts count = 0 and empties count = 550
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00759608 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00825945 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00795712 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00830545 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00795332 s:9/0
+with aborts count = 0 and empties count = 407
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00781178 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00806766 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00770937 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00776183 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00771184 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00820703 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0078956 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00831702 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00805973 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00802719 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00781308 s:9/0
+with aborts count = 0 and empties count = 253
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00794823 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0080281 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00837143 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00830552 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00803491 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00860696 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00853073 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00775361 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00778133 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00991125 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0101958 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.008383 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00776868 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00870962 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00905061 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00804084 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00857866 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0082021 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00891366 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0100703 s:9/0
+with aborts count = 0 and empties count = 638
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00843708 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00861926 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00784557 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00848147 s:9/0
+with aborts count = 0 and empties count = 1166
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00888355 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00812579 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00824796 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00889937 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00802304 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00778457 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00816543 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00832769 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00799377 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00862316 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00794496 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00904222 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00828647 s:9/0
+with aborts count = 0 and empties count = 539
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00850052 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00822875 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00855576 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00898841 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00768536 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00919362 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00803844 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00839618 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0080917 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00764178 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0078972 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00818658 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00789946 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0077955 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00803408 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0084815 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00832995 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00792339 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00808682 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00994874 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00795861 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00809894 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00774104 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00845859 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00979952 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00869576 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00841314 s:9/0
+with aborts count = 0 and empties count = 814
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00933812 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00804598 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00776835 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00790177 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0090925 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00807294 s:9/0
+with aborts count = 0 and empties count = 638
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00786528 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00780957 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00844102 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00809136 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00863653 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00842434 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00879298 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00798431 s:9/0
+with aborts count = 0 and empties count = 143
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00840477 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00797781 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00869944 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00797004 s:9/0
+with aborts count = 0 and empties count = 341
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0080383 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00806191 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00784792 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00917343 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00884918 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00771992 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00767153 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00768205 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00770252 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00793734 s:9/0
+with aborts count = 0 and empties count = 803
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00789132 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00824126 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00774678 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00756549 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00779052 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00873056 s:9/0
+with aborts count = 0 and empties count = 132
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00958969 s:9/0
+with aborts count = 0 and empties count = 715
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00769841 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00777638 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00854 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00832905 s:9/0
+with aborts count = 0 and empties count = 121
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0101977 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00861371 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00800455 s:9/0
+with aborts count = 0 and empties count = 462
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00767272 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0104727 s:9/0
+with aborts count = 0 and empties count = 550
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00895384 s:9/0
+with aborts count = 0 and empties count = 550
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00797571 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00813447 s:9/0
+with aborts count = 0 and empties count = 110
+running parallel with 10 cities and 10 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.00856346 s:9/0
+with aborts count = 0 and empties count = 110
+  Time (mean ± σ):      16.8 ms ±   1.3 ms    [User: 36.3 ms, System: 12.5 ms]
+  Range (min … max):    15.5 ms …  20.5 ms    183 runs
+ 
+10 cities with 10 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 10 50 8
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0185874 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0181304 s:9/0
+with aborts count = 0 and empties count = 3213
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0169046 s:9/0
+with aborts count = 0 and empties count = 2856
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0175159 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0162688 s:9/0
+with aborts count = 0 and empties count = 3264
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0167413 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0173134 s:9/0
+with aborts count = 0 and empties count = 2754
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0163673 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0167232 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0170929 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.017162 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0168276 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0166644 s:9/0
+with aborts count = 0 and empties count = 3060
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0165779 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.01665 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0173168 s:9/0
+with aborts count = 0 and empties count = 3876
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0163042 s:9/0
+with aborts count = 0 and empties count = 2805
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0169158 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0165124 s:9/0
+with aborts count = 0 and empties count = 4692
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0170204 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0172694 s:9/0
+with aborts count = 0 and empties count = 3009
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0172766 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0169419 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0180846 s:9/0
+with aborts count = 0 and empties count = 3213
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0164817 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0168572 s:9/0
+with aborts count = 0 and empties count = 2907
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0170843 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0160032 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0168517 s:9/0
+with aborts count = 0 and empties count = 2754
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0166823 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0167651 s:9/0
+with aborts count = 0 and empties count = 2652
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.016783 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.016941 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0174855 s:9/0
+with aborts count = 0 and empties count = 2703
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0168196 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0167053 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0171892 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0173254 s:9/0
+with aborts count = 0 and empties count = 3876
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0161706 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0173045 s:9/0
+with aborts count = 0 and empties count = 3417
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0168214 s:9/0
+with aborts count = 0 and empties count = 2805
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0167792 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0179082 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0170962 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0165633 s:9/0
+with aborts count = 0 and empties count = 2703
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0168417 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0166322 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0163448 s:9/0
+with aborts count = 0 and empties count = 2754
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0169132 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.016273 s:9/0
+with aborts count = 0 and empties count = 3111
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0166416 s:9/0
+with aborts count = 0 and empties count = 2805
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0170075 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0168095 s:9/0
+with aborts count = 0 and empties count = 3111
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0174653 s:9/0
+with aborts count = 0 and empties count = 4131
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0179451 s:9/0
+with aborts count = 0 and empties count = 2856
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0172592 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0168592 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0169826 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0176739 s:9/0
+with aborts count = 0 and empties count = 3774
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0178595 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.016479 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0166931 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.016418 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0174737 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0175129 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0174734 s:9/0
+with aborts count = 0 and empties count = 3519
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0167649 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0165884 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0172229 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0170373 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0172745 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.017236 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0177291 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0169074 s:9/0
+with aborts count = 0 and empties count = 5967
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0173133 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0175246 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0181479 s:9/0
+with aborts count = 0 and empties count = 3570
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0168537 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0163737 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0168943 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0172367 s:9/0
+with aborts count = 0 and empties count = 2805
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0169821 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0171925 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0171323 s:9/0
+with aborts count = 0 and empties count = 2856
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0175882 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.017363 s:9/0
+with aborts count = 0 and empties count = 2754
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0170085 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0179225 s:9/0
+with aborts count = 0 and empties count = 3825
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0176666 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0174254 s:9/0
+with aborts count = 0 and empties count = 2907
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0162527 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0169181 s:9/0
+with aborts count = 0 and empties count = 3060
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0176463 s:9/0
+with aborts count = 0 and empties count = 4233
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0169421 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0173228 s:9/0
+with aborts count = 0 and empties count = 5610
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0168061 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0170796 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0166632 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0170375 s:9/0
+with aborts count = 0 and empties count = 4131
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.017402 s:9/0
+with aborts count = 0 and empties count = 2550
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0167477 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0178719 s:9/0
+with aborts count = 0 and empties count = 3825
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0170782 s:9/0
+with aborts count = 0 and empties count = 2703
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0171372 s:9/0
+with aborts count = 0 and empties count = 2601
+running parallel with 10 cities and 50 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0173784 s:9/0
+with aborts count = 0 and empties count = 2550
+  Time (mean ± σ):      25.8 ms ±   1.0 ms    [User: 38.8 ms, System: 31.8 ms]
+  Range (min … max):    24.3 ms …  28.6 ms    105 runs
+ 
+16.80 ms    
+10 cities with 50 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 10 100 8
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0326769 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0330541 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0329262 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0325782 s:9/0
+with aborts count = 0 and empties count = 11817
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0336136 s:9/0
+with aborts count = 0 and empties count = 10605
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0340649 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.032659 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0324873 s:9/0
+with aborts count = 0 and empties count = 10302
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0335316 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.033836 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0339032 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.032426 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0332875 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0328865 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.032831 s:9/0
+with aborts count = 0 and empties count = 10504
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0341147 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0340789 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0337045 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.033145 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0333583 s:9/0
+with aborts count = 0 and empties count = 11514
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0332683 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0356616 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0333427 s:9/0
+with aborts count = 0 and empties count = 10403
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0343177 s:9/0
+with aborts count = 0 and empties count = 10807
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0347508 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0339036 s:9/0
+with aborts count = 0 and empties count = 10605
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0345089 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0335547 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0333818 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.033414 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0332332 s:9/0
+with aborts count = 0 and empties count = 10302
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0329577 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0329991 s:9/0
+with aborts count = 0 and empties count = 11413
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.03268 s:9/0
+with aborts count = 0 and empties count = 10302
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0323286 s:9/0
+with aborts count = 0 and empties count = 14039
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0328406 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0332684 s:9/0
+with aborts count = 0 and empties count = 10706
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.032485 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0329729 s:9/0
+with aborts count = 0 and empties count = 11110
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0338883 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0325343 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0332529 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0326068 s:9/0
+with aborts count = 0 and empties count = 10302
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0327642 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0323257 s:9/0
+with aborts count = 0 and empties count = 12827
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0324276 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0319187 s:9/0
+with aborts count = 0 and empties count = 11918
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0320115 s:9/0
+with aborts count = 0 and empties count = 10302
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0332292 s:9/0
+with aborts count = 0 and empties count = 10706
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0335546 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0334152 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0321096 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0332846 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.034367 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0339674 s:9/0
+with aborts count = 0 and empties count = 10504
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0332719 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0326153 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0323694 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0330931 s:9/0
+with aborts count = 0 and empties count = 11009
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0331793 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0333604 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0344961 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0339033 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.034655 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0331534 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0338749 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0333711 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0323388 s:9/0
+with aborts count = 0 and empties count = 10201
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.033165 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0328387 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0332974 s:9/0
+with aborts count = 0 and empties count = 10100
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.033302 s:9/0
+with aborts count = 0 and empties count = 10605
+running parallel with 10 cities and 100 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0329747 s:9/0
+with aborts count = 0 and empties count = 10201
+  Time (mean ± σ):      42.3 ms ±   1.4 ms    [User: 45.0 ms, System: 55.8 ms]
+  Range (min … max):    40.1 ms …  49.7 ms    73 runs
+ 
+25.80 ms    
+10 cities with 100 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 10 200 8
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0659475 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0678645 s:9/0
+with aborts count = 0 and empties count = 41004
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0659371 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0668452 s:9/0
+with aborts count = 0 and empties count = 40401
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0682688 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0663056 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0671075 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0640874 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0666587 s:9/0
+with aborts count = 0 and empties count = 40803
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0658771 s:9/0
+with aborts count = 0 and empties count = 40602
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0668284 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.069024 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.066533 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0656723 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0681828 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0699564 s:9/0
+with aborts count = 0 and empties count = 40401
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0640881 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0653808 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0678231 s:9/0
+with aborts count = 0 and empties count = 40401
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0676169 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.066754 s:9/0
+with aborts count = 0 and empties count = 40803
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0658093 s:9/0
+with aborts count = 0 and empties count = 41607
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0669292 s:9/0
+with aborts count = 0 and empties count = 40401
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0675774 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0685406 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0669952 s:9/0
+with aborts count = 0 and empties count = 40401
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0665341 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0684991 s:9/0
+with aborts count = 0 and empties count = 42612
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0663744 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0665583 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0682773 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0650353 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0679282 s:9/0
+with aborts count = 0 and empties count = 42009
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0680804 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0662486 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0673196 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0693349 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0656953 s:9/0
+with aborts count = 0 and empties count = 40200
+running parallel with 10 cities and 200 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0681323 s:9/0
+with aborts count = 0 and empties count = 42210
+  Time (mean ± σ):      76.3 ms ±   1.6 ms    [User: 51.4 ms, System: 107.8 ms]
+  Range (min … max):    72.3 ms …  79.1 ms    39 runs
+ 
+42.26 ms    
+10 cities with 200 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 10 256 8
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0861245 s:9/0
+with aborts count = 0 and empties count = 68876
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0873486 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0842445 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0882105 s:9/0
+with aborts count = 0 and empties count = 66049
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0861613 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0867461 s:9/0
+with aborts count = 0 and empties count = 66049
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0836171 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0856889 s:9/0
+with aborts count = 0 and empties count = 67077
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0845309 s:9/0
+with aborts count = 0 and empties count = 66049
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0866452 s:9/0
+with aborts count = 0 and empties count = 66820
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0931951 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0870059 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0883196 s:9/0
+with aborts count = 0 and empties count = 65800
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0844615 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0863163 s:9/0
+with aborts count = 0 and empties count = 66049
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0866022 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0830548 s:9/0
+with aborts count = 0 and empties count = 66306
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0859814 s:9/0
+with aborts count = 0 and empties count = 66563
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0857253 s:9/0
+with aborts count = 0 and empties count = 66049
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0857372 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0876769 s:9/0
+with aborts count = 0 and empties count = 66049
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0929787 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0865756 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0946244 s:9/0
+with aborts count = 0 and empties count = 66049
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0851212 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0846687 s:9/0
+with aborts count = 0 and empties count = 66049
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.085656 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.085265 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0903848 s:9/0
+with aborts count = 0 and empties count = 65792
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.08783 s:9/0
+with aborts count = 0 and empties count = 66049
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0844048 s:9/0
+with aborts count = 0 and empties count = 65792
+  Time (mean ± σ):      95.8 ms ±   2.9 ms    [User: 58.9 ms, System: 136.3 ms]
+  Range (min … max):    91.5 ms … 103.4 ms    31 runs
+ 
+76.26 ms    
+10 cities with 256 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 13 10 8
+running parallel with 13 cities and 10 threads with cutoff = 8
+parallel: {3125: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 12, 9, 0} t:0.475555 s:11736/1448
+with aborts count = 0 and empties count = 226
+  Time (abs ≡):        486.0 ms               [User: 4729.2 ms, System: 14.0 ms]
+ 
+95.82 ms    
+13 cities with 10 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 13 50 8
+running parallel with 13 cities and 50 threads with cutoff = 8
+parallel: {3125: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 12, 9, 0} t:0.138877 s:11880/1464
+with aborts count = 1 and empties count = 5004
+  Time (abs ≡):        150.1 ms               [User: 6211.6 ms, System: 43.0 ms]
+ 
+486.02 ms    
+13 cities with 50 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 13 100 8
+running parallel with 13 cities and 100 threads with cutoff = 8
+parallel: {3125: 0, 9, 12, 11, 10, 8, 7, 6, 5, 4, 2, 3, 1, 0} t:0.104632 s:11880/1464
+with aborts count = 1 and empties count = 17699
+  Time (abs ≡):        114.4 ms               [User: 8038.5 ms, System: 78.0 ms]
+ 
+150.13 ms    
+13 cities with 100 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 13 200 8
+running parallel with 13 cities and 200 threads with cutoff = 8
+parallel: {3125: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 12, 9, 0} t:0.105542 s:11880/1464
+with aborts count = 15 and empties count = 59131
+  Time (abs ≡):        116.9 ms               [User: 10599.1 ms, System: 209.6 ms]
+ 
+114.37 ms    
+13 cities with 200 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 13 256 8
+running parallel with 13 cities and 256 threads with cutoff = 8
+parallel: {3125: 0, 9, 12, 11, 10, 8, 7, 6, 5, 4, 2, 3, 1, 0} t:0.117303 s:11880/1464
+with aborts count = 10 and empties count = 89351
+  Time (abs ≡):        129.1 ms               [User: 10342.6 ms, System: 346.9 ms]
+ 
+116.90 ms    
+13 cities with 256 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 15 10 8
+running parallel with 15 cities and 10 threads with cutoff = 8
+[progress] 15.7102% done
+[progress] 87.8118% done
+parallel: {3171: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 12, 14, 13, 9, 0} t:5.48185 s:1667826/210080
+with aborts count = 3 and empties count = 278
+  Time (abs ≡):         5.507 s               [User: 54.468 s, System: 0.348 s]
+ 
+129.15 ms    -6% since 'final' (137.54 ms)
+15 cities with 10 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 15 50 8
+running parallel with 15 cities and 50 threads with cutoff = 8
+[progress] 78.1578% done
+[progress] 82.012% done

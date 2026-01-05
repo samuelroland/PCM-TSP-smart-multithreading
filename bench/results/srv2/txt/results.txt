@@ -1,0 +1,537 @@
+./tsp dj38.tsp 1 256 8
+./tsp dj38.tsp 2 256 8
+./tsp dj38.tsp 3 256 8
+./tsp dj38.tsp 4 256 8
+running parallel with 4 cities and 4 threads with cutoff = 2
+parallel: {1602: 0, 2, 3, 1, 0} t:0.0018398 s:3/0
+with aborts count = 0 and empties count = 22
+./tsp dj38.tsp 5 256 8
+running parallel with 5 cities and 4 threads with cutoff = 3
+parallel: {1719: 0, 1, 3, 4, 2, 0} t:0.00174355 s:4/0
+with aborts count = 0 and empties count = 513
+./tsp dj38.tsp 6 256 8
+running parallel with 6 cities and 4 threads with cutoff = 4
+parallel: {1818: 0, 1, 5, 4, 2, 3, 0} t:0.00181543 s:5/0
+with aborts count = 0 and empties count = 23
+./tsp dj38.tsp 7 256 8
+running parallel with 7 cities and 4 threads with cutoff = 5
+parallel: {1883: 0, 3, 2, 4, 6, 5, 1, 0} t:0.00193264 s:6/0
+with aborts count = 0 and empties count = 113
+./tsp dj38.tsp 8 256 8
+./tsp dj38.tsp 9 256 8
+running parallel with 9 cities and 256 threads with cutoff = 7
+parallel: {2134: 0, 3, 2, 4, 6, 8, 7, 5, 1, 0} t:0.0833706 s:8/0
+with aborts count = 0 and empties count = 65810
+./tsp dj38.tsp 10 256 8
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0840157 s:9/0
+with aborts count = 0 and empties count = 66049
+./tsp dj38.tsp 1 256 8
+./tsp dj38.tsp 2 256 8
+./tsp dj38.tsp 3 256 8
+./tsp dj38.tsp 4 256 8
+running parallel with 4 cities and 4 threads with cutoff = 2
+parallel: {1602: 0, 1, 3, 2, 0} t:0.00179745 s:3/0
+with aborts count = 0 and empties count = 760
+./tsp dj38.tsp 5 256 8
+running parallel with 5 cities and 4 threads with cutoff = 3
+parallel: {1719: 0, 1, 3, 4, 2, 0} t:0.00187082 s:4/0
+with aborts count = 0 and empties count = 563
+./tsp dj38.tsp 6 256 8
+running parallel with 6 cities and 4 threads with cutoff = 4
+parallel: {1818: 0, 1, 5, 4, 2, 3, 0} t:0.00202245 s:5/0
+with aborts count = 0 and empties count = 23
+./tsp dj38.tsp 7 256 8
+running parallel with 7 cities and 4 threads with cutoff = 5
+parallel: {1883: 0, 3, 2, 4, 6, 5, 1, 0} t:0.0020321 s:6/0
+with aborts count = 0 and empties count = 338
+./tsp dj38.tsp 8 256 8
+running parallel with 8 cities and 256 threads with cutoff = 6
+parallel: {2101: 0, 3, 2, 4, 6, 7, 5, 1, 0} t:0.0835072 s:7/0
+with aborts count = 0 and empties count = 65803
+./tsp dj38.tsp 9 256 8
+running parallel with 9 cities and 256 threads with cutoff = 7
+parallel: {2134: 0, 3, 2, 4, 6, 8, 7, 5, 1, 0} t:0.0835115 s:8/0
+with aborts count = 0 and empties count = 66067
+./tsp dj38.tsp 10 256 8
+running parallel with 10 cities and 256 threads with cutoff = 8
+parallel: {2577: 0, 1, 3, 2, 4, 6, 8, 7, 5, 9, 0} t:0.0838637 s:9/0
+with aborts count = 0 and empties count = 66049
+./tsp dj38.tsp 11 256 8
+running parallel with 11 cities and 256 threads with cutoff = 8
+parallel: {3014: 0, 1, 3, 2, 4, 10, 8, 7, 6, 5, 9, 0} t:0.0860574 s:90/10
+with aborts count = 0 and empties count = 65979
+./tsp dj38.tsp 12 256 8
+running parallel with 12 cities and 256 threads with cutoff = 8
+parallel: {3026: 0, 9, 5, 6, 7, 8, 11, 10, 4, 2, 3, 1, 0} t:0.0901196 s:990/121
+with aborts count = 0 and empties count = 67611
+./tsp dj38.tsp 13 256 8
+running parallel with 13 cities and 256 threads with cutoff = 8
+parallel: {3125: 0, 9, 12, 11, 10, 8, 7, 6, 5, 4, 2, 3, 1, 0} t:0.12771 s:11880/1464
+with aborts count = 5 and empties count = 84557
+./tsp dj38.tsp 14 256 8
+running parallel with 14 cities and 256 threads with cutoff = 8
+parallel: {3161: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 12, 13, 9, 0} t:0.214284 s:152398/18818
+with aborts count = 62 and empties count = 42520
+./tsp dj38.tsp 15 256 8
+running parallel with 15 cities and 256 threads with cutoff = 8
+[progress] 3.11332% done
+[progress] 12.5622% done
+[progress] 61.1142% done
+[progress] 71.7538% done
+[progress] 79.1005% done
+[progress] 96.5% done
+parallel: {3171: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 12, 14, 13, 9, 0} t:1.06479 s:1940541/241798
+with aborts count = 286 and empties count = 120303
+./tsp dj38.tsp 11 256 8
+running parallel with 11 cities and 256 threads with cutoff = 8
+parallel: {3014: 0, 1, 3, 2, 4, 10, 8, 7, 6, 5, 9, 0} t:0.0851482 s:90/10
+with aborts count = 0 and empties count = 65968
+./tsp dj38.tsp 12 256 8
+running parallel with 12 cities and 256 threads with cutoff = 8
+parallel: {3026: 0, 9, 5, 6, 7, 8, 11, 10, 4, 2, 3, 1, 0} t:0.0900429 s:990/121
+with aborts count = 1 and empties count = 67808
+./tsp dj38.tsp 13 256 8
+running parallel with 13 cities and 256 threads with cutoff = 8
+parallel: {3125: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 12, 9, 0} t:0.129948 s:11880/1464
+with aborts count = 8 and empties count = 88399
+./tsp dj38.tsp 14 256 8
+running parallel with 14 cities and 256 threads with cutoff = 8
+parallel: {3161: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 12, 13, 9, 0} t:0.21534 s:152208/18797
+with aborts count = 137 and empties count = 114244
+./tsp dj38.tsp 15 256 8
+running parallel with 15 cities and 256 threads with cutoff = 8
+parallel: {3171: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 12, 14, 13, 9, 0} t:1.07443 s:1945906/242398
+with aborts count = 207 and empties count = 132388
+./tsp dj38.tsp 16 256 8
+running parallel with 16 cities and 256 threads with cutoff = 8
+[progress] 1.65826% done
+[progress] 2.08859% done
+[progress] 3.40617% done
+[progress] 5.26177% done
+[progress] 13.7311% done
+[progress] 17.4818% done
+[progress] 19.7786% done
+[progress] 20.2771% done
+[progress] 25.7953% done
+[progress] 28.0483% done
+[progress] 29.4778% done
+[progress] 30.5164% done
+[progress] 31.1159% done
+[progress] 33.1998% done
+[progress] 35.534% done
+[progress] 37.7563% done
+[progress] 38.7159% done
+[progress] 39.4252% done
+[progress] 39.8073% done
+[progress] 45.2573% done
+[progress] 46.88% done
+[progress] 47.4642% done
+[progress] 49.3768% done
+[progress] 49.783% done
+[progress] 51.7417% done
+[progress] 51.8669% done
+[progress] 55.7514% done
+[progress] 55.8063% done
+[progress] 57.1085% done
+[progress] 61.8712% done
+[progress] 65.9379% done
+[progress] 72.2182% done
+[progress] 76.3465% done
+[progress] 78.516% done
+[progress] 79.491% done
+[progress] 90.6878% done
+parallel: {3226: 0, 9, 13, 14, 12, 15, 11, 10, 8, 7, 6, 5, 4, 2, 3, 1, 0} t:6.05288 s:22977772/2915191
+with aborts count = 580 and empties count = 122044
+./tsp dj38.tsp 16 256 8
+running parallel with 16 cities and 256 threads with cutoff = 8
+[progress] 6.59892% done
+[progress] 11.2959% done
+[progress] 16.2191% done
+[progress] 18.0219% done
+[progress] 18.5928% done
+[progress] 20.7843% done
+[progress] 24.0694% done
+[progress] 27.9714% done
+[progress] 29.3219% done
+[progress] 31.1005% done
+[progress] 32.1766% done
+[progress] 36.8977% done
+[progress] 40.3079% done
+[progress] 45.4506% done
+[progress] 51.0457% done
+[progress] 56.0807% done
+[progress] 57.9758% done
+[progress] 58.7554% done
+[progress] 59.0826% done
+[progress] 66.3092% done
+[progress] 68.7532% done
+[progress] 68.887% done
+[progress] 70.4088% done
+[progress] 71.6956% done
+[progress] 73.7092% done
+[progress] 77.5805% done
+[progress] 81.8251% done
+./tsp dj38.tsp 16 256 8
+running parallel with 16 cities and 256 threads with cutoff = 8
+[progress] 2.94052% done
+[progress] 3.45441% done
+[progress] 4.28013% done
+./tsp dj38.tsp 16 256 8
+running parallel with 16 cities and 256 threads with cutoff = 8
+[progress] 0.386817% done
+[progress] 0.887415% done
+[progress] 8.79046% done
+[progress] 8.86073% done
+[progress] 13.4106% done
+[progress] 21.8845% done
+[progress] 26.7769% done
+[progress] 28.6325% done
+[progress] 29.3526% done
+[progress] 29.6798% done
+[progress] 35.04% done
+[progress] 35.2816% done
+[progress] 39.0057% done
+[progress] 50.9688% done
+[progress] 51.6802% done
+[progress] 56.1202% done
+[progress] 57.0798% done
+[progress] 59.0078% done
+[progress] 61.9656% done
+[progress] 67.4904% done
+[progress] 72.1326% done
+[progress] 74.7391% done
+[progress] 80.9599% done
+[progress] 81.9503% done
+[progress] 84.368% done
+[progress] 85.3276% done
+[progress] 86.0677% done
+[progress] 89.4255% done
+[progress] 91.1426% done
+[progress] 93.9645% done
+[progress] 95.9124% done
+./tsp dj38.tsp 1 256 8
+./tsp dj38.tsp 2 256 8
+./tsp dj38.tsp 3 256 8
+./tsp dj38.tsp 4 256 8
+running parallel with 4 cities and 4 threads with cutoff = 2
+parallel: {1602: 0, 1, 3, 2, 0} t:0.00182379 s:3/0
+with aborts count = 0 and empties count = 762
+./tsp dj38.tsp 5 256 8
+running parallel with 5 cities and 4 threads with cutoff = 3
+parallel: {1719: 0, 2, 4, 3, 1, 0} t:0.00164214 s:4/0
+with aborts count = 0 and empties count = 23
+./tsp dj38.tsp 6 256 8
+running parallel with 6 cities and 4 threads with cutoff = 4
+parallel: {1818: 0, 1, 5, 4, 2, 3, 0} t:0.00183276 s:5/0
+with aborts count = 0 and empties count = 410
+./tsp dj38.tsp 7 256 8
+running parallel with 7 cities and 4 threads with cutoff = 5
+parallel: {1883: 0, 3, 2, 4, 6, 5, 1, 0} t:0.00166646 s:6/0
+with aborts count = 0 and empties count = 748
+./tsp dj38.tsp 8 256 8
+./tsp dj38.tsp 9 256 8
+running parallel with 9 cities and 256 threads with cutoff = 7
+parallel: {2134: 0, 3, 2, 4, 6, 8, 7, 5, 1, 0} t:0.0844428 s:8/0
+with aborts count = 0 and empties count = 65810
+./tsp dj38.tsp 10 256 8
+./tsp dj38.tsp 11 256 8
+./tsp dj38.tsp 12 256 8
+running parallel with 12 cities and 256 threads with cutoff = 8
+parallel: {3026: 0, 9, 5, 6, 7, 8, 11, 10, 4, 2, 3, 1, 0} t:0.0900309 s:990/121
+with aborts count = 0 and empties count = 68655
+./tsp dj38.tsp 17 256 8
+running parallel with 17 cities and 256 threads with cutoff = 8
+[progress] 0.0790594% done
+[progress] 0.120768% done
+[progress] 0.313869% done
+[progress] 0.505879% done
+[progress] 1.32397% done
+[progress] 1.42745% done
+[progress] 1.46889% done
+[progress] 1.8986% done
+[progress] 3.36379% done
+[progress] 4.75282% done
+[progress] 4.81581% done
+[progress] 5.80093% done
+[progress] 6.00433% done
+[progress] 6.23846% done
+[progress] 6.68368% done
+[progress] 6.9012% done
+[progress] 7.33434% done
+[progress] 7.59867% done
+[progress] 8.0845% done
+[progress] 8.12499% done
+[progress] 9.23267% done
+[progress] 9.9676% done
+[progress] 10.2539% done
+[progress] 10.849% done
+[progress] 10.9504% done
+[progress] 10.9601% done
+[progress] 11.2991% done
+[progress] 11.3542% done
+[progress] 11.7552% done
+[progress] 11.8195% done
+[progress] 12.0141% done
+[progress] 12.9945% done
+[progress] 13.1627% done
+[progress] 13.6363% done
+[progress] 13.6652% done
+[progress] 13.6696% done
+[progress] 13.7402% done
+[progress] 14.0173% done
+[progress] 14.2797% done
+[progress] 15.601% done
+[progress] 16.3201% done
+[progress] 17.521% done
+[progress] 17.601% done
+[progress] 18.8764% done
+[progress] 18.8915% done
+[progress] 19.4478% done
+[progress] 19.9235% done
+[progress] 20.7161% done
+[progress] 20.7551% done
+[progress] 20.761% done
+[progress] 20.8585% done
+[progress] 21.62% done
+[progress] 21.9428% done
+[progress] 22.0121% done
+[progress] 22.0267% done
+[progress] 22.1194% done
+[progress] 22.2564% done
+[progress] 22.4066% done
+[progress] 22.6242% done
+[progress] 23.7714% done
+[progress] 23.865% done
+[progress] 24.004% done
+[progress] 24.3523% done
+[progress] 24.523% done
+[progress] 24.7966% done
+[progress] 24.8678% done
+[progress] 25.0468% done
+[progress] 25.9974% done
+[progress] 26.2686% done
+[progress] 26.6227% done
+[progress] 26.9411% done
+[progress] 26.946% done
+[progress] 26.9548% done
+[progress] 26.9777% done
+[progress] 27.087% done
+[progress] 27.4016% done
+[progress] 27.5079% done
+[progress] 27.5763% done
+[progress] 27.6679% done
+[progress] 27.7134% done
+[progress] 28.226% done
+[progress] 28.4416% done
+[progress] 28.801% done
+[progress] 28.8468% done
+[progress] 29.1263% done
+[progress] 29.3243% done
+[progress] 30.0008% done
+[progress] 30.052% done
+[progress] 30.5168% done
+[progress] 32.3278% done
+[progress] 32.4239% done
+[progress] 32.6298% done
+[progress] 32.8156% done
+[progress] 33.2063% done
+[progress] 33.2799% done
+[progress] 34.9719% done
+[progress] 35.664% done
+[progress] 35.707% done
+[progress] 35.8596% done
+[progress] 36.7966% done
+[progress] 37.0844% done
+[progress] 37.1156% done
+[progress] 37.4986% done
+[progress] 37.5097% done
+[progress] 37.5272% done
+[progress] 37.5521% done
+[progress] 38.1116% done
+[progress] 38.4745% done
+[progress] 38.7101% done
+[progress] 38.9788% done
+[progress] 39.0973% done
+[progress] 39.1695% done
+[progress] 39.6445% done
+[progress] 39.8971% done
+[progress] 40.0274% done
+[progress] 40.1351% done
+[progress] 40.8847% done
+[progress] 40.8979% done
+[progress] 40.9926% done
+[progress] 41.2164% done
+[progress] 41.3272% done
+[progress] 41.9308% done
+[progress] 42.3881% done
+[progress] 42.7061% done
+[progress] 42.8012% done
+[progress] 42.9412% done
+[progress] 43.4333% done
+[progress] 43.5099% done
+[progress] 44.0464% done
+[progress] 44.2834% done
+[progress] 45.7375% done
+[progress] 45.874% done
+[progress] 46.2754% done
+[progress] 46.9065% done
+[progress] 47.3436% done
+[progress] 47.3597% done
+[progress] 48.1054% done
+[progress] 48.1727% done
+[progress] 48.7609% done
+[progress] 49.0233% done
+[progress] 49.0355% done
+[progress] 49.8738% done
+[progress] 50.3035% done
+[progress] 50.9802% done
+[progress] 51.2319% done
+[progress] 52.3249% done
+[progress] 52.5975% done
+[progress] 52.7848% done
+[progress] 52.8228% done
+[progress] 52.9418% done
+[progress] 53.0818% done
+[progress] 53.733% done
+[progress] 54.0115% done
+[progress] 54.2739% done
+[progress] 54.3778% done
+[progress] 54.4177% done
+[progress] 54.7632% done
+[progress] 54.7729% done
+[progress] 55.545% done
+[progress] 55.8416% done
+[progress] 55.883% done
+[progress] 56.023% done
+[progress] 56.3318% done
+[progress] 57.1131% done
+[progress] 57.6609% done
+[progress] 57.9764% done
+[progress] 58.133% done
+[progress] 58.6334% done
+[progress] 59.4474% done
+[progress] 59.7283% done
+[progress] 60.6861% done
+[progress] 60.6915% done
+[progress] 60.7041% done
+[progress] 60.8793% done
+[progress] 61.0755% done
+[progress] 61.4647% done
+[progress] 61.8955% done
+[progress] 61.9438% done
+[progress] 62.2022% done
+[progress] 62.5574% done
+[progress] 62.5657% done
+[progress] 62.7535% done
+[progress] 63.7596% done
+[progress] 63.8606% done
+[progress] 63.9865% done
+[progress] 64.1616% done
+[progress] 64.6601% done
+[progress] 64.7845% done
+[progress] 64.7943% done
+[progress] 64.8703% done
+[progress] 65.1644% done
+[progress] 65.2298% done
+[progress] 65.3122% done
+[progress] 66.0594% done
+[progress] 66.2998% done
+[progress] 66.9272% done
+[progress] 66.9954% done
+[progress] 67.449% done
+[progress] 68.3893% done
+[progress] 68.4747% done
+[progress] 68.6122% done
+[progress] 69.3683% done
+[progress] 69.4424% done
+[progress] 69.6941% done
+[progress] 69.7502% done
+[progress] 69.7615% done
+[progress] 70.0795% done
+[progress] 70.0974% done
+[progress] 70.2829% done
+[progress] 70.3858% done
+[progress] 70.4799% done
+[progress] 70.5336% done
+[progress] 70.6881% done
+[progress] 70.9286% done
+[progress] 71.1388% done
+[progress] 71.2695% done
+[progress] 71.6089% done
+[progress] 71.6465% done
+[progress] 71.9483% done
+[progress] 72.9444% done
+[progress] 73.2303% done
+[progress] 73.3912% done
+[progress] 73.5809% done
+[progress] 73.6814% done
+[progress] 74.0652% done
+[progress] 74.4077% done
+[progress] 74.8242% done
+[progress] 74.8383% done
+[progress] 74.854% done
+[progress] 75.2377% done
+[progress] 75.5562% done
+[progress] 75.7054% done
+[progress] 75.764% done
+[progress] 75.8133% done
+[progress] 75.8479% done
+[progress] 75.9835% done
+[progress] 76.0557% done
+[progress] 76.3025% done
+[progress] 76.3572% done
+[progress] [progress] 76.8619% done76.8619% done
+
+[progress] 77.0214% done
+[progress] 77.0619% done
+[progress] 77.2634% done
+[progress] 77.3887% done
+[progress] 77.4828% done
+[progress] 77.5575% done
+[progress] 77.7682% done
+[progress] 78.054% done
+[progress] 78.2053% done
+[progress] 78.5028% done
+[progress] 78.6906% done
+[progress] 78.9018% done
+[progress] 78.9681% done
+[progress] 79.0198% done
+[progress] 79.1436% done
+[progress] 79.3626% done
+[progress] 81.1808% done
+[progress] 81.2116% done
+[progress] 81.5066% done
+[progress] 81.554% done
+[progress] 81.9002% done
+[progress] [progress] 82.0769% done82.0769
+% done
+[progress] 82.6734% done
+[progress] 82.8914% done
+[progress] 82.8973% done
+[progress] 83.1402% done
+[progress] 83.1812% done
+[progress] 83.2685% done
+[progress] 83.8728% done
+[progress] 84.0416% done
+[progress] 84.2425% done
+[progress] 84.7127% done
+[progress] 85.9633% done
+[progress] [progress] 86.437986.4379% done% done
+
+[progress] 86.8533% done
+[progress] 86.864% done
+[progress] 86.9241% done
+[progress] 87.1206% done
+[progress] 87.6111% done
+[progress] 87.9599% done
+[progress] 87.974% done
+[progress] 88.1877% done
+[progress] 88.4847% done
+[progress] 88.4944% done
+[progress] 88.8382% done
+[progress] 88.8919% done
+[progress] 90.259% done
+[progress] 90.3483% done
+[progress] 90.4473% done
+[progress] 90.593% done

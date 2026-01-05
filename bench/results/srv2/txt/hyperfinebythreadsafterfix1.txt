@@ -1,0 +1,225 @@
+skipping build
+Executing benchmarks on current code
+
+Benchmark 1: ./tsp dj38.tsp 15 10 8
+running parallel with 15 cities and 10 threads with cutoff = 8
+[progress] 7.04749% done
+[progress] 22.2649% done
+[progress] 74.7024% done
+[progress] 85.9346% done
+parallel: {3171: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 12, 14, 13, 9, 0} t:5.47906 s:1667754/210072
+with aborts count = 1 and empties count = 258
+  Time (abs ≡):         5.505 s               [User: 54.372 s, System: 0.421 s]
+ 
+15 cities with 10 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 15 50 8
+running parallel with 15 cities and 50 threads with cutoff = 8
+[progress] 1.74044% done
+[progress] 21.2735% done
+[progress] 84.9432% done
+Error: The process has been terminated by a signal. Use the '-i'/'--ignore-failure' option if you want to ignore this. Alternatively, use the '--show-output' option to debug what went wrong.
+5.50 s    
+15 cities with 50 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 15 100 8
+running parallel with 15 cities and 100 threads with cutoff = 8
+[progress] 35.8613% done
+[progress] 39.8465% done
+[progress] 66.5268% done
+parallel: {3171: 0, 9, 13, 14, 12, 11, 10, 8, 7, 6, 5, 4, 2, 3, 1, 0} t:1.19978 s:1944045/242204
+with aborts count = 76 and empties count = 19848
+  Time (abs ≡):         1.234 s               [User: 117.280 s, System: 0.593 s]
+ 
+Exception Expecting value: line 1 column 1 (char 0) caused the result to be ignored...
+15 cities with 100 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 15 200 8
+Error: The process has been terminated by a signal. Use the '-i'/'--ignore-failure' option if you want to ignore this. Alternatively, use the '--show-output' option to debug what went wrong.
+1.23 s    
+15 cities with 200 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 15 256 8
+running parallel with 15 cities and 256 threads with cutoff = 8
+[progress] 4.46068% done
+[progress] 29.8562% done
+[progress] 65.0994% done
+Error: The process has been terminated by a signal. Use the '-i'/'--ignore-failure' option if you want to ignore this. Alternatively, use the '--show-output' option to debug what went wrong.
+Exception Expecting value: line 1 column 1 (char 0) caused the result to be ignored...
+15 cities with 256 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 16 10 8
+running parallel with 16 cities and 10 threads with cutoff = 8
+[progress] 0.790398% done
+[progress] 4.84836% done
+[progress] 7.10353% done
+[progress] 9.56949% done
+[progress] 9.92082% done
+[progress] 13.9085% done
+[progress] 14.2599% done
+[progress] 16.6556% done
+[progress] 17.1628% done
+[progress] 23.8975% done
+[progress] 31.5062% done
+[progress] 32.8018% done
+[progress] 40.551% done
+[progress] 40.7069% done
+[progress] 43.2431% done
+[progress] 51.414% done
+[progress] 56.6972% done
+[progress] 61.0516% done
+[progress] 65.6717% done
+[progress] 69.8% done
+[progress] 71.9695% done
+[progress] 72.3362% done
+[progress] 73.2804% done
+[progress] 74.4508% done
+[progress] 76.168% done
+[progress] 81.381% done
+[progress] 81.7477% done
+[progress] 86.6488% done
+[progress] 91.9629% done
+[progress] 96.9497% done
+[progress] 97.8939% done
+parallel: {3226: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 15, 12, 14, 13, 9, 0} t:28.6823 s:17853264/2295824
+with aborts count = 5 and empties count = 306
+  Time (abs ≡):        28.868 s               [User: 282.960 s, System: 3.990 s]
+ 
+Exception Expecting value: line 1 column 1 (char 0) caused the result to be ignored...
+16 cities with 10 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 16 50 8
+running parallel with 16 cities and 50 threads with cutoff = 8
+[progress] 4.19147% done
+[progress] 21.3588% done
+[progress] 22.4436% done
+[progress] 25.4871% done
+[progress] 27.5555% done
+[progress] 30.1225% done
+[progress] 32.1603% done
+[progress] 37.9661% done
+[progress] 39.433% done
+[progress] 45.4804% done
+[progress] 53.7369% done
+[progress] 54.6109% done
+[progress] 56.6552% done
+[progress] 56.8353% done
+[progress] 57.92% done
+[progress] 60.1444% done
+[progress] 61.0886% done
+[progress] 71.3346% done
+[progress] 73.6226% done
+[progress] 74.2155% done
+[progress] 80.4276% done
+[progress] 84.4856% done
+[progress] 97.5247% done
+[progress] 99.1387% done
+parallel: {3226: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 15, 12, 14, 13, 9, 0} t:9.50294 s:22647921/2876496
+with aborts count = 68 and empties count = 6937
+  Time (abs ≡):         9.734 s               [User: 469.127 s, System: 5.667 s]
+ 
+28.87 s    
+16 cities with 50 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 16 100 8
+running parallel with 16 cities and 100 threads with cutoff = 8
+[progress] 0.460327% done
+[progress] 12.9373% done
+[progress] 15.0278% done
+[progress] 22.8166% done
+[progress] 23.1987% done
+[progress] 23.4951% done
+[progress] 29.56% done
+[progress] 30.7853% done
+[progress] 34.4437% done
+[progress] 35.9808% done
+[progress] 40.1178% done
+[progress] 40.3835% done
+[progress] 49.6149% done
+[progress] 50.4581% done
+[progress] 51.8635% done
+[progress] 57.935% done
+[progress] 59.6434% done
+[progress] 60.401% done
+[progress] 65.4734% done
+[progress] 66.4638% done
+parallel: {-253: 0, 2, 6, 7, 15, 8, 5, 14, 10, 4, 1, 9, 13, 9, 13, 13, 0} t:51.2628 s:14920677/1897740
+with aborts count = 107 and empties count = 3715
+  Time (abs ≡):        51.421 s               [User: 416.955 s, System: 5.572 s]
+ 
+9.73 s    
+16 cities with 100 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 16 200 8
+running parallel with 16 cities and 200 threads with cutoff = 8
+[progress] 5.4684% done
+[progress] 6.38186% done
+[progress] 21.0437% done
+[progress] 21.3622% done
+[progress] 24.2124% done
+[progress] 33.031% done
+[progress] 33.2967% done
+[progress] 37.8905% done
+[progress] 38.4286% done
+[progress] 41.0438% done
+[progress] 41.9111% done
+[progress] 45.0007% done
+[progress] 46.8409% done
+[progress] 53.3121% done
+[progress] 56.2832% done
+[progress] 56.5796% done
+[progress] 59.1005% done
+[progress] 62.3568% done
+[progress] 71.5642% done
+[progress] 74.9898% done
+[progress] 82.045% done
+[progress] 82.6072% done
+[progress] 82.8092% done
+[progress] 85.2752% done
+[progress] 87.3437% done
+[progress] 87.3986% done
+[progress] 89.5286% done
+[progress] 89.6845% done
+[progress] 92.9059% done
+[progress] 93.1167% done
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  Empty path to pop().
+Error: The process has been terminated by a signal. Use the '-i'/'--ignore-failure' option if you want to ignore this. Alternatively, use the '--show-output' option to debug what went wrong.
+51.42 s    
+16 cities with 200 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 16 256 8
+running parallel with 16 cities and 256 threads with cutoff = 8
+[progress] 12.9561% done
+[progress] 15.3826% done
+[progress] 18.2327% done
+[progress] 18.8256% done
+[progress] 21.7286% done
+[progress] 26.2609% done
+[progress] 31.7088% done
+[progress] 32.7474% done
+[progress] 32.9977% done
+[progress] 35.3232% done
+[progress] 36.79% done
+[progress] 40.8941% done
+[progress] 45.7799% done
+[progress] 46.4277% done
+[progress] 56.7418% done
+[progress] 65.0553% done
+[progress] 67.2181% done
+[progress] 71.6582% done
+[progress] 72.0557% done
+[progress] 75.949% done
+[progress] 76.5573% done
+[progress] 84.0761% done
+[progress] 92.7304% done
+[progress] 97.1422% done
+[progress] 98.9143% done
+parallel: {3226: 0, 9, 13, 14, 12, 15, 11, 10, 8, 7, 6, 5, 4, 2, 3, 1, 0} t:5.85474 s:22884300/2903767
+with aborts count = 914 and empties count = 124653
+  Time (abs ≡):         6.101 s               [User: 1370.107 s, System: 68.403 s]
+ 
+Exception Expecting value: line 1 column 1 (char 0) caused the result to be ignored...
+16 cities with 256 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[K6.10 s    -6% since 'final' (6.49 s)

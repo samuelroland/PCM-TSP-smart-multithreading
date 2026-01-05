@@ -1,0 +1,195 @@
+skipping build
+Executing benchmarks on current code
+
+Benchmark 1: ./tsp dj38.tsp 15 10 8
+running parallel with 15 cities and 10 threads with cutoff = 8
+[progress] 16.7642% done
+[progress] 66.0397% done
+[progress] 92.0278% done
+[progress] 93.3125% done
+parallel: {3171: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 12, 14, 13, 9, 0} t:5.48247 s:1667754/210072
+with aborts count = 0 and empties count = 280
+  Time (abs ≡):         5.508 s               [User: 54.436 s, System: 0.384 s]
+ 
+15 cities with 10 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 15 50 8
+running parallel with 15 cities and 50 threads with cutoff = 8
+[progress] 30.7594% done
+[progress] 73.3493% done
+[progress] 76.742% done
+parallel: {3171: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 12, 14, 13, 9, 0} t:1.69359 s:1925883/240141
+with aborts count = 27 and empties count = 5712
+  Time (abs ≡):         1.724 s               [User: 83.677 s, System: 0.469 s]
+ 
+5.51 s    
+15 cities with 50 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 15 100 8
+running parallel with 15 cities and 100 threads with cutoff = 8
+[progress] 17.9434% done
+[progress] 22.2904% done
+[progress] 97.1296% done
+parallel: {3171: 0, 9, 13, 14, 12, 11, 10, 8, 7, 6, 5, 4, 2, 3, 1, 0} t:1.20838 s:1944171/242211
+with aborts count = 88 and empties count = 21153
+  Time (abs ≡):         1.240 s               [User: 118.193 s, System: 0.630 s]
+ 
+1.72 s    
+15 cities with 100 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 15 200 8
+running parallel with 15 cities and 200 threads with cutoff = 8
+[progress] 46.8882% done
+[progress] 68.1675% done
+[progress] 95.446% done
+parallel: {3171: 0, 9, 13, 14, 12, 11, 10, 8, 7, 6, 5, 4, 2, 3, 1, 0} t:1.11635 s:1937485/241436
+with aborts count = 162 and empties count = 39265
+  Time (abs ≡):         1.151 s               [User: 212.562 s, System: 1.119 s]
+ 
+1.24 s    
+15 cities with 200 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 15 256 8
+running parallel with 15 cities and 256 threads with cutoff = 8
+[progress] 30.8789% done
+[progress] 53.6365% done
+Error: The process has been terminated by a signal. Use the '-i'/'--ignore-failure' option if you want to ignore this. Alternatively, use the '--show-output' option to debug what went wrong.
+1.15 s    
+15 cities with 256 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 16 10 8
+running parallel with 16 cities and 10 threads with cutoff = 8
+[progress] 10.5686% done
+[progress] 15.1338% done
+[progress] 28.2519% done
+[progress] 34.62% done
+[progress] 38.522% done
+[progress] 40.0437% done
+[progress] 47.4965% done
+[progress] 48.2146% done
+[progress] 52.7798% done
+[progress] 64.2202% done
+[progress] 66.023% done
+[progress] 70.7442% done
+[progress] 83.3243% done
+[progress] 86.5237% done
+[progress] 95.9352% done
+[progress] 97.9795% done
+[progress] 98.4868% done
+parallel: {3226: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 15, 12, 14, 13, 9, 0} t:28.6546 s:17853354/2295834
+with aborts count = 0 and empties count = 234
+  Time (abs ≡):        28.839 s               [User: 282.851 s, System: 3.832 s]
+ 
+Exception Expecting value: line 1 column 1 (char 0) caused the result to be ignored...
+16 cities with 10 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 16 50 8
+running parallel with 16 cities and 50 threads with cutoff = 8
+[progress] 0.227883% done
+[progress] 0.48483% done
+[progress] 2.38866% done
+[progress] 10.8164% done
+[progress] 21.7958% done
+[progress] 22.101% done
+[progress] 23.8094% done
+[progress] 24.668% done
+[progress] 36.5916% done
+[progress] 36.6223% done
+[progress] 41.5235% done
+[progress] 49.6482% done
+[progress] 51.6069% done
+[progress] 56.4224% done
+[progress] 62.516% done
+[progress] 64.5537% done
+[progress] 65.3574% done
+[progress] 75.4782% done
+[progress] 78.9433% done
+[progress] 87.1141% done
+[progress] 90.4781% done
+[progress] 93.2713% done
+[progress] 94.1607% done
+[progress] 94.8941% done
+parallel: {3226: 0, 1, 3, 2, 4, 5, 6, 7, 8, 10, 11, 15, 12, 14, 13, 9, 0} t:9.63396 s:22657851/2877572
+with aborts count = 42 and empties count = 6448
+  Time (abs ≡):         9.864 s               [User: 475.423 s, System: 5.889 s]
+ 
+28.84 s    
+16 cities with 50 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 16 100 8
+running parallel with 16 cities and 100 threads with cutoff = 8
+[progress] 8.24696% done
+[progress] 11.1653% done
+[progress] 19.7972% done
+[progress] 20.109% done
+[progress] 20.3506% done
+[progress] 25.2759% done
+[progress] 33.3436% done
+[progress] 34.9905% done
+[progress] 36.9338% done
+[progress] 38.2996% done
+[progress] 42.0919% done
+[progress] 44.1055% done
+[progress] 46.5802% done
+[progress] 51.6988% done
+[progress] 54.4679% done
+[progress] 57.7309% done
+[progress] 58.0273% done
+[progress] 62.3817% done
+[progress] 65.5283% done
+[progress] 67.1972% done
+[progress] 67.6891% done
+[progress] 68.3764% done
+[progress] 69.4765% done
+Error: The process has been terminated by a signal. Use the '-i'/'--ignore-failure' option if you want to ignore this. Alternatively, use the '--show-output' option to debug what went wrong.
+9.86 s    
+16 cities with 100 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 16 200 8
+running parallel with 16 cities and 200 threads with cutoff = 8
+[progress] 1.65408% done
+[progress] 12.5129% done
+[progress] 22.1813% done
+[progress] 24.2739% done
+[progress] 33.9028% done
+[progress] 37.6731% done
+[progress] 41.013% done
+[progress] 42.2537% done
+[progress] 45.5146% done
+[progress] 46.9441% done
+[progress] 52.873% done
+[progress] 57.1966% done
+[progress] 57.829% done
+[progress] 60.6617% done
+[progress] 62.6907% done
+[progress] 67.5919% done
+[progress] 69.7373% done
+[progress] 75.4904% done
+[progress] 79.0872% done
+[progress] 79.9217% done
+Error: The process has been terminated by a signal. Use the '-i'/'--ignore-failure' option if you want to ignore this. Alternatively, use the '--show-output' option to debug what went wrong.
+Exception Expecting value: line 1 column 1 (char 0) caused the result to be ignored...
+16 cities with 200 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KBenchmark 1: ./tsp dj38.tsp 16 256 8
+running parallel with 16 cities and 256 threads with cutoff = 8
+[progress] 11.1641% done
+[progress] 12.8572% done
+[progress] 21.2367% done
+[progress] 26.4563% done
+[progress] 29.1111% done
+[progress] 29.4778% done
+[progress] 32.2007% done
+[progress] 33.0505% done
+[progress] 33.4019% done
+[progress] 34.0276% done
+[progress] 34.8554% done
+[progress] 40.8634% done
+[progress] 41.8163% done
+terminate called after throwing an instance of 'std::runtime_error'
+  what():  Empty path to pop().
+Error: The process has been terminated by a signal. Use the '-i'/'--ignore-failure' option if you want to ignore this. Alternatively, use the '--show-output' option to debug what went wrong.
+Exception Expecting value: line 1 column 1 (char 0) caused the result to be ignored...
+16 cities with 256 threads and cutoff 8
+
+[F[K[F[K[F[K[F[K[F[KException Expecting value: line 1 column 1 (char 0) caused the result to be ignored...
