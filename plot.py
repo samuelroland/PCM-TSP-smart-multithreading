@@ -51,7 +51,7 @@ def plot_cutoff_impact(json_path):
     # plt.title("Cutoff impact depending on cities numbers, on starting code")
 
     ax = plt.gca()
-    ax.set_yscale("log")
+    # ax.set_yscale("log")
 
     yticks = [0.2, 0.4, 0.6, 0.8, 1, 2, 5, 10, 30, 50, 70]
 
@@ -105,8 +105,8 @@ def plot_threads_impact(json_path, xticks=None, yticks=None):
 
     # Log Y axis with explicit ticks
     ax = plt.gca()
-    ax.set_xscale("log")
-    ax.set_yscale("log")
+    # ax.set_xscale("log")
+    # ax.set_yscale("log")
 
     if xticks is not None:
         ax.set_xticks(xticks)
@@ -507,9 +507,10 @@ def gen_speedup_plot():
 
 # ------
 
-gen_speedup_plot()
 
 print("Plots generation")
+
+gen_speedup_plot()
 
 print("Printing txt results parsed")
 # Parse results
@@ -539,8 +540,6 @@ for r in results:
         f"aborts={r['aborts']}, "
         f"empties={r['empties']}"
     )
-
-exit(2)
 
 file = "bench/plots/srv2-cutoff-analysis.svg"
 plot_cutoff_impact("./bench/results/srv2/base-cutoff-analysis.json").savefig(file)
