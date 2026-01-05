@@ -243,7 +243,6 @@ Our system `bench.py` allowed us to compare different versions of our program an
   caption: [Cutoff analysis - 256 threads - on server],
 )
 
-
 #figure(
   image("bench/plots/srv2-threads-analysis-cutoff-optimal.svg", width: 100%),
   caption: [Threads analysis with optimal cutoff at 8 - on server],
@@ -258,10 +257,25 @@ TODO
   caption: [Optimisations results - on server],
 )
 
-speedup
+== Speedup
+TODO: run sur le serveur le temps de Direct sur 15, 16 et 17 villes.
 
+#figure(
+  image("bench/plots/srv2-speedup-base.svg", width: 100%),
+  caption: [TODO 1],
+)
 
+#figure(
+  image("bench/plots/srv2-speedup-first-wsd.svg", width: 100%),
+  caption: [TODO 1],
+)
 
+#figure(
+  image("bench/plots/srv2-speedup-final.svg", width: 100%),
+  caption: [TODO 1],
+)
+
+== Efficiency
 // TODO efficiency graph kinda... how to it better ?
 #figure(
   image("bench/plots/srv2-abort-empty-ratio.svg", width: 100%),
@@ -271,7 +285,6 @@ speedup
   image("bench/plots/srv2-abort-and-empties-vs-threads.svg", width: 100%),
   caption: [TODO 2],
 )
-
 
 = Perspectives
 
