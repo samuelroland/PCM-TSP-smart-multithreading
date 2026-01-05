@@ -34,8 +34,9 @@ TODO: résumé des résultats sans chiffres précis
 In this section we present the structure of 2 core datastructures and one secondary structure also used. The first part is developed inside `parrallel_work.hpp`.
 
 == TSPParraTask & ParallelTaskRunner
+// short intro or useless ?
 
-== Stop management
+=== Stop management
 To manage the exit of threads properly, all threads are checking a global counter to detect the end of the problem. For this, we initialize a global `std::atomic<uint64_t> _tasks_done;` to zero and a constant counter `uint64_t _total_todo_tasks_counter;` to the total amount of tasks to cover. To calculate how much tasks a tree or subtree contains, we precalculated at compile-time the amount of nodes in any tree for 0 to 25 cities in a global constant `SUBTREE_NODES_COUNT_BY_TREE_HEIGHT`. As an example, the tree with 3 cities is composed of 5 nodes (level 0: 1 node, level 1: 2 nodes, level 2: 2 nodes. The sum is $1+2+2=5$.) This allow us to know how many nodes (or tasks) there is for a path with a given number of city. When the cutoff of .i.e 8 is reached, we can cut a substree of all subpath of 8 cities. In this case, it would increment the counter of `SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[8] = 13700` elements with this call `_tasks_done.fetch_add(13700, std::memory_order_relaxed)`. We can simplify the memory ordering constraints from sequential consistency to `relaxed` because this is related to any other variable that would need to be changed in relation.
 
 == PriorityStack
@@ -147,7 +148,6 @@ To fix the previous issue, we need to make sure instructions cannot be reordered
 ```,
   caption: [],
 )
-TODO: mentionnez la galère de crash ici ?
 
 === Integration
 As work-stealing deque is useless, how can we integrate it in the rest of the code ? We need one deque per thread and we need to define 2 strategies: how to init the deques and where to steal work ? First, we implemented a basic way to init the deques. The first deque gets the root task, and all threads are going to come steal their first task into this first deque. It will be filled by subtasks of the root task, splitted by the first thread.
@@ -274,6 +274,10 @@ TODO: run sur le serveur le temps de Direct sur 15, 16 et 17 villes.
   image("bench/plots/srv2-speedup-final.svg", width: 100%),
   caption: [TODO 1],
 )
+
+Note: to avoid measuring ourself, we took the values from Rafael and Gaspard for the Direct approach (starting code).
+
+TODO: which baseline has used the LockFreeQueue ?
 
 == Efficiency
 // TODO efficiency graph kinda... how to it better ?
