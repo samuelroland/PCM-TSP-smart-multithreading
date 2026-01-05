@@ -33,46 +33,42 @@ TODO: résumé des résultats sans chiffres précis
 = Data structures
 In this section we present the structure of 2 core datastructures and one secondary structure also used. The first part is developed inside `parrallel_work.hpp`.
 
-// TODO:on parle de ça ou on s'en fout ??
-// #slide(title: "Optimisation 1")[
-//   - Named "Keep first task in your hand" in `recurse()`
-//
-//   #text(size: 0.9em)[
-//   ```diff
-//           if (n > 0) {
-//               _splits++;
-//   -            for (int i = 0; i < n; i++) {
-//   +            // keep the first task selfishly
-//   +            Task* next_local = coll[0];
-//   +            for (int i = 1; i < n; i++) {
-//                   Task* sub = coll[i];
-//                   enqueue(sub);
-//               }
-//               delete t;
-//   +            // continue with local task
-//   +            recurse(next_local);
-//           } else {
-//               _solves++;
-//               t->solve();
-//   ```
-//   ]
-// ]
-//
-// #slide(title: "Optimisation 2")[
-//   - Named "Take first task heuristic"
-//   ```cpp
-//   // actual distance - path already done > probably a better way
-//   estimated_cost = _path.distance() - _path.size();
-//   ```
-// ]
-
-== TSPParraTask
+== TSPParraTask & ParallelTaskRunner
 
 == PriorityStack
+This is small structure which inherits `TaskCollection`, used in `ParallelTaskRunner`. This is not thread-safe but it is shared between threads. It is given to `Task::split()` to store the sub tasks based on a given task. The priority aspect on this stack is based on a simple idea. If we can pop the city that will give us the shortest path first, we'll reach the end of a good path faster. Then, this would allow us to cut more branches because the shortest distance found at this point is a bit shorter. To build a simple priority queue, we just sorted the insertion and pop at the back, on a simple `std::vector`. The sort criterion is an estimated cost.
+
+TODO: explain the estimated cost formula.
+
+// TODO: est-ce quon sest pas gouré de sens de tri, comme on fait des popback ? pas bien capté upper_bound et le tri à vrai dire.
+
+#figure(
+```cpp
+void push(Task* t) override {
+    TSPParraTask* tp = static_cast<TSPParraTask*>(t);
+    // sorted insert
+    auto it = std::upper_bound(_tab.begin(), _tab.end(), tp,
+      [](TSPParraTask* a, TSPParraTask* b) { return a->get_estimated_cost() < b->get_estimated_cost(); });
+    _tab.insert(it, tp);
+}
+```,
+  caption: [],
+)
 
 == LockFreeQueue
-This is implementation in file `LockFreeQueue.hpp`.
+This is implementation is available in file `LockFreeQueue.hpp`. This implementation is based on the course, in chapter 5, with memory ordering constraints added. It works with 2 pointers `head` and `tail` that are `std::atomic`, they are pointing on dummy nodes at start. They allow to build a simply-linked list to represent this queue, as a chain of `Node`. Instead of using null pointers to inform about the empty state, we return a boolean value (`false` if empty) and return the `result` by changing the pointer's reference.
 
+#figure(
+  image("imgs/lockfreequeue-diagram.png", width: 70%),
+  caption: [Class diagram of the 2 classes for `LockFreeQueue`],
+) <fig-lockfreequeue-diagram>
+
+One change from the course's definitions, is the fact that we needed to differ the freeing of removed nodes. We implemented this behavior in `dequeue` with another internal linked list pointed by `retired_head`. Once a node is the result has been read from the first node, we removed it from the queue, we migrate it in "the retire list", which is freed in the destructor.
+
+// TODO: en fait je suis toujours pas sur de pourquoi on a besoin de retired_head, comme on retourne next->value; et pas next, le noeud next pourrait être free
+// mais bon jai pas codé cette partie ni beaucoup relu/réfléchi à ça donc je sais pas...
+//
+// est-ce que tu arrives à justifier la raison stp ?
 
   - A small tweak in `split()`:
     #text(size: 0.9em)[
@@ -81,8 +77,9 @@ This is implementation in file `LockFreeQueue.hpp`.
     ```
     ]
 
-
     -> skip call to `solve()` and directly call `merge()`
+
+This queue was first used to store the list of shared tasks in baseline TODO.
 
 == Work-stealing deque
 This part is developed in `wsd.hpp` and integrated in `parrallel_work.hpp`.
@@ -100,7 +97,7 @@ We are always sure that `top` is lower or equal to `bottom`. `top` is pointing o
 
 As visible in @fig-wsd-diagram, all attributes that do change are atomic (all of them, except the size and stored_size which are constant). Both classes are generic to make it possible to reuse it with other kind of elements outside of the `Task` interface.
 #figure(
-  image("imgs/wsd-diagram.png", width: 100%),
+  image("imgs/wsd-diagram.png", width: 90%),
   caption: [The 2 classes signatures used in the work-stealing implementation],
 ) <fig-wsd-diagram>
 
@@ -161,6 +158,11 @@ To fix the previous issue, we need to make sure instructions cannot be reordered
 ```,
   caption: [],
 )
+
+=== Integrations
+As work-stealing deque is useless, how can we integrate it in the rest of the code ?
+
+=== Memory model
 
 = Measures
 
