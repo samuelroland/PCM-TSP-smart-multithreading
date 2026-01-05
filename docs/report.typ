@@ -85,14 +85,7 @@ This is implementation is available in file `LockFreeQueue.hpp`. This implementa
 
 One change from the course's definitions, is the fact that we needed to differ the freeing of removed nodes. We implemented this behavior in `dequeue` with another internal linked list pointed by `retired_head`. Once a node is the result has been read from the first node, we removed it from the queue, we migrate it in "the retire list", which is freed in the destructor.
 
-// TODO: en fait je suis toujours pas sur de pourquoi on a besoin de retired_head, comme on retourne next->value; et pas next, le noeud next pourrait être free
-// mais bon jai pas codé cette partie ni beaucoup relu/réfléchi à ça donc je sais pas...
-//
-// est-ce que tu arrives à justifier la raison stp ?
-
 This queue was initially used to store the list of shared tasks before the task stealing mechanism was implemented. It is now used to manage memory reuse for tasks through a dedicated free list (`_free_list`). We will discuss this in detail in the "Memory Model" chapter.
-
-// TODO: mention the baseline in perf
 
 == Work-stealing deque
 This part is developed in `wsd.hpp` and integrated in `parrallel_work.hpp`.
@@ -183,7 +176,6 @@ The `static thread_local LockFreeQueue<Task>* _free_list;` attribute of `TSPParr
 The work-stealing pointer to the circular buffer `activeArray` is not cleaned up after a `grow()` because other stealers might still reference the old pointer. We knowingly leak this memory by not calling `delete`. The paper describes a way to reuse this memory but this didn't seem to be an issue, especially with the 126GB of the server. The leaked amount of memory is almost linear to the number of threads (considering there are an almost fixed number of reallocations of and no shrinking).
 
 === Crashes
-TODO: explain multiple steals + unit tests evidence
 We had a very hard time debugging and thus we spend a significant amount of time trying to fix numerous kind of crashes (use-after-free, segfault of task pointer, out of range on bitset, pop on empty path...). We still have segfaults or some exceptions throwing for cities >= 15. These issues have significantly slowed us down and made it impossible to measure time for more than 16 cities on the server. By the repetition of the last benchmarks, it seems we were able to fix some of them along the way and we restarted them enough to have some measures to discuss.
 
 #figure(
@@ -200,9 +192,7 @@ Thread 247 "tsp" received signal SIGSEGV, Segmentation fault.
 #6  0x00007ffff7ad65ac in __clone3 () from /lib64/libc.so.6
 ```, caption: [Example of GDB backtrace, which is not very helpful in itself])
 
-Some issues are caused by duplication of tasks. A task must be only managed by one thread, and because of issues with the Work-stealing deque implementation, some tasks are stolen or stolen+popBottom twice or even three times. We have discovered that by asking ChatGPT to write GoogleTest for us (see `wsd_tests.cpp`) but we just could figure out how to fix our structures. Some issues might be related to memory ordering again.
-
-
+Some issues are caused by duplication of tasks. A task must be only managed by one thread, and because of issues with the Work-stealing deque implementation, some tasks are stolen or stolen+popBottom twice or even three times. Asking ChatGPT to write GoogleTest for us (see `wsd_tests.cpp`) has confirmed we have stolen and duplicated tasks. But we could not figure out how to fix our structures. Some issues might be related to memory ordering again.
 
 = Measures
 
@@ -212,7 +202,7 @@ Our program has the following arguments.
 Usage: ./tsp <file.tsp> [nb cities] [nb threads] [cutoff]
 ```
 
-We run most of our benchmarks with `hyperfine`, to make sure small we can take an average of several runs. In practice, this is taking too much time with > 15 cities, so we reduce the maximum of executions count. Hyperfine is chosing itself how much runs to do, but sometimes is to slow to wait for 900 executions, when a lot of different combinations are tested. From 8 cities to 17 and above, we tried to reduce progressively (300 runs for 1-7, 200 runs for 8-9-10-11, 40 runs for 13, 5 runs for 15, 2 runs for 16...). Finally it was too slow, 
+We run most of our benchmarks with a Python CLI `bench.py` as a wrapper of `hyperfine`, to make sure small we can take an average of several runs. In practice, this is taking too much time with > 15 cities, so we reduce the maximum of executions count. Hyperfine is chosing itself how much runs to do, but sometimes is to slow to wait for 900 executions, when a lot of different combinations are tested. From 8 cities to 17 and above, we tried to reduce progressively (300 runs for 1-7, 200 runs for 8-9-10-11, 40 runs for 13, 5 runs for 15, 2 runs for 16...). Finally it was too slow, we reduced it to 1 run for cities >= 13.
 ```sh
 > hyperfine './tsp dj38.tsp 12 50 4'
 Benchmark 1: ./tsp dj38.tsp 12 50 4
@@ -246,40 +236,49 @@ This is an example of the configuration file generated.
 ```
 ]
 
-Our system `bench.py` allowed us to compare different versions of our program and compare between execution with the previous results. More features are described in `bench/README.md` if needed.
+Our system `bench.py` allowed us to compare different versions of our program and compare between execution with the previous results. More features are described in `bench/README.md` if needed. In this report, we have several baselines (several versions) of the code, where we saved the name and Git hash. Here are the baselines we kept for comparisons in this report. Specific versions can be lookup in our #link("https:/github.com/samuelroland/PCM-TSP-smart-multithreading")[GitHub repository].
+
+#text(size:0.9em)[
+
+#table(
+  columns: 2,
+
+  [*Name*, \ *Commit Hash*], [*Description*],
+
+  [`direct` \ N/A],
+  [The provided code with the direct approach using a single thread],
+
+  [`base` \ 3585e48d9d0d325d56fde899f134f84440e9ea3f],
+  [First working parallel version using a LockFreeQueue to share a queue of tasks globally],
+
+  [`first-wsd` \ 59cc1958518943d4d06f78bea5edb44ed1ce632c],
+  [First WorkStealing Deque implementation with a basic stealing strategy and initialisation],
+
+  [`final` \ 675509761b81b93639e7820b110e928ef118bf68],
+  [Final version with optimisations and fixes around the work-stealing deque],
+)
+]
+
+We first tried measuring what is the best cutoff on the server from the `base` version. We created a plot on @cutoffanalysis that shows that the best default cutoff is around 8. This is what we used for our measures, with a pinned value to simplify comparisons.
 
 #figure(
   image("bench/plots/srv2-cutoff-analysis.svg", width: 100%),
   caption: [Cutoff analysis - 256 threads - on server],
-)
+)<cutoffanalysis>
 
-#figure(
-  image("bench/plots/srv2-threads-analysis-cutoff-optimal.svg", width: 100%),
-  caption: [Threads analysis with optimal cutoff at 8 - on server],
-)
-
-After this first analysis, we decided the best default cutoff was *8 and* the numbers of threads to continue was *30*. We also continued to measure with *256* as the goal was to have this number of threads to be optimal.
-
-TODO
+= Results
+== Baseline comparisons results
+Along the development of each versions, it was interesting to compare them for a few number of cities to see the progression.
 
 #figure(
   image("bench/plots/srv2-baseline-cmp.svg", width: 100%),
-  caption: [Optimisations results - on server],
+  caption: [Performance evolution during the development, on the server],
 )
+TODO clean the graph.
 
-== Speedup
-TODO: run sur le serveur le temps de Direct sur 15, 16 et 17 villes.
+== Speedup results
 
-#figure(
-  image("bench/plots/srv2-speedup-base.svg", width: 100%),
-  caption: [TODO 1],
-)
-
-#figure(
-  image("bench/plots/srv2-speedup-first-wsd.svg", width: 100%),
-  caption: [TODO 1],
-)
-
+TODO complete
 #figure(
   image("bench/plots/srv2-speedup-final.svg", width: 100%),
   caption: [TODO 1],
@@ -292,15 +291,9 @@ TODO: which baseline has used the LockFreeQueue ?
 == Efficiency
 // TODO efficiency graph kinda... how to it better ?
 #figure(
-  image("bench/plots/srv2-abort-empty-ratio.svg", width: 100%),
-  caption: [TODO 1],
-)
-#figure(
   image("bench/plots/srv2-abort-and-empties-vs-threads.svg", width: 100%),
   caption: [TODO 2],
 )
-
-= Perspectives
 
 // Le rapport livré contiendra 5 ou 6 pages A4 en PDF, police de taille 12. Des fichiers Word ne seront pas acceptés !
 //
@@ -317,15 +310,15 @@ TODO: which baseline has used the LockFreeQueue ?
 
 = Conclusion
 
-TODO
-x% au max dans lintro
+We managed to 
 
-conclusion résultats: avec comparaisons de baselines, pourcentage code final vs direct. max villes supportées.
+TODO x% au max dans lintro
 
-rappel des points principaux d'améliorations: 
-- corriger les bugs des concurrence sur la structure WSD avec les tests unitaires
-- optimiser linit des deques, potentiel important et améliorer la stratégie dordre de vol nexttidtosteal = tid + 1.
-- clean the code, plus particulièrement retirer lockfreequeue pour freeliist et passer à non thread safe.
- but it is no longer required in the current version of the code.
+TODO conclusion résultats: avec comparaisons de baselines, pourcentage code final vs direct. max villes supportées.
+
+We already a few possible improvements for future projects, but here is a brief resume of the priority features
+- Fix the concurrency bugs still present on the work-stealing deque. The help of unit tests could be a good way to fix some issues.
+- Optimize the initialisation of deques to have at least one task per queue, if not more. Even with a minor change of splitting the root task, this has shown some real potential.
+- Clean the code, especially removing the LockFreeQueue usage, which is no longer required in the current version of the code. (because of the `thread_local`). This is probably causing memory overhead to have barriers for a single thread.
 
 #bibliography("biblio.bib", style: "ieee")
