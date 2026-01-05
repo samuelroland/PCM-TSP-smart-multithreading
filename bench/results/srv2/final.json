@@ -14,5 +14,21 @@
         "cities": 14,
         "threads": 256,
         "cutoff": 8
+    },
+    {
+        "mean": 1.081066509,
+        "date": "2026-01-05_00-03-38-980433",
+        "baseline": "final",
+        "cities": 15,
+        "threads": 256,
+        "cutoff": 8
+    },
+    {
+        "mean": 6.493919935,
+        "date": "2026-01-05_00-04-17-392939",
+        "baseline": "final",
+        "cities": 16,
+        "threads": 256,
+        "cutoff": 8
     }
 ]
