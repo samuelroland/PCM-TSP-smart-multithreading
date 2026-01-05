@@ -473,7 +473,7 @@ def plot_speedup(speedup_by_city, version_name):
             )
 
     plt.xlabel("Threads")
-    plt.ylabel("Speedup (start / mean)")
+    plt.ylabel("Speedup")
     plt.title(f"Speedup vs Threads — {version_name}")
     plt.grid(True, linestyle="--", alpha=0.4)
     plt.legend(title="Cities")
@@ -505,12 +505,120 @@ def gen_speedup_plot():
         print(f"Generated {file}")
 
 
+from collections import defaultdict
+
+
+def extract_final_baselines(results, baseline_threads=256):
+    """
+    Returns:
+      city -> baseline_mean
+    Uses baseline == "final" at baseline_threads
+    """
+    baselines = {}
+
+    for r in results:
+        if r.get("baseline") != "final":
+            continue
+        if r["threads"] != baseline_threads:
+            continue
+
+        baselines[r["cities"]] = r["mean"]
+
+    return baselines
+
+
+def compute_speedup_vs_final(results, final_baselines):
+    """
+    Returns:
+      city -> {threads -> speedup}
+    speedup = baseline_final / mean
+    """
+    by_city = defaultdict(dict)
+
+    for r in results:
+        city = r["cities"]
+        threads = r["threads"]
+
+        if city not in final_baselines:
+            continue
+
+        speedup = final_baselines[city] / r["mean"]
+        by_city[city][threads] = speedup
+
+    return by_city
+
+
+def compute_dynamic_baselines(results):
+    """
+    Returns:
+      city -> baseline_mean
+    Baseline = smallest thread count for that city
+    """
+    by_city = defaultdict(list)
+
+    for r in results:
+        by_city[r["cities"]].append(r)
+
+    baselines = {}
+    for city, rs in by_city.items():
+        baseline = min(rs, key=lambda r: r["threads"])
+        baselines[city] = baseline["mean"]
+
+    return baselines
+
+
+def compute_speedup_from_results(results, baselines):
+    """
+    Returns:
+      city -> {threads -> speedup}
+    """
+    by_city = defaultdict(dict)
+
+    for r in results:
+        city = r["cities"]
+        threads = r["threads"]
+
+        if city not in baselines:
+            continue
+
+        speedup = baselines[city] / r["mean"]
+        by_city[city][threads] = speedup
+
+    return by_city
+
+
+def compute_final_speedup_vs_start(results, start_times):
+    """
+    Returns:
+      city -> {threads -> speedup}
+    speedup = start_time / final_mean
+    """
+    by_city = defaultdict(dict)
+
+    for r in results:
+        city = r["cities"]
+        threads = r["threads"]
+
+        if city not in start_times:
+            continue  # must exist in start.json
+
+        speedup = start_times[city] / r["mean"]
+        print(city, start_times[city], r["mean"], speedup)
+        by_city[city][threads] = speedup
+
+    return by_city
+
+
 # ------
 
 
-print("Plots generation")
+def load_start_times_2(path):
+    with open(path) as f:
+        raw = json.load(f)
+    return {int(k): v for k, v in raw.items()}
 
-gen_speedup_plot()
+
+print("Plots generation")
 
 print("Printing txt results parsed")
 # Parse results
@@ -519,7 +627,16 @@ megaresults = [
     parse_benchmark_output("./bench/results/srv2/txt/hyperfinebythreadsafterfix2.txt"),
     parse_benchmark_output("./bench/results/srv2/txt/hyperfinebythreadsafterfix3.txt"),
 ]
+
 results = deduplicate_results(megaresults)
+
+start_times = load_start_times_2(Path("./bench/results/srv2/start.json"))
+
+speedup = compute_final_speedup_vs_start(results, start_times)
+
+plot_speedup(speedup, "Final version speedup compared to Direct").savefig(
+    "bench/plots/srv2-speedup-final-vs-start.svg"
+)
 
 file = "bench/plots/srv2-abort-empty-ratio.svg"
 plot_abort_empty_ratio(results).savefig(file)
