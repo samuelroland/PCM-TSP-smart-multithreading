@@ -278,17 +278,38 @@ TODO clean the graph.
 
 == Speedup results
 
+Note: to avoid measuring ourself like all other groups the same values for `direct`, we took these specific values from Rafael and Gaspard. We made all the other measures ourself.
+
+This speedup graph of the version `final` compared to the `direct` versions on @best is showing us a maximum speedup to 45x for 
+
 TODO complete
 #figure(
-  image("bench/plots/srv2-speedup-final.svg", width: 100%),
+  image("bench/plots/srv2-speedup-final-vs-start.svg", width: 100%),
   caption: [TODO 1],
-)
+) <best>
 
-Note: to avoid measuring ourself, we took the values from Rafael and Gaspard for the Direct approach (starting code).
 
 TODO: which baseline has used the LockFreeQueue ?
 
 == Efficiency
+As discussed in class, we measured the efficiency 
+#table(
+  columns: 6,
+  [Cities], [Threads], [Cutoff], [Mean time (s)], [Aborts], [Empties],
+
+  [15], [10], [8], [5.47415], [0], [265],
+  [15], [50], [8], [1.70257], [29], [6472],
+  [15], [100], [8], [1.15291], [89], [9733],
+  [15], [200], [8], [1.11635], [162], [39265],
+  [15], [256], [8], [0.972745], [333], [121669],
+
+  [16], [10], [8], [28.5893], [1], [280],
+  [16], [50], [8], [9.51987], [38], [5600],
+  [16], [100], [8], [6.64518], [218], [20800],
+  [16], [200], [8], [6.54397], [387], [34833],
+  [16], [256], [8], [5.85474], [914], [124653],
+)
+
 // TODO efficiency graph kinda... how to it better ?
 #figure(
   image("bench/plots/srv2-abort-and-empties-vs-threads.svg", width: 100%),
