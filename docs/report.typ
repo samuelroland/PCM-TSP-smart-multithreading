@@ -12,12 +12,6 @@
 #set page(margin: 1.5cm)
 
 #set text(font: "Cantarell", size: 12pt)
-#let figure = figure.with(
-  kind: "image",
-  supplement: none,
-) // disable prefix in captions
-
-
 
 = Multi-threading optimization for TSP
 
@@ -37,32 +31,118 @@ The main ideas were to implement a lock free queue to replace the existing stack
 TODO: résumé des résultats sans chiffres précis
 
 = Data structures
-In this section we present the structure of 2 core datastructures and one secondary structure also used.
+In this section we present the structure of 2 core datastructures and one secondary structure also used. The first part is developed inside `parrallel_work.hpp`.
 
-== LockFreeQueue
+== TSPParraTask
 
 == PriorityStack
 
+== LockFreeQueue
+This is implementation in file `LockFreeQueue.hpp`.
+
 == Work-stealing deque
+This part is developed in `wsd.hpp` and integrated in `parrallel_work.hpp`.
+
 The structure presented in the paper @wsdpaper, is a circular and growable buffer, that is used a double ended queue. One side of the queue (the bottom), each thread will be able to push and pop some tasks. As the other end (the top), some other threads might come to steal some tasks, if their own queue is empty.
 
-As visible in @fig-wsd-diagram, like in the paper, the structure is using 2 classes. The `CircularArray` is the internal contiguous structure dynamically allocated, that can double its capacity when the buffer is full. It is using 2 indexes `bottom` and `top`, which are monotonic values (they always increment and never decrement). These indexes are used modulo the size of the buffer to avoid overflows and enable this circular style. Tasks are represented here with a number, to identify the portion of the buffer that is considered to be used.
+As visible in @wsd-basics `CircularArray` is the internal contiguous structure dynamically allocated, that can double its capacity when the buffer is full. It is using 2 indexes `bottom` and `top`, which are monotonic values (they always increment and never decrement). These indexes are used modulo the size of the buffer to avoid overflows and enable this circular style. Tasks are represented here with a number, to identify the portion of the buffer that is considered to be used.
+
+The `CircularArray` class is used by `CircularWSDeque`.
 #figure(
   image("schemas/wsd-basics.png", width: 100%),
   caption: [The abstract view of the 2 structures `CircularArray` and `CircularWSDeque`],
-)
-We are always sure that `top` is lower or equal to `bottom`. `top` is pointing on the top node but `bottom` is pointing on the next cell to be filled by a push on the bottom side. This is leaving an unused cell all the time.
+) <wsd-basics>
+We are always sure that `top` is lower or equal to `bottom`. `top` is pointing on the top node but `bottom` is pointing on the next cell to be filled by a push on the bottom side. This is leaving an unused cell all the time. The steal on one side `steal()` and the `pushBottom()` and `popBottom()` working on the other side, allow to reduce frequency of threads wanting the work on the same elements. The `pushBottom` and `popBottom` can only be called by the thread owner of the queue. The `steal` method can be called by any thread. The only concurrency problem we have, is when the queue is empty or has one element, the `top` could be changed both from `steal` from other threads and by `popBottom`. This is why this index needs to be protected by a CAS (Compare And Swap).
 
+As visible in @fig-wsd-diagram, all attributes that do change are atomic (all of them, except the size and stored_size which are constant). Both classes are generic to make it possible to reuse it with other kind of elements outside of the `Task` interface.
 #figure(
   image("imgs/wsd-diagram.png", width: 100%),
-  caption: [The 2 classes used in the work-stealing implementation],
+  caption: [The 2 classes signatures used in the work-stealing implementation],
 ) <fig-wsd-diagram>
 
+To be able to mark the answer as "empty" (pop and steal) or "abort" (steal), we defined 3 pointers that are markers for such states. To avoid the overhead of a structure with a enum field to discriminate the field, we just defined the empty state as a null pointer. We also defined the abort state as an arbitrary address on the stack, that would never be chosen by a dynamic allocation. With this little hack visible in @hack, we can return 8 bytes pointers, instead of 9 or more bytes with a wrapper struct.
 
+#figure(
+```cpp
+template<typename T>
+class CircularWSDeque {
+public:
+    static T* Empty;
+    static T* Abort;
+// ...
+}
+static long a = 1;
+template<typename T>
+T* CircularWSDeque<T>::Empty = nullptr;
+template<typename T>
+T* CircularWSDeque<T>::Abort = reinterpret_cast<T*>(&a);
+```,
+  caption: [The initialisation of Empty and Abort static markers pointers in `CircularWSDeque`],
+) <hack>
 
+The initial size of the array has been defined to 32 in ```cpp int CircularWSDeque<T>::LogInitialSize = 5;``` (because $2^5$). We didn't measure the cost of growing the arrays, but this might be something to optimize. This could be also adapted dynamically based on the number of cities.
 
+=== Memory ordering challenges
+One major challenge of this implementation was the memory ordering which gave us some headache. The convertion from the Java code in the paper was not as easy as it seems. First we didn't had `std::atomic` around `bottom`, which seems to causes issues where it could not warranty the order of operations before its change. As a small example, the code in @oldcodebottom is a good example where the CPU reordering of instructions could really be bad. If we consider a scenario where the queue is empty, this snippet is pushing a `new_object` but the CPU reorder the instructions and save `bottom` before the object is really saved in `activeArray`... This means that an concurrent thread using `steal` on the same queue could take the element without its initialisation to be done.
+
+#figure(
+```cpp
+    activeArray->put(b, new_object);
+    bottom = b + 1;
+```,
+  caption: [An old code example where `bottom` was not `std::atomic`, inside `pushBottom`],
+) <oldcodebottom>
+
+To fix the previous issue, we need to make sure instructions cannot be reordered in the wrong way. This is especially the case with lock-free algorithms, where the precise order is giving us very specific coherence or concurrency warranties!
+
+#figure(
+```cpp
+    activeArray->put(b, new_object);
+    bottom.store(b + 1, std::memory_order_release);
+```,
+  caption: [An extract of the current `pushBottom` code, where `bottom` is `std::atomic` and we use memory ordering mode],
+) <newcodebottom>
+#figure(
+```cpp
+```,
+  caption: [],
+)
 = Baseline
 
 = Optimizations
 
 = Perspectives
+
+Le rapport livré contiendra 5 ou 6 pages A4 en PDF, police de taille 12. Des fichiers Word ne seront pas acceptés !
+
+Le rapport aura:
+
+    Une introduction mentionant les idées de base et un résumé des résultats sans donner des chiffres précis.
+    Une présentation des implémentations développées
+        On doit expliquer pourquoi le code est tel qu'il est, les raisons des choix.
+        Votre analyse doit au moins indiquer la décomposition du problème, sa structure et l'identification du parallélisme.
+    Une présentation des expériences faites et des mesures de performance collectées.
+        Vous devez discuter à propos de la taille idéale de problème (nombre de villes) pour l'environnement utilisé lors des expériences.
+        Vous devez présenter les résultats de performance avec les graphes demandés (speedup et efficience).
+    Une conclusion rapellant les avantages des choix faits et quelques propositions d'amélioration.
+
+
+== segfaults
+
+```
+Thread 247 "tsp" received signal SIGSEGV, Segmentation fault.
+[Switching to Thread 0x7ffdf977a6c0 (LWP 41539)]
+TSPParraTask::split (this=<optimized out>, collection=<optimized out>) at /home/sam/mse/pcm/PCM-TSP-smart-multithreading/parrallel_work.hpp:270
+270	               TSPParraTask* t = reusealloc(i);
+(gdb) bt
+#0  TSPParraTask::split (this=<optimized out>, collection=<optimized out>) at /home/sam/mse/pcm/PCM-TSP-smart-multithreading/parrallel_work.hpp:270
+#1  TSPParraTask::split (this=0x7ffe500b1e40, collection=0x7ffdf9779dc0) at /home/sam/mse/pcm/PCM-TSP-smart-multithreading/parrallel_work.hpp:262
+#2  0x000000000040287d in ParallelTaskRunner::recurse (this=this@entry=0x7fffffffd0b0, t=0x7ffe500b1e40, tid=tid@entry=245)
+    at /home/sam/mse/pcm/PCM-TSP-smart-multithreading/parrallel_work.hpp:364
+#3  0x0000000000402d4d in ParallelTaskRunner::worker (this=0x7fffffffd0b0, tid=245) at /home/sam/mse/pcm/PCM-TSP-smart-multithreading/parrallel_work.hpp:434
+#4  0x00007ffff7c4e3e4 in execute_native_thread_routine () from /lib64/libstdc++.so.6
+#5  0x00007ffff7a53464 in start_thread () from /lib64/libc.so.6
+#6  0x00007ffff7ad65ac in __clone3 () from /lib64/libc.so.6
+```
+
+#bibliography("biblio.bib", style: "ieee")
