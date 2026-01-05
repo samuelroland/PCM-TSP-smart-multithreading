@@ -35,6 +35,9 @@ In this section we present the structure of 2 core datastructures and one second
 
 == TSPParraTask & ParallelTaskRunner
 
+== Stop management
+To manage the exit of threads properly, all threads are checking a global counter to detect the end of the problem. For this, we initialize a global `std::atomic<uint64_t> _tasks_done;` to zero and a constant counter `uint64_t _total_todo_tasks_counter;` to the total amount of tasks to cover. To calculate how much tasks a tree or subtree contains, we precalculated at compile-time the amount of nodes in any tree for 0 to 25 cities in a global constant `SUBTREE_NODES_COUNT_BY_TREE_HEIGHT`. As an example, the tree with 3 cities is composed of 5 nodes (level 0: 1 node, level 1: 2 nodes, level 2: 2 nodes. The sum is $1+2+2=5$.) This allow us to know how many nodes (or tasks) there is for a path with a given number of city. When the cutoff of .i.e 8 is reached, we can cut a substree of all subpath of 8 cities. In this case, it would increment the counter of `SUBTREE_NODES_COUNT_BY_TREE_HEIGHT[8] = 13700` elements with this call `_tasks_done.fetch_add(13700, std::memory_order_relaxed)`. We can simplify the memory ordering constraints from sequential consistency to `relaxed` because this is related to any other variable that would need to be changed in relation.
+
 == PriorityStack
 This is small structure which inherits `TaskCollection`, used in `ParallelTaskRunner`. This is not thread-safe but it is shared between threads. It is given to `Task::split()` to store the sub tasks based on a given task. The priority aspect on this stack is based on a simple idea. If we can pop the city that will give us the shortest path first, we'll reach the end of a good path faster. Then, this would allow us to cut more branches because the shortest distance found at this point is a bit shorter. To build a simple priority queue, we just sorted the insertion and pop at the back, on a simple `std::vector`. The sort criterion is an estimated cost.
 
@@ -153,11 +156,6 @@ To fix the previous issue, we need to make sure instructions cannot be reordered
 ```,
   caption: [],
 )
-#figure(
-```cpp
-```,
-  caption: [],
-)
 TODO: mentionnez la galère de crash ici ?
 
 === Integration
@@ -168,7 +166,9 @@ As work-stealing deque is useless, how can we integrate it in the rest of the co
   caption: [Each thread has it's own work-stealing deque, each thread will start stealing at thread 1 and following],
 ) <fig-wsd-vector>
 
-Because of the mentionned issues
+In `ParallelTaskRunner`, the vector of pointer to the deques (`wsds` in the schema) as defined as `std::vector<std::unique_ptr<CircularWSDeque<Task>>> _wsds;`.
+
+This is clearly not the best way to init the deques, as most threads will need to steal thread 1 at the same time, losing some time at start. We didn't have the chance to try it but we would definitly make sure all threads have at least one starting task, to avoid stealing at start. We only developed one level splitting of the root task, which gained us in a hand-made test 3s from 16s in total. We think that the ideal solution is to split the root task recursively in breadth, until we have enough tasks to cover all threads. We would push this list one by one to a different deques each time to ensure proper repartition. Then, it would make sense to have the first thread to steal to be the next one (by attributed thread id) and not the first thread, to avoid contention.
 
 === Memory model
 Our memory management strategy is as following:
@@ -181,7 +181,25 @@ The `static thread_local LockFreeQueue<Task>* _free_list;` attribute of `TSPParr
 //TODO: bon du coup c'est bete mais jaurai du changer par qqch de pas lock free pour éviter les CAS alors que ya un seul thread... okay la note à ce sujet ?
 
 === Crashes
+We had a very hard time debugging and put a big effort in trying to fix numerous kind of crashes (use-after-free, out of range, pop on empty path...). We still have segfaults or some exceptions throwing for cities >= 15. These issues have significantly slowed us down and made it impossible to measure time for more than 16 cities on the server.
 
+#figure(
+```
+Thread 247 "tsp" received signal SIGSEGV, Segmentation fault.
+(gdb) bt
+#0  TSPParraTask::split (this=<optimized out>, collection=<optimized out>) at parrallel_work.hpp:270
+#1  TSPParraTask::split (this=0x7ffe500b1e40, collection=0x7ffdf9779dc0) at parrallel_work.hpp:262
+#2  0x000000000040287d in ParallelTaskRunner::recurse (this=this@entry=0x7fffffffd0b0, t=0x7ffe500b1e40, tid=tid@entry=245)
+    at parrallel_work.hpp:364
+#3  0x0000000000402d4d in ParallelTaskRunner::worker (this=0x7fffffffd0b0, tid=245) at parrallel_work.hpp:434
+#4  0x00007ffff7c4e3e4 in execute_native_thread_routine () from /lib64/libstdc++.so.6
+#5  0x00007ffff7a53464 in start_thread () from /lib64/libc.so.6
+#6  0x00007ffff7ad65ac in __clone3 () from /lib64/libc.so.6
+```, caption: [Example of GDB backtrace, which is not very helpful in itself])
+
+Some issues are caused by duplication of tasks. A task must be only managed by one thread, and because of issues with the Work-stealing deque implementation, some tasks are stolen or stolen+popBottom twice or even three times. We have discovered that by asking ChatGPT to write GoogleTest for us (see `wsd_tests.cpp`) but we just could figure out how to fix our structures. Some issues might be related to memory ordering again.
+
+By the repetition of the last benchmarks, it seems we were able to fix some of them along the way and we restarted them enough to have some measures to discuss.
 
 = Measures
 
@@ -269,20 +287,5 @@ Le rapport aura:
 
 == segfaults
 
-```
-Thread 247 "tsp" received signal SIGSEGV, Segmentation fault.
-[Switching to Thread 0x7ffdf977a6c0 (LWP 41539)]
-TSPParraTask::split (this=<optimized out>, collection=<optimized out>) at /home/sam/mse/pcm/PCM-TSP-smart-multithreading/parrallel_work.hpp:270
-270	               TSPParraTask* t = reusealloc(i);
-(gdb) bt
-#0  TSPParraTask::split (this=<optimized out>, collection=<optimized out>) at /home/sam/mse/pcm/PCM-TSP-smart-multithreading/parrallel_work.hpp:270
-#1  TSPParraTask::split (this=0x7ffe500b1e40, collection=0x7ffdf9779dc0) at /home/sam/mse/pcm/PCM-TSP-smart-multithreading/parrallel_work.hpp:262
-#2  0x000000000040287d in ParallelTaskRunner::recurse (this=this@entry=0x7fffffffd0b0, t=0x7ffe500b1e40, tid=tid@entry=245)
-    at /home/sam/mse/pcm/PCM-TSP-smart-multithreading/parrallel_work.hpp:364
-#3  0x0000000000402d4d in ParallelTaskRunner::worker (this=0x7fffffffd0b0, tid=245) at /home/sam/mse/pcm/PCM-TSP-smart-multithreading/parrallel_work.hpp:434
-#4  0x00007ffff7c4e3e4 in execute_native_thread_routine () from /lib64/libstdc++.so.6
-#5  0x00007ffff7a53464 in start_thread () from /lib64/libc.so.6
-#6  0x00007ffff7ad65ac in __clone3 () from /lib64/libc.so.6
-```
 
 #bibliography("biblio.bib", style: "ieee")
