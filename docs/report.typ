@@ -158,11 +158,30 @@ To fix the previous issue, we need to make sure instructions cannot be reordered
 ```,
   caption: [],
 )
+TODO: mentionnez la galère de crash ici ?
 
-=== Integrations
-As work-stealing deque is useless, how can we integrate it in the rest of the code ?
+=== Integration
+As work-stealing deque is useless, how can we integrate it in the rest of the code ? We need one deque per thread and we need to define 2 strategies: how to init the deques and where to steal work ? First, we implemented a basic way to init the deques. The first deque gets the root task, and all threads are going to come steal their first task into this first deque. It will be filled by subtasks of the root task, splitted by the first thread.
+
+#figure(
+  image("schemas/wsds-vector.png", width: 90%),
+  caption: [Each thread has it's own work-stealing deque, each thread will start stealing at thread 1 and following],
+) <fig-wsd-vector>
+
+Because of the mentionned issues
 
 === Memory model
+Our memory management strategy is as following:
+- all tasks are dynamically allocated
+- all tasks are disallocated only when it has been managed (splitted in subtasks or solved)
+- allocation and disallocation are not using `new` and `delete` all the time, a shared pool of heap memory zones is managed (see `_free_list` below)
+
+The `static thread_local LockFreeQueue<Task>* _free_list;` attribute of `TSPParraTask` is used by `reusealloc` and `reusefree`. A shared list (with only `static`, not `thread_local`) had the first advantage of consuming a lower amount of total memory. But it became a central point of contention. This is why we added `thread_local`, so thread has its own list and doesn't wait on other threads. Now that only a single thread is using each list, we could have switched back a non thread-safe stack or queue implementation to avoid CAS operations.
+
+//TODO: bon du coup c'est bete mais jaurai du changer par qqch de pas lock free pour éviter les CAS alors que ya un seul thread... okay la note à ce sujet ?
+
+=== Crashes
+
 
 = Measures
 
