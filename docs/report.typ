@@ -73,15 +73,6 @@ One change from the course's definitions, is the fact that we needed to differ t
 //
 // est-ce que tu arrives à justifier la raison stp ?
 
-  - A small tweak in `split()`:
-    #text(size: 0.9em)[
-    ```cpp
-    if (_path.distance() >= _shortest.distance()) return -1;// the branch must be cut
-    ```
-    ]
-
-    -> skip call to `solve()` and directly call `merge()`
-
 This queue was first used to store the list of shared tasks in baseline TODO.
 
 == Work-stealing deque
@@ -180,8 +171,10 @@ The `static thread_local LockFreeQueue<Task>* _free_list;` attribute of `TSPParr
 
 //TODO: bon du coup c'est bete mais jaurai du changer par qqch de pas lock free pour éviter les CAS alors que ya un seul thread... okay la note à ce sujet ?
 
+The work-stealing pointer to the circular buffer `activeArray` is not cleaned up after a `grow()` because other stealers might still reference the old pointer. We knowingly leak this memory by not calling `delete`. The paper describes a way to reuse this memory but this didn't seem to be an issue, especially with the 126GB of the server. The leaked amount of memory is almost linear to the number of threads (considering there are an almost fixed number of reallocations of and no shrinking).
+
 === Crashes
-We had a very hard time debugging and put a big effort in trying to fix numerous kind of crashes (use-after-free, out of range, pop on empty path...). We still have segfaults or some exceptions throwing for cities >= 15. These issues have significantly slowed us down and made it impossible to measure time for more than 16 cities on the server.
+We had a very hard time debugging and thus we spend a significant amount of time trying to fix numerous kind of crashes (use-after-free, segfault of task pointer, out of range on bitset, pop on empty path...). We still have segfaults or some exceptions throwing for cities >= 15. These issues have significantly slowed us down and made it impossible to measure time for more than 16 cities on the server.
 
 #figure(
 ```
@@ -265,27 +258,37 @@ TODO
   caption: [Optimisations results - on server],
 )
 
-= Baseline
+speedup
 
-= Optimizations
+
+
+// TODO efficiency graph kinda... how to it better ?
+#figure(
+  image("bench/plots/srv2-abort-empty-ratio.svg", width: 100%),
+  caption: [TODO 1],
+)
+#figure(
+  image("bench/plots/srv2-abort-and-empties-vs-threads.svg", width: 100%),
+  caption: [TODO 2],
+)
+
 
 = Perspectives
 
-Le rapport livré contiendra 5 ou 6 pages A4 en PDF, police de taille 12. Des fichiers Word ne seront pas acceptés !
+// Le rapport livré contiendra 5 ou 6 pages A4 en PDF, police de taille 12. Des fichiers Word ne seront pas acceptés !
+//
+// Le rapport aura:
+//
+//     Une introduction mentionant les idées de base et un résumé des résultats sans donner des chiffres précis.
+//     Une présentation des implémentations développées
+//         On doit expliquer pourquoi le code est tel qu'il est, les raisons des choix.
+//         Votre analyse doit au moins indiquer la décomposition du problème, sa structure et l'identification du parallélisme.
+//     Une présentation des expériences faites et des mesures de performance collectées.
+//         Vous devez discuter à propos de la taille idéale de problème (nombre de villes) pour l'environnement utilisé lors des expériences.
+//         Vous devez présenter les résultats de performance avec les graphes demandés (speedup et efficience).
+//     Une conclusion rapellant les avantages des choix faits et quelques propositions d'amélioration.
 
-Le rapport aura:
-
-    Une introduction mentionant les idées de base et un résumé des résultats sans donner des chiffres précis.
-    Une présentation des implémentations développées
-        On doit expliquer pourquoi le code est tel qu'il est, les raisons des choix.
-        Votre analyse doit au moins indiquer la décomposition du problème, sa structure et l'identification du parallélisme.
-    Une présentation des expériences faites et des mesures de performance collectées.
-        Vous devez discuter à propos de la taille idéale de problème (nombre de villes) pour l'environnement utilisé lors des expériences.
-        Vous devez présenter les résultats de performance avec les graphes demandés (speedup et efficience).
-    Une conclusion rapellant les avantages des choix faits et quelques propositions d'amélioration.
-
-
-== segfaults
+= Conclusion
 
 
 #bibliography("biblio.bib", style: "ieee")
